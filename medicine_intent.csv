@@ -1,0 +1,364 @@
+Language,Speech,Label
+English,Get me hypertension medicine,ACE Inhibitor
+Cantonese,攞高血壓藥畀我,ACE Inhibitor
+Cantonese,幫我拎高血壓藥,ACE Inhibitor
+English,Where is the medicine for high blood pressure,ACE Inhibitor
+Cantonese,高血壓藥放邊,ACE Inhibitor
+English,I need something for hypertension,ACE Inhibitor
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor
+English,Fetch Metformin for diabetes,Metformin
+Cantonese,俾糖尿病藥我,Metformin
+Cantonese,邊度有甲福明,Metformin
+English,Bring me pills for diabetes,Metformin
+Cantonese,我要糖尿病藥,Metformin
+English,Where can I find diabetes medicine,Metformin
+Cantonese,糖尿病藥喺邊,Metformin
+English,Give me Atorvastatin for my heart disease,Atorvastatin
+Cantonese,攞阿伐他汀畀我,Atorvastatin
+Cantonese,幫我搵心臟病藥,Atorvastatin
+English,Can you find me medicine for CAD,Atorvastatin
+Cantonese,冠心病藥喺邊,Atorvastatin
+English,I need something for coronary heart disease,Atorvastatin
+Cantonese,攞冠脈病藥畀我,Atorvastatin
+English,Fetch Amitriptyline for depression,Amitriptyline
+Cantonese,俾阿米替林我,Amitriptyline
+Cantonese,我要抗抑鬱藥,Amitriptyline
+English,Where is the depression medicine,Amitriptyline
+Cantonese,抑鬱症藥喺邊,Amitriptyline
+English,I need help with antidepressants,Amitriptyline
+Cantonese,攞抑鬱症藥畀我,Amitriptyline
+English,What should I take for my condition,Empty
+Cantonese,我應該食咩藥,Empty
+English,Which medicine is right for me,Empty
+Cantonese,應該拎咩藥,Empty
+English,Can you find high blood pressure medicine,ACE Inhibitor
+Cantonese,幫我攞高血壓藥,ACE Inhibitor
+Cantonese,高血壓藥搵唔到,ACE Inhibitor
+English,I need ACE Inhibitors,ACE Inhibitor
+Cantonese,俾我血管緊張素轉換酶抑制藥,ACE Inhibitor
+English,Where are the hypertension pills,ACE Inhibitor
+Cantonese,幫手搵高血壓藥,ACE Inhibitor
+English,Please bring me Metformin for diabetes,Metformin
+Cantonese,甲福明喺邊,Metformin
+English,Can you grab the diabetes pills,Metformin
+Cantonese,幫我攞糖尿病藥,Metformin
+English,I am looking for Metformin,Metformin
+Cantonese,邊度可以拎到糖尿病藥,Metformin
+English,Diabetes medication is what I need,Metformin
+Cantonese,請攞甲福明,Metformin
+English,Get Atorvastatin for my CAD,Atorvastatin
+Cantonese,幫我搵冠脈病藥,Atorvastatin
+English,Fetch my heart disease medication,Atorvastatin
+Cantonese,攞心臟病藥畀我,Atorvastatin
+English,I need pills for coronary artery disease,Atorvastatin
+Cantonese,心臟病藥喺邊,Atorvastatin
+English,Where can I find Atorvastatin,Atorvastatin
+Cantonese,我要阿伐他汀,Atorvastatin
+English,Bring me Amitriptyline for depression,Amitriptyline
+Cantonese,抗抑鬱藥係邊,Empty
+English,Can I have pills for depression,Amitriptyline
+Cantonese,攞抑鬱症藥俾我,Amitriptyline
+English,Where can I find antidepressants,Amitriptyline
+Cantonese,邊度有阿米替林,Amitriptyline
+English,What should I use for depression,Empty
+Cantonese,抗抑鬱藥拎唔拎得,Amitriptyline
+English,Which pill do I need for diabetes,Empty
+Cantonese,我應該用咩藥,Empty
+English,Can you suggest a medicine for CAD,Empty
+Cantonese,冠心病食咩藥,Empty
+English,Find the medicine for high blood pressure,ACE Inhibitor
+Cantonese,邊度有高血壓藥,ACE Inhibitor
+English,Where can I get hypertension pills,ACE Inhibitor
+Cantonese,幫我拎血管緊張素轉換酶抑制藥,ACE Inhibitor
+English,Get me pills for my hypertension,ACE Inhibitor
+Cantonese,請攞高血壓藥畀我,ACE Inhibitor
+English,I need ACE Inhibitor tablets,ACE Inhibitor
+Cantonese,幫我搵高血壓藥,ACE Inhibitor
+English,Can you give me Metformin for diabetes,Metformin
+Cantonese,俾我糖尿病藥,Metformin
+English,Where is the diabetes medicine kept,Metformin
+Cantonese,糖尿病藥擺邊,Metformin
+English,I need to take Metformin for my condition,Metformin
+Cantonese,攞甲福明畀我,Metformin
+English,Grab the diabetes medication for me,Metformin
+Cantonese,糖尿病藥幫手攞下,Metformin
+English,Please find my heart medication,Atorvastatin
+Cantonese,幫我搵心臟病藥,Atorvastatin
+English,I need Atorvastatin tablets for CAD,Atorvastatin
+Cantonese,冠脈病藥放喺邊,Atorvastatin
+English,Can you grab Atorvastatin for me,Atorvastatin
+Cantonese,攞冠心病藥,Atorvastatin
+English,Heart disease medicine is what I need,Atorvastatin
+Cantonese,請攞阿伐他汀畀我,Atorvastatin
+English,Fetch depression medicine for me,Amitriptyline
+Cantonese,抑鬱症藥係邊,Empty
+English,I want to take Amitriptyline for depression,Amitriptyline
+Cantonese,阿米替林喺邊,Empty
+English,Where are the antidepressants stored,Amitriptyline
+Cantonese,幫手搵抗抑鬱藥,Amitriptyline
+English,Give me a pill for depression,Amitriptyline
+Cantonese,請幫我攞抑鬱症藥,Amitriptyline
+English,Which medicine helps with my heart condition,Empty
+Cantonese,食咩藥可以治好心臟病,Empty
+English,What do I need for my diabetes,Empty
+Cantonese,我應該攞咩藥治糖尿病,Empty
+English,Can you check what medicine suits me,Empty
+Cantonese,有咩藥適合我用,Empty
+English,I need medication for high blood pressure,ACE Inhibitor
+Cantonese,高血壓藥幫我搵下,ACE Inhibitor
+English,Can you find the pills for hypertension,ACE Inhibitor
+Cantonese,請幫我攞高血壓藥,ACE Inhibitor
+English,Fetch ACE Inhibitor tablets for me,ACE Inhibitor
+Cantonese,攞血管緊張素轉換酶抑制藥俾我,ACE Inhibitor
+English,Bring me high blood pressure pills,ACE Inhibitor
+Cantonese,高血壓藥係邊,ACE Inhibitor
+English,Get Metformin for my diabetes,Metformin
+Cantonese,幫我拎糖尿病藥,Metformin
+English,Where is the diabetes medication kept,Metformin
+Cantonese,邊度可以搵到甲福明,Metformin
+English,I want to take Metformin now,Metformin
+Cantonese,請攞糖尿病藥俾我,Metformin
+English,Can you bring me diabetes pills,Metformin
+Cantonese,攞甲福明幫幫手,Metformin
+English,I need Atorvastatin for coronary artery disease,Atorvastatin
+Cantonese,冠心病藥幫我搵下,Atorvastatin
+English,Find the heart disease medication for me,Atorvastatin
+Cantonese,攞心臟病藥俾我,Atorvastatin
+English,Can you fetch Atorvastatin,Atorvastatin
+Cantonese,心臟病藥邊度有,Atorvastatin
+English,Bring my coronary disease pills,Atorvastatin
+Cantonese,幫手攞冠心病藥,Atorvastatin
+English,Fetch Amitriptyline for depression,Amitriptyline
+Cantonese,請搵阿米替林,Empty
+English,Can you find my antidepressant,Amitriptyline
+Cantonese,幫我搵抑鬱症藥,Amitriptyline
+English,I want to take antidepressants,Amitriptyline
+Cantonese,請攞抑鬱症藥畀我,Amitriptyline
+English,Where are my depression tablets,Amitriptyline
+Cantonese,邊度有抗抑鬱藥,Amitriptyline
+English,What medicine should I use for high blood pressure,Empty
+Cantonese,治高血壓食咩藥,Empty
+English,Which pills are good for heart disease,Empty
+Cantonese,治心臟病應該用咩藥,Empty
+English,Can you suggest the right medicine for me,Empty
+Cantonese,我應該買咩藥,Empty
+English,What tablets should I use for my condition,Empty
+Cantonese,咩藥適合治療我嘅病,Empty
+English,What time is the meeting,Empty
+Cantonese,今日幾點開會,Empty
+English,Can you turn on the lights,Empty
+Cantonese,幫我開燈,Empty
+English,Where is the nearest coffee shop,Empty
+Cantonese,邊度有咖啡店,Empty
+English,I need to call a taxi,Empty
+Cantonese,幫我叫的士,Empty
+English,What’s the weather like today,Empty
+Cantonese,今日天氣如何,Empty
+English,Play some relaxing music for me,Empty
+Cantonese,播啲輕鬆嘅音樂,Empty
+English,How do I connect to WiFi,Empty
+Cantonese,點樣連接WiFi,Empty
+English,Can you set an alarm for me,Empty
+Cantonese,幫我設鬧鐘,Empty
+English,Where is my phone,Empty
+Cantonese,我部電話去咗邊,Empty
+English,What’s the schedule for tomorrow,Empty
+Cantonese,明日行程係咩,Empty
+English,Help me find my keys,Empty
+Cantonese,幫我搵鎖匙,Empty
+English,Turn off the air conditioner,Empty
+Cantonese,幫我關冷氣,Empty
+English,Do you know any good restaurants nearby,Empty
+Cantonese,附近有咩好餐廳,Empty
+English,How long will it take to get there,Empty
+Cantonese,去到嗰度要幾耐,Empty
+English,Remind me to drink water,Empty
+Cantonese,提醒我要飲水,Empty
+English,What is the current time,Empty
+Cantonese,依家幾點鐘,Empty
+English,Can you help me open the door,Empty
+Cantonese,幫我開門,Empty
+English,What’s your favorite color,Empty
+Cantonese,你最鍾意咩顏色,Empty
+English,Where is the nearest bus stop,Empty
+Cantonese,最近巴士站喺邊,Empty
+English,How do I get to the train station,Empty
+Cantonese,點樣去火車站,Empty
+English,Can you order some food for me,Empty
+Cantonese,幫我訂外賣,Empty
+English,I need to check my email,Empty
+Cantonese,我要查電郵,Empty
+English,What’s the latest news,Empty
+Cantonese,最新新聞有咩,Empty
+English,Can you find my wallet,Empty
+Cantonese,幫我搵銀包,Empty
+English,What movies are playing nearby,Empty
+Cantonese,附近有咩戲上映,Empty
+English,Remind me about my appointment,Empty
+Cantonese,記得提醒我約會,Empty
+English,Where is the closest supermarket,Empty
+Cantonese,最近嘅超市喺邊,Empty
+English,Can you adjust the room temperature,Empty
+Cantonese,幫我調室溫,Empty
+English,What is the traffic like right now,Empty
+Cantonese,依家交通情況如何,Empty
+English,Let’s go for a walk,Empty
+Cantonese,我哋出去行下啦,Empty
+English,What’s on my to-do list today,Empty
+Cantonese,今日有咩待辦事項,Empty
+English,How far is the airport from here,Empty
+Cantonese,機場距離呢度有幾遠,Empty
+English,Can you translate this sentence for me,Empty
+Cantonese,幫我翻譯呢句說話,Empty
+English,I need help finding a parking spot,Empty
+Cantonese,幫我搵個泊車位,Empty
+English,When is the next holiday,Empty
+Cantonese,下次假期係幾時,Empty
+English,Give me hypertension medication,ACE Inhibitor
+Cantonese,攞高血壓藥畀我,ACE Inhibitor
+English,Find me the ACE Inhibitor pills,ACE Inhibitor
+Cantonese,幫手搵血管緊張素轉換酶抑制藥,ACE Inhibitor
+English,I need tablets for high blood pressure,ACE Inhibitor
+Cantonese,高血壓藥喺邊度,ACE Inhibitor
+English,Bring me some hypertension pills,ACE Inhibitor
+Cantonese,請幫我攞高血壓藥,ACE Inhibitor
+English,Where is the Metformin for diabetes,Metformin
+Cantonese,糖尿病藥邊度有,Metformin
+English,I need Metformin now,Metformin
+Cantonese,請攞甲福明畀我,Metformin
+English,Fetch diabetes medication for me,Metformin
+Cantonese,幫我拎糖尿病藥,Metformin
+English,Can you bring me Metformin tablets,Metformin
+Cantonese,我要糖尿病藥,Metformin
+English,Where is the Atorvastatin for my heart,Atorvastatin
+Cantonese,攞心臟病藥幫下手,Atorvastatin
+English,Bring me heart disease medication,Atorvastatin
+Cantonese,心臟病藥放喺邊,Atorvastatin
+English,I need pills for coronary artery disease,Atorvastatin
+Cantonese,冠脈病藥喺邊度,Atorvastatin
+English,Fetch Atorvastatin tablets for me,Atorvastatin
+Cantonese,阿伐他汀幫我攞,Atorvastatin
+English,Give me antidepressants for depression,Amitriptyline
+Cantonese,我要阿米替林,Empty
+English,Where is the medicine for depression,Amitriptyline
+Cantonese,幫我攞抑鬱症藥,Amitriptyline
+English,I need Amitriptyline tablets,Amitriptyline
+Cantonese,阿米替林係邊度,Empty
+English,Bring depression medication for me,Amitriptyline
+Cantonese,請攞抗抑鬱藥畀我,Amitriptyline
+English,Where are my pills for depression,Amitriptyline
+Cantonese,抑鬱症藥幫我搵下,Amitriptyline
+English,Get me high blood pressure pills,ACE Inhibitor
+Cantonese,幫我攞高血壓藥,ACE Inhibitor
+English,Where is the ACE Inhibitor medicine,ACE Inhibitor
+Cantonese,血管緊張素轉換酶抑制藥喺邊,ACE Inhibitor
+English,I need medicine for hypertension,ACE Inhibitor
+Cantonese,攞高血壓藥幫幫手,ACE Inhibitor
+English,Fetch hypertension medication for me,ACE Inhibitor
+Cantonese,請攞高血壓藥,ACE Inhibitor
+English,Find the Metformin tablets for me,Metformin
+Cantonese,幫我搵甲福明,Metformin
+English,I want diabetes medicine,Metformin
+Cantonese,我要糖尿病藥,Metformin
+English,Bring me Metformin for my condition,Metformin
+Cantonese,請攞甲福明畀我,Metformin
+English,Can you find diabetes pills for me,Metformin
+Cantonese,糖尿病藥幫我搵下,Metformin
+English,Fetch me the Metformin tablets,Metformin
+Cantonese,搵糖尿病藥俾我,Metformin
+English,I need Atorvastatin for CAD,Atorvastatin
+Cantonese,攞阿伐他汀,Atorvastatin
+English,Bring coronary artery medication,Atorvastatin
+Cantonese,請攞冠心病藥畀我,Atorvastatin
+English,Where can I find heart disease pills,Atorvastatin
+Cantonese,心臟病藥放喺邊,Atorvastatin
+English,Fetch my Atorvastatin tablets,Atorvastatin
+Cantonese,冠脈病藥幫我搵下,Atorvastatin
+English,Give me some pills for my heart condition,Atorvastatin
+Cantonese,幫我攞心臟病藥,Atorvastatin
+English,Bring me pills for depression,Amitriptyline
+Cantonese,攞抑鬱症藥俾我,Amitriptyline
+English,Can you find my antidepressant pills,Amitriptyline
+Cantonese,幫手搵抗抑鬱藥,Amitriptyline
+English,I want Amitriptyline for my depression,Amitriptyline
+Cantonese,我要阿米替林,Amitriptyline
+English,Find me the antidepressant medication,Amitriptyline
+Cantonese,攞抗抑鬱藥幫下手,Amitriptyline
+English,Fetch the depression medication for me,Amitriptyline
+Cantonese,請幫我攞抑鬱症藥,Amitriptyline
+English,Find pills for high blood pressure,ACE Inhibitor
+Cantonese,幫我搵高血壓藥,ACE Inhibitor
+English,I need tablets to control hypertension,ACE Inhibitor
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor
+English,Bring hypertension medicine to me,ACE Inhibitor
+Cantonese,高血壓藥幫我拎嚟,ACE Inhibitor
+English,Where is the ACE Inhibitor stored,ACE Inhibitor
+Cantonese,血管緊張素轉換酶抑制藥放喺邊,ACE Inhibitor
+English,Can you grab Metformin for me,Metformin
+Cantonese,請幫手攞糖尿病藥,Metformin
+English,Bring me medication for diabetes,Metformin
+Cantonese,我要甲福明,Metformin
+English,I need Metformin tablets urgently,Metformin
+Cantonese,請攞糖尿病藥畀我,Metformin
+English,Find some diabetes medication for me,Metformin
+Cantonese,幫我搵糖尿病藥,Metformin
+English,Grab Metformin pills for my condition,Metformin
+Cantonese,攞糖尿病藥俾我,Metformin
+English,Find me Atorvastatin for my heart,Atorvastatin
+Cantonese,冠心病藥請幫手搵下,Atorvastatin
+English,Can you fetch heart disease pills,Atorvastatin
+Cantonese,心臟病藥幫我搵下,Atorvastatin
+English,I need Atorvastatin pills for CAD,Atorvastatin
+Cantonese,阿伐他汀請攞畀我,Atorvastatin
+English,Bring me medication for coronary disease,Atorvastatin
+Cantonese,幫我攞冠脈病藥,Atorvastatin
+English,Fetch pills for heart disease,Atorvastatin
+Cantonese,心臟病藥請攞,Atorvastatin
+English,Give me depression medicine now,Amitriptyline
+Cantonese,抑鬱症藥攞畀我,Amitriptyline
+English,I need antidepressants quickly,Amitriptyline
+Cantonese,幫手攞阿米替林,Amitriptyline
+English,Bring me Amitriptyline medication,Amitriptyline
+Cantonese,請攞抑鬱症藥畀我,Amitriptyline
+English,Find my depression medicine,Amitriptyline
+Cantonese,搵阿米替林俾我,Amitriptyline
+English,Fetch antidepressants for my condition,Amitriptyline
+Cantonese,攞抗抑鬱藥幫我,Amitriptyline
+English,Can you find hypertension medication for me,ACE Inhibitor
+Cantonese,幫我搵高血壓藥,ACE Inhibitor
+English,Bring me the pills for high blood pressure,ACE Inhibitor
+Cantonese,攞高血壓藥俾我,ACE Inhibitor
+English,I need ACE Inhibitor for hypertension,ACE Inhibitor
+Cantonese,血管緊張素轉換酶抑制藥幫我攞下,ACE Inhibitor
+English,Where is the medication for hypertension,ACE Inhibitor
+Cantonese,高血壓藥放喺邊,ACE Inhibitor
+English,Fetch diabetes pills for me,Metformin
+Cantonese,幫我攞糖尿病藥,Metformin
+English,Can you bring Metformin for my diabetes,Metformin
+Cantonese,請攞甲福明畀我,Metformin
+English,I want the medicine for diabetes,Metformin
+Cantonese,我要糖尿病藥,Metformin
+English,Get the Metformin tablets for my treatment,Metformin
+Cantonese,幫我搵甲福明,Metformin
+English,Find medication for controlling diabetes,Metformin
+Cantonese,糖尿病藥幫我拎,Metformin
+English,Bring heart disease pills for me,Atorvastatin
+Cantonese,攞心臟病藥俾我,Atorvastatin
+English,Where are the Atorvastatin tablets stored,Atorvastatin
+Cantonese,阿伐他汀放喺邊度,Atorvastatin
+English,I need coronary disease medication,Atorvastatin
+Cantonese,幫我搵冠脈病藥,Atorvastatin
+English,Fetch medication for heart problems,Atorvastatin
+Cantonese,心臟病藥幫我搵下,Atorvastatin
+English,Can you grab Atorvastatin for me,Atorvastatin
+Cantonese,阿伐他汀幫手攞下,Atorvastatin
+English,Bring me antidepressants now,Amitriptyline
+Cantonese,請攞抗抑鬱藥畀我,Amitriptyline
+English,Where is my depression medication,Amitriptyline
+Cantonese,幫我搵抑鬱症藥,Amitriptyline
+English,I need Amitriptyline for depression,Amitriptyline
+Cantonese,請幫我攞阿米替林,Amitriptyline
+English,Fetch antidepressant tablets for me,Amitriptyline
+Cantonese,搵抗抑鬱藥畀我,Amitriptyline
+English,Give me the medicine for my depression,Amitriptyline
+Cantonese,攞抑鬱症藥俾我,Amitriptyline
