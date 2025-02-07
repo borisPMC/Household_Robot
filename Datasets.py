@@ -1,6 +1,8 @@
 from typing import List, Optional, Union
 from datasets import load_dataset, Dataset, interleave_datasets
 
+SEED = 10000
+
 class Custom_Dataset:
 
     repo_id: str = "borisPMC/grab_medicine_intent"
@@ -29,8 +31,8 @@ class Custom_Dataset:
 
     def group_train_test(self):
         
-        train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], probabilities=[0.5,0.5], seed=1)
-        test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], probabilities=[0.5,0.5], seed=1)
+        train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], probabilities=[0.5,0.5], seed=SEED)
+        test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], probabilities=[0.5,0.5], seed=SEED)
 
         return train_ds, test_ds
 
@@ -69,7 +71,7 @@ class CV17_dataset:
         for l in self.lang_list:
             sub_ds_list.append(CV17_dataset._load_ds(l, split, token))
 
-        ds = interleave_datasets(sub_ds_list, seed=1, stopping_strategy="first_exhausted")
+        ds = interleave_datasets(sub_ds_list, seed=SEED, stopping_strategy="first_exhausted")
         ds = ds.remove_columns(["client_id", "path", "gender", "accent", "segment", "age", 'up_votes', 'down_votes', 'locale', 'variant'])
         return ds
 

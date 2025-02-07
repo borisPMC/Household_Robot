@@ -132,13 +132,14 @@ class Whisper_Model:
             train_dataset=self.train_dataset,
             eval_dataset=self.test_dataset,
             data_collator=self.data_collator,
-            compute_metrics=self._compute_metrics,
+            compute_metrics=self.compute_metrics,
             tokenizer=self.feature_extractor,
         )
 
         self.trainer = trainer
 
-    def _compute_metrics(self, pred):
+    # Special name: overwrite Trainer's compute_metrics
+    def compute_metrics(self, pred):
 
         labels_ids = pred.label_ids
         pred_ids = pred.predictions
@@ -316,9 +317,9 @@ class Wav2Vec2_Model:
             gradient_accumulation_steps=1,
             fp16=True,
             evaluation_strategy="steps",
-            save_steps=100,
-            eval_steps=100,
-            logging_steps=100,
+            save_steps=EVAL_STEPS,
+            eval_steps=EVAL_STEPS,
+            logging_steps=EVAL_STEPS,
             learning_rate=2e-5,
             num_train_epochs=3,
             weight_decay=0.01,
