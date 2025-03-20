@@ -1,364 +1,364 @@
 Language,Speech,Label,Audio_path
-English,Get me hypertension medicine,ACE Inhibitor,0001.mp3
-Cantonese,攞高血壓藥畀我,ACE Inhibitor,0002.mp3
-Cantonese,幫我拎高血壓藥,ACE Inhibitor,0003.mp3
-English,Where is the medicine for high blood pressure,ACE Inhibitor,0004.mp3
-Cantonese,高血壓藥放邊,ACE Inhibitor,0005.mp3
-English,I need something for hypertension,ACE Inhibitor,0006.mp3
-Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor,0007.mp3
-English,Fetch Metformin for diabetes,Metformin,0008.mp3
-Cantonese,俾糖尿病藥我,Metformin,0009.mp3
-Cantonese,邊度有甲福明,Metformin,0010.mp3
-English,Bring me pills for diabetes,Metformin,0011.mp3
-Cantonese,我要糖尿病藥,Metformin,0012.mp3
-English,Where can I find diabetes medicine,Metformin,0013.mp3
-Cantonese,糖尿病藥喺邊,Metformin,0014.mp3
-English,Give me Atorvastatin for my heart disease,Atorvastatin,0015.mp3
-Cantonese,攞阿伐他汀畀我,Atorvastatin,0016.mp3
-Cantonese,幫我搵心臟病藥,Atorvastatin,0017.mp3
-English,Can you find me medicine for CAD,Atorvastatin,0018.mp3
-Cantonese,冠心病藥喺邊,Atorvastatin,0019.mp3
-English,I need something for coronary heart disease,Atorvastatin,0020.mp3
-Cantonese,攞冠脈病藥畀我,Atorvastatin,0021.mp3
-English,Fetch Amitriptyline for depression,Amitriptyline,0022.mp3
-Cantonese,俾阿米替林我,Amitriptyline,0023.mp3
-Cantonese,我要抗抑鬱藥,Amitriptyline,0024.mp3
-English,Where is the depression medicine,Amitriptyline,0025.mp3
-Cantonese,抑鬱症藥喺邊,Amitriptyline,0026.mp3
-English,I need help with antidepressants,Amitriptyline,0027.mp3
-Cantonese,攞抑鬱症藥畀我,Amitriptyline,0028.mp3
-English,What should I take for my condition,Empty,0029.mp3
-Cantonese,我應該食咩藥,Empty,0030.mp3
-English,Which medicine is right for me,Empty,0031.mp3
-Cantonese,應該拎咩藥,Empty,0032.mp3
-English,Can you find high blood pressure medicine,ACE Inhibitor,0033.mp3
-Cantonese,幫我攞高血壓藥,ACE Inhibitor,0034.mp3
-Cantonese,高血壓藥搵唔到,ACE Inhibitor,0035.mp3
-English,I need ACE Inhibitors,ACE Inhibitor,0036.mp3
-Cantonese,俾我血管緊張素轉換酶抑制藥,ACE Inhibitor,0037.mp3
-English,Where are the hypertension pills,ACE Inhibitor,0038.mp3
-Cantonese,幫手搵高血壓藥,ACE Inhibitor,0039.mp3
-English,Please bring me Metformin for diabetes,Metformin,0040.mp3
-Cantonese,甲福明喺邊,Metformin,0041.mp3
-English,Can you grab the diabetes pills,Metformin,0042.mp3
-Cantonese,幫我攞糖尿病藥,Metformin,0043.mp3
-English,I am looking for Metformin,Metformin,0044.mp3
-Cantonese,邊度可以拎到糖尿病藥,Metformin,0045.mp3
-English,Diabetes medication is what I need,Metformin,0046.mp3
-Cantonese,請攞甲福明,Metformin,0047.mp3
-English,Get Atorvastatin for my CAD,Atorvastatin,0048.mp3
-Cantonese,幫我搵冠脈病藥,Atorvastatin,0049.mp3
-English,Fetch my heart disease medication,Atorvastatin,0050.mp3
-Cantonese,攞心臟病藥畀我,Atorvastatin,0051.mp3
-English,I need pills for coronary artery disease,Atorvastatinm,0052.mp3
-Cantonese,心臟病藥喺邊,Atorvastatin,0053.mp3
-English,Where can I find Atorvastatin,Atorvastatin,0054.mp3
-Cantonese,我要阿伐他汀,Atorvastatin,0055.mp3
-English,Bring me Amitriptyline for depression,Amitriptyline,0056.mp3
-Cantonese,抗抑鬱藥係邊,Empty,0057.mp3
-English,Can I have pills for depression,Amitriptyline,0058.mp3
-Cantonese,攞抑鬱症藥俾我,Amitriptyline,0059.mp3
-English,Where can I find antidepressants,Amitriptyline,0060.mp3
-Cantonese,邊度有阿米替林,Amitriptyline,0061.mp3
-English,What should I use for depression,Empty,0062.mp3
-Cantonese,抗抑鬱藥拎唔拎得,Amitriptyline,0063.mp3
-English,Which pill do I need for diabetes,Empty,0064.mp3
-Cantonese,我應該用咩藥,Empty,0065.mp3
-English,Can you suggest a medicine for CAD,Empty,0066.mp3
-Cantonese,冠心病食咩藥,Empty,0067.mp3
-English,Find the medicine for high blood pressure,ACE Inhibitor,0068.mp3
-Cantonese,邊度有高血壓藥,ACE Inhibitor,0069.mp3
-English,Where can I get hypertension pills,ACE Inhibitor,0070.mp3
-Cantonese,幫我拎血管緊張素轉換酶抑制藥,ACE Inhibitor,0071.mp3
-English,Get me pills for my hypertension,ACE Inhibitor,0072.mp3
-Cantonese,請攞高血壓藥畀我,ACE Inhibitor,0073.mp3
-English,I need ACE Inhibitor tablets,ACE Inhibitor,0074.mp3
-Cantonese,幫我搵高血壓藥,ACE Inhibitor,0075.mp3
-English,Can you give me Metformin for diabetes,Metformin,0076.mp3
-Cantonese,俾我糖尿病藥,Metformin,0077.mp3
-English,Where is the diabetes medicine kept,Metformin,0078.mp3
-Cantonese,糖尿病藥擺邊,Metformin,0079.mp3
-English,I need to take Metformin for my condition,Metformin,0080.mp3
-Cantonese,攞甲福明畀我,Metformin,0081.mp3
-English,Grab the diabetes medication for me,Metformin,0082.mp3
-Cantonese,糖尿病藥幫手攞下,Metformin,0083.mp3
-English,Please find my heart medication,Atorvastatin,0084.mp3
-Cantonese,幫我搵心臟病藥,Atorvastatin,0085.mp3
-English,I need Atorvastatin tablets for CAD,Atorvastatin,0086.mp3
-Cantonese,冠脈病藥放喺邊,Atorvastatin,0087.mp3
-English,Can you grab Atorvastatin for me,Atorvastatin,0088.mp3
-Cantonese,攞冠心病藥,Atorvastatin,0089.mp3
-English,Heart disease medicine is what I need,Atorvastatin,0090.mp3
-Cantonese,請攞阿伐他汀畀我,Atorvastatin,0091.mp3
-English,Fetch depression medicine for me,Amitriptyline,0092.mp3
-Cantonese,抑鬱症藥係邊,Amitriptyline,0093.mp3
-English,I want to take Amitriptyline for depression,Amitriptyline,0094.mp3
-Cantonese,阿米替林喺邊,Amitriptyline,0095.mp3
-English,Where are the antidepressants stored,Amitriptyline,0096.mp3
-Cantonese,幫手搵抗抑鬱藥,Amitriptyline,0097.mp3
-English,Give me a pill for depression,Amitriptyline,0098.mp3
-Cantonese,請幫我攞抑鬱症藥,Amitriptyline,0099.mp3
-English,Which medicine helps with my heart condition,Empty,0100.mp3
-Cantonese,食咩藥可以治好心臟病,Empty,0101.mp3
-English,What do I need for my diabetes,Empty,0102.mp3
-Cantonese,我應該攞咩藥治糖尿病,Empty,0103.mp3
-English,Can you check what medicine suits me,Empty,0104.mp3
-Cantonese,有咩藥適合我用,Empty,0105.mp3
-English,I need medication for high blood pressure,ACE Inhibitor,0106.mp3
-Cantonese,高血壓藥幫我搵下,ACE Inhibitor,0107.mp3
-English,Can you find the pills for hypertension,ACE Inhibitor,0108.mp3
-Cantonese,請幫我攞高血壓藥,ACE Inhibitor,0109.mp3
-English,Fetch ACE Inhibitor tablets for me,ACE Inhibitor,0110.mp3
-Cantonese,攞血管緊張素轉換酶抑制藥俾我,ACE Inhibitor,0111.mp3
-English,Bring me high blood pressure pills,ACE Inhibitor,0112.mp3
-Cantonese,高血壓藥係邊,ACE Inhibitor,0113.mp3
-English,Get Metformin for my diabetes,Metformin,0114.mp3
-Cantonese,幫我拎糖尿病藥,Metformin,0115.mp3
-English,Where is the diabetes medication kept,Metformin,0116.mp3
-Cantonese,邊度可以搵到甲福明,Metformin,0117.mp3
-English,I want to take Metformin now,Metformin,0118.mp3
-Cantonese,請攞糖尿病藥俾我,Metformin,0119.mp3
-English,Can you bring me diabetes pills,Metformin,0120.mp3
-Cantonese,攞甲福明幫幫手,Metformin
-English,I need Atorvastatin for coronary artery disease,Atorvastatin
-Cantonese,冠心病藥幫我搵下,Atorvastatin
-English,Find the heart disease medication for me,Atorvastatin
-Cantonese,攞心臟病藥俾我,Atorvastatin
-English,Can you fetch Atorvastatin,Atorvastatin
-Cantonese,心臟病藥邊度有,Atorvastatin
-English,Bring my coronary disease pills,Atorvastatin
-Cantonese,幫手攞冠心病藥,Atorvastatin
-English,Fetch Amitriptyline for depression,Amitriptyline
-Cantonese,請搵阿米替林,Empty
-English,Can you find my antidepressant,Amitriptyline
-Cantonese,幫我搵抑鬱症藥,Amitriptyline
-English,I want to take antidepressants,Amitriptyline
-Cantonese,請攞抑鬱症藥畀我,Amitriptyline
-English,Where are my depression tablets,Amitriptyline
-Cantonese,邊度有抗抑鬱藥,Amitriptyline
-English,What medicine should I use for high blood pressure,Empty
-Cantonese,治高血壓食咩藥,Empty
-English,Which pills are good for heart disease,Empty
-Cantonese,治心臟病應該用咩藥,Empty
-English,Can you suggest the right medicine for me,Empty
-Cantonese,我應該買咩藥,Empty
-English,What tablets should I use for my condition,Empty
-Cantonese,咩藥適合治療我嘅病,Empty
-English,What time is the meeting,Empty
-Cantonese,今日幾點開會,Empty
-English,Can you turn on the lights,Empty
-Cantonese,幫我開燈,Empty
-English,Where is the nearest coffee shop,Empty
-Cantonese,邊度有咖啡店,Empty
-English,I need to call a taxi,Empty
-Cantonese,幫我叫的士,Empty
-English,What’s the weather like today,Empty
-Cantonese,今日天氣如何,Empty
-English,Play some relaxing music for me,Empty
-Cantonese,播啲輕鬆嘅音樂,Empty
-English,How do I connect to WiFi,Empty
-Cantonese,點樣連接WiFi,Empty
-English,Can you set an alarm for me,Empty
-Cantonese,幫我設鬧鐘,Empty
-English,Where is my phone,Empty
-Cantonese,我部電話去咗邊,Empty
-English,What’s the schedule for tomorrow,Empty
-Cantonese,明日行程係咩,Empty
-English,Help me find my keys,Empty
-Cantonese,幫我搵鎖匙,Empty
-English,Turn off the air conditioner,Empty
-Cantonese,幫我關冷氣,Empty
-English,Do you know any good restaurants nearby,Empty
-Cantonese,附近有咩好餐廳,Empty
-English,How long will it take to get there,Empty
-Cantonese,去到嗰度要幾耐,Empty
-English,Remind me to drink water,Empty
-Cantonese,提醒我要飲水,Empty
-English,What is the current time,Empty
-Cantonese,依家幾點鐘,Empty
-English,Can you help me open the door,Empty
-Cantonese,幫我開門,Empty
-English,What’s your favorite color,Empty
-Cantonese,你最鍾意咩顏色,Empty
-English,Where is the nearest bus stop,Empty
-Cantonese,最近巴士站喺邊,Empty
-English,How do I get to the train station,Empty
-Cantonese,點樣去火車站,Empty
-English,Can you order some food for me,Empty
-Cantonese,幫我訂外賣,Empty
-English,I need to check my email,Empty
-Cantonese,我要查電郵,Empty
-English,What’s the latest news,Empty
-Cantonese,最新新聞有咩,Empty
-English,Can you find my wallet,Empty
-Cantonese,幫我搵銀包,Empty
-English,What movies are playing nearby,Empty
-Cantonese,附近有咩戲上映,Empty
-English,Remind me about my appointment,Empty
-Cantonese,記得提醒我約會,Empty
-English,Where is the closest supermarket,Empty
-Cantonese,最近嘅超市喺邊,Empty
-English,Can you adjust the room temperature,Empty
-Cantonese,幫我調室溫,Empty
-English,What is the traffic like right now,Empty
-Cantonese,依家交通情況如何,Empty
-English,Let’s go for a walk,Empty
-Cantonese,我哋出去行下啦,Empty
-English,What’s on my to-do list today,Empty
-Cantonese,今日有咩待辦事項,Empty
-English,How far is the airport from here,Empty
-Cantonese,機場距離呢度有幾遠,Empty
-English,Can you translate this sentence for me,Empty
-Cantonese,幫我翻譯呢句說話,Empty
-English,I need help finding a parking spot,Empty
-Cantonese,幫我搵個泊車位,Empty
-English,When is the next holiday,Empty
-Cantonese,下次假期係幾時,Empty
-English,Give me hypertension medication,ACE Inhibitor
-Cantonese,攞高血壓藥畀我,ACE Inhibitor
-English,Find me the ACE Inhibitor pills,ACE Inhibitor
-Cantonese,幫手搵血管緊張素轉換酶抑制藥,ACE Inhibitor
-English,I need tablets for high blood pressure,ACE Inhibitor
-Cantonese,高血壓藥喺邊度,ACE Inhibitor
-English,Bring me some hypertension pills,ACE Inhibitor
-Cantonese,請幫我攞高血壓藥,ACE Inhibitor
-English,Where is the Metformin for diabetes,Metformin
-Cantonese,糖尿病藥邊度有,Metformin
-English,I need Metformin now,Metformin
-Cantonese,請攞甲福明畀我,Metformin
-English,Fetch diabetes medication for me,Metformin
-Cantonese,幫我拎糖尿病藥,Metformin
-English,Can you bring me Metformin tablets,Metformin
-Cantonese,我要糖尿病藥,Metformin
-English,Where is the Atorvastatin for my heart,Atorvastatin
-Cantonese,攞心臟病藥幫下手,Atorvastatin
-English,Bring me heart disease medication,Atorvastatin
-Cantonese,心臟病藥放喺邊,Atorvastatin
-English,I need pills for coronary artery disease,Atorvastatin
-Cantonese,冠脈病藥喺邊度,Atorvastatin
-English,Fetch Atorvastatin tablets for me,Atorvastatin
-Cantonese,阿伐他汀幫我攞,Atorvastatin
-English,Give me antidepressants for depression,Amitriptyline
-Cantonese,我要阿米替林,Empty
-English,Where is the medicine for depression,Amitriptyline
-Cantonese,幫我攞抑鬱症藥,Amitriptyline
-English,I need Amitriptyline tablets,Amitriptyline
-Cantonese,阿米替林係邊度,Empty
-English,Bring depression medication for me,Amitriptyline
-Cantonese,請攞抗抑鬱藥畀我,Amitriptyline
-English,Where are my pills for depression,Amitriptyline
-Cantonese,抑鬱症藥幫我搵下,Amitriptyline
-English,Get me high blood pressure pills,ACE Inhibitor
-Cantonese,幫我攞高血壓藥,ACE Inhibitor
-English,Where is the ACE Inhibitor medicine,ACE Inhibitor
-Cantonese,血管緊張素轉換酶抑制藥喺邊,ACE Inhibitor
-English,I need medicine for hypertension,ACE Inhibitor
-Cantonese,攞高血壓藥幫幫手,ACE Inhibitor
-English,Fetch hypertension medication for me,ACE Inhibitor
-Cantonese,請攞高血壓藥,ACE Inhibitor
-English,Find the Metformin tablets for me,Metformin
-Cantonese,幫我搵甲福明,Metformin
-English,I want diabetes medicine,Metformin
-Cantonese,我要糖尿病藥,Metformin
-English,Bring me Metformin for my condition,Metformin
-Cantonese,請攞甲福明畀我,Metformin
-English,Can you find diabetes pills for me,Metformin
-Cantonese,糖尿病藥幫我搵下,Metformin
-English,Fetch me the Metformin tablets,Metformin
-Cantonese,搵糖尿病藥俾我,Metformin
-English,I need Atorvastatin for CAD,Atorvastatin
-Cantonese,攞阿伐他汀,Atorvastatin
-English,Bring coronary artery medication,Atorvastatin
-Cantonese,請攞冠心病藥畀我,Atorvastatin
-English,Where can I find heart disease pills,Atorvastatin
-Cantonese,心臟病藥放喺邊,Atorvastatin
-English,Fetch my Atorvastatin tablets,Atorvastatin
-Cantonese,冠脈病藥幫我搵下,Atorvastatin
-English,Give me some pills for my heart condition,Atorvastatin
-Cantonese,幫我攞心臟病藥,Atorvastatin
-English,Bring me pills for depression,Amitriptyline
-Cantonese,攞抑鬱症藥俾我,Amitriptyline
-English,Can you find my antidepressant pills,Amitriptyline
-Cantonese,幫手搵抗抑鬱藥,Amitriptyline
-English,I want Amitriptyline for my depression,Amitriptyline
-Cantonese,我要阿米替林,Amitriptyline
-English,Find me the antidepressant medication,Amitriptyline
-Cantonese,攞抗抑鬱藥幫下手,Amitriptyline
-English,Fetch the depression medication for me,Amitriptyline
-Cantonese,請幫我攞抑鬱症藥,Amitriptyline
-English,Find pills for high blood pressure,ACE Inhibitor
-Cantonese,幫我搵高血壓藥,ACE Inhibitor
-English,I need tablets to control hypertension,ACE Inhibitor
-Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor
-English,Bring hypertension medicine to me,ACE Inhibitor
-Cantonese,高血壓藥幫我拎嚟,ACE Inhibitor
-English,Where is the ACE Inhibitor stored,ACE Inhibitor
-Cantonese,血管緊張素轉換酶抑制藥放喺邊,ACE Inhibitor
-English,Can you grab Metformin for me,Metformin
-Cantonese,請幫手攞糖尿病藥,Metformin
-English,Bring me medication for diabetes,Metformin
-Cantonese,我要甲福明,Metformin
-English,I need Metformin tablets urgently,Metformin
-Cantonese,請攞糖尿病藥畀我,Metformin
-English,Find some diabetes medication for me,Metformin
-Cantonese,幫我搵糖尿病藥,Metformin
-English,Grab Metformin pills for my condition,Metformin
-Cantonese,攞糖尿病藥俾我,Metformin
-English,Find me Atorvastatin for my heart,Atorvastatin
-Cantonese,冠心病藥請幫手搵下,Atorvastatin
-English,Can you fetch heart disease pills,Atorvastatin
-Cantonese,心臟病藥幫我搵下,Atorvastatin
-English,I need Atorvastatin pills for CAD,Atorvastatin
-Cantonese,阿伐他汀請攞畀我,Atorvastatin
-English,Bring me medication for coronary disease,Atorvastatin
-Cantonese,幫我攞冠脈病藥,Atorvastatin
-English,Fetch pills for heart disease,Atorvastatin
-Cantonese,心臟病藥請攞,Atorvastatin
-English,Give me depression medicine now,Amitriptyline
-Cantonese,抑鬱症藥攞畀我,Amitriptyline
-English,I need antidepressants quickly,Amitriptyline
-Cantonese,幫手攞阿米替林,Amitriptyline
-English,Bring me Amitriptyline medication,Amitriptyline
-Cantonese,請攞抑鬱症藥畀我,Amitriptyline
-English,Find my depression medicine,Amitriptyline
-Cantonese,搵阿米替林俾我,Amitriptyline
-English,Fetch antidepressants for my condition,Amitriptyline
-Cantonese,攞抗抑鬱藥幫我,Amitriptyline
-English,Can you find hypertension medication for me,ACE Inhibitor
-Cantonese,幫我搵高血壓藥,ACE Inhibitor
-English,Bring me the pills for high blood pressure,ACE Inhibitor
-Cantonese,攞高血壓藥俾我,ACE Inhibitor
-English,I need ACE Inhibitor for hypertension,ACE Inhibitor
-Cantonese,血管緊張素轉換酶抑制藥幫我攞下,ACE Inhibitor
-English,Where is the medication for hypertension,ACE Inhibitor
-Cantonese,高血壓藥放喺邊,ACE Inhibitor
-English,Fetch diabetes pills for me,Metformin
-Cantonese,幫我攞糖尿病藥,Metformin
-English,Can you bring Metformin for my diabetes,Metformin
-Cantonese,請攞甲福明畀我,Metformin
-English,I want the medicine for diabetes,Metformin
-Cantonese,我要糖尿病藥,Metformin
-English,Get the Metformin tablets for my treatment,Metformin
-Cantonese,幫我搵甲福明,Metformin
-English,Find medication for controlling diabetes,Metformin
-Cantonese,糖尿病藥幫我拎,Metformin
-English,Bring heart disease pills for me,Atorvastatin
-Cantonese,攞心臟病藥俾我,Atorvastatin
-English,Where are the Atorvastatin tablets stored,Atorvastatin
-Cantonese,阿伐他汀放喺邊度,Atorvastatin
-English,I need coronary disease medication,Atorvastatin
-Cantonese,幫我搵冠脈病藥,Atorvastatin
-English,Fetch medication for heart problems,Atorvastatin
-Cantonese,心臟病藥幫我搵下,Atorvastatin
-English,Can you grab Atorvastatin for me,Atorvastatin
-Cantonese,阿伐他汀幫手攞下,Atorvastatin
-English,Bring me antidepressants now,Amitriptyline
-Cantonese,請攞抗抑鬱藥畀我,Amitriptyline
-English,Where is my depression medication,Amitriptyline
-Cantonese,幫我搵抑鬱症藥,Amitriptyline
-English,I need Amitriptyline for depression,Amitriptyline
-Cantonese,請幫我攞阿米替林,Amitriptyline
-English,Fetch antidepressant tablets for me,Amitriptyline
-Cantonese,搵抗抑鬱藥畀我,Amitriptyline
-English,Give me the medicine for my depression,Amitriptyline
-Cantonese,攞抑鬱症藥俾我,Amitriptyline
+English,Get me hypertension medicine,ACE Inhibitor,medicine_intent_audio/0001.mp3
+Cantonese,攞高血壓藥畀我,ACE Inhibitor,medicine_intent_audio/0002.mp3
+Cantonese,幫我拎高血壓藥,ACE Inhibitor,medicine_intent_audio/0003.mp3
+English,Where is the medicine for high blood pressure,ACE Inhibitor,medicine_intent_audio/0004.mp3
+Cantonese,高血壓藥放邊,ACE Inhibitor,medicine_intent_audio/0005.mp3
+English,I need something for hypertension,ACE Inhibitor,medicine_intent_audio/0006.mp3
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor,medicine_intent_audio/0007.mp3
+English,Fetch Metformin for diabetes,Metformin,medicine_intent_audio/0008.mp3
+Cantonese,俾糖尿病藥我,Metformin,medicine_intent_audio/0009.mp3
+Cantonese,邊度有甲福明,Metformin,medicine_intent_audio/0010.mp3
+English,Bring me pills for diabetes,Metformin,medicine_intent_audio/0011.mp3
+Cantonese,我要糖尿病藥,Metformin,medicine_intent_audio/0012.mp3
+English,Where can I find diabetes medicine,Metformin,medicine_intent_audio/0013.mp3
+Cantonese,糖尿病藥喺邊,Metformin,medicine_intent_audio/0014.mp3
+English,Give me Atorvastatin for my heart disease,Atorvastatin,medicine_intent_audio/0015.mp3
+Cantonese,攞阿伐他汀畀我,Atorvastatin,medicine_intent_audio/0016.mp3
+Cantonese,幫我搵心臟病藥,Atorvastatin,medicine_intent_audio/0017.mp3
+English,Can you find me medicine for CAD,Atorvastatin,medicine_intent_audio/0018.mp3
+Cantonese,冠心病藥喺邊,Atorvastatin,medicine_intent_audio/0019.mp3
+English,I need something for coronary heart disease,Atorvastatin,medicine_intent_audio/0020.mp3
+Cantonese,攞冠脈病藥畀我,Atorvastatin,medicine_intent_audio/0021.mp3
+English,Fetch Amitriptyline for depression,Amitriptyline,medicine_intent_audio/0022.mp3
+Cantonese,俾阿米替林我,Amitriptyline,medicine_intent_audio/0023.mp3
+Cantonese,我要抗抑鬱藥,Amitriptyline,medicine_intent_audio/0024.mp3
+English,Where is the depression medicine,Amitriptyline,medicine_intent_audio/0025.mp3
+Cantonese,抑鬱症藥喺邊,Amitriptyline,medicine_intent_audio/0026.mp3
+English,I need help with antidepressants,Amitriptyline,medicine_intent_audio/0027.mp3
+Cantonese,攞抑鬱症藥畀我,Amitriptyline,medicine_intent_audio/0028.mp3
+English,What should I take for my condition,Empty,medicine_intent_audio/0029.mp3
+Cantonese,我應該食咩藥,Empty,medicine_intent_audio/0030.mp3
+English,Which medicine is right for me,Empty,medicine_intent_audio/0031.mp3
+Cantonese,應該拎咩藥,Empty,medicine_intent_audio/0032.mp3
+English,Can you find high blood pressure medicine,ACE Inhibitor,medicine_intent_audio/0033.mp3
+Cantonese,幫我攞高血壓藥,ACE Inhibitor,medicine_intent_audio/0034.mp3
+Cantonese,高血壓藥搵唔到,ACE Inhibitor,medicine_intent_audio/0035.mp3
+English,I need ACE Inhibitors,ACE Inhibitor,medicine_intent_audio/0036.mp3
+Cantonese,俾我血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0037.mp3
+English,Where are the hypertension pills,ACE Inhibitor,medicine_intent_audio/0038.mp3
+Cantonese,幫手搵高血壓藥,ACE Inhibitor,medicine_intent_audio/0039.mp3
+English,Please bring me Metformin for diabetes,Metformin,medicine_intent_audio/0040.mp3
+Cantonese,甲福明喺邊,Metformin,medicine_intent_audio/0041.mp3
+English,Can you grab the diabetes pills,Metformin,medicine_intent_audio/0042.mp3
+Cantonese,幫我攞糖尿病藥,Metformin,medicine_intent_audio/0043.mp3
+English,I am looking for Metformin,Metformin,medicine_intent_audio/0044.mp3
+Cantonese,邊度可以拎到糖尿病藥,Metformin,medicine_intent_audio/0045.mp3
+English,Diabetes medication is what I need,Metformin,medicine_intent_audio/0046.mp3
+Cantonese,請攞甲福明,Metformin,medicine_intent_audio/0047.mp3
+English,Get Atorvastatin for my CAD,Atorvastatin,medicine_intent_audio/0048.mp3
+Cantonese,幫我搵冠脈病藥,Atorvastatin,medicine_intent_audio/0049.mp3
+English,Fetch my heart disease medication,Atorvastatin,medicine_intent_audio/0050.mp3
+Cantonese,攞心臟病藥畀我,Atorvastatin,medicine_intent_audio/0051.mp3
+English,I need pills for coronary artery disease,Atorvastatinm,medicine_intent_audio/0052.mp3
+Cantonese,心臟病藥喺邊,Atorvastatin,medicine_intent_audio/0053.mp3
+English,Where can I find Atorvastatin,Atorvastatin,medicine_intent_audio/0054.mp3
+Cantonese,我要阿伐他汀,Atorvastatin,medicine_intent_audio/0055.mp3
+English,Bring me Amitriptyline for depression,Amitriptyline,medicine_intent_audio/0056.mp3
+Cantonese,抗抑鬱藥係邊,Empty,medicine_intent_audio/0057.mp3
+English,Can I have pills for depression,Amitriptyline,medicine_intent_audio/0058.mp3
+Cantonese,攞抑鬱症藥俾我,Amitriptyline,medicine_intent_audio/0059.mp3
+English,Where can I find antidepressants,Amitriptyline,medicine_intent_audio/0060.mp3
+Cantonese,邊度有阿米替林,Amitriptyline,medicine_intent_audio/0061.mp3
+English,What should I use for depression,Empty,medicine_intent_audio/0062.mp3
+Cantonese,抗抑鬱藥拎唔拎得,Amitriptyline,medicine_intent_audio/0063.mp3
+English,Which pill do I need for diabetes,Empty,medicine_intent_audio/0064.mp3
+Cantonese,我應該用咩藥,Empty,medicine_intent_audio/0065.mp3
+English,Can you suggest a medicine for CAD,Empty,medicine_intent_audio/0066.mp3
+Cantonese,冠心病食咩藥,Empty,medicine_intent_audio/0067.mp3
+English,Find the medicine for high blood pressure,ACE Inhibitor,medicine_intent_audio/0068.mp3
+Cantonese,邊度有高血壓藥,ACE Inhibitor,medicine_intent_audio/0069.mp3
+English,Where can I get hypertension pills,ACE Inhibitor,medicine_intent_audio/0070.mp3
+Cantonese,幫我拎血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0071.mp3
+English,Get me pills for my hypertension,ACE Inhibitor,medicine_intent_audio/0072.mp3
+Cantonese,請攞高血壓藥畀我,ACE Inhibitor,medicine_intent_audio/0073.mp3
+English,I need ACE Inhibitor tablets,ACE Inhibitor,medicine_intent_audio/0074.mp3
+Cantonese,幫我搵高血壓藥,ACE Inhibitor,medicine_intent_audio/0075.mp3
+English,Can you give me Metformin for diabetes,Metformin,medicine_intent_audio/0076.mp3
+Cantonese,俾我糖尿病藥,Metformin,medicine_intent_audio/0077.mp3
+English,Where is the diabetes medicine kept,Metformin,medicine_intent_audio/0078.mp3
+Cantonese,糖尿病藥擺邊,Metformin,medicine_intent_audio/0079.mp3
+English,I need to take Metformin for my condition,Metformin,medicine_intent_audio/0080.mp3
+Cantonese,攞甲福明畀我,Metformin,medicine_intent_audio/0081.mp3
+English,Grab the diabetes medication for me,Metformin,medicine_intent_audio/0082.mp3
+Cantonese,糖尿病藥幫手攞下,Metformin,medicine_intent_audio/0083.mp3
+English,Please find my heart medication,Atorvastatin,medicine_intent_audio/0084.mp3
+Cantonese,幫我搵心臟病藥,Atorvastatin,medicine_intent_audio/0085.mp3
+English,I need Atorvastatin tablets for CAD,Atorvastatin,medicine_intent_audio/0086.mp3
+Cantonese,冠脈病藥放喺邊,Atorvastatin,medicine_intent_audio/0087.mp3
+English,Can you grab Atorvastatin for me,Atorvastatin,medicine_intent_audio/0088.mp3
+Cantonese,攞冠心病藥,Atorvastatin,medicine_intent_audio/0089.mp3
+English,Heart disease medicine is what I need,Atorvastatin,medicine_intent_audio/0090.mp3
+Cantonese,請攞阿伐他汀畀我,Atorvastatin,medicine_intent_audio/0091.mp3
+English,Fetch depression medicine for me,Amitriptyline,medicine_intent_audio/0092.mp3
+Cantonese,抑鬱症藥係邊,Amitriptyline,medicine_intent_audio/0093.mp3
+English,I want to take Amitriptyline for depression,Amitriptyline,medicine_intent_audio/0094.mp3
+Cantonese,阿米替林喺邊,Amitriptyline,medicine_intent_audio/0095.mp3
+English,Where are the antidepressants stored,Amitriptyline,medicine_intent_audio/0096.mp3
+Cantonese,幫手搵抗抑鬱藥,Amitriptyline,medicine_intent_audio/0097.mp3
+English,Give me a pill for depression,Amitriptyline,medicine_intent_audio/0098.mp3
+Cantonese,請幫我攞抑鬱症藥,Amitriptyline,medicine_intent_audio/0099.mp3
+English,Which medicine helps with my heart condition,Empty,medicine_intent_audio/0100.mp3
+Cantonese,食咩藥可以治好心臟病,Empty,medicine_intent_audio/0101.mp3
+English,What do I need for my diabetes,Empty,medicine_intent_audio/0102.mp3
+Cantonese,我應該攞咩藥治糖尿病,Empty,medicine_intent_audio/0103.mp3
+English,Can you check what medicine suits me,Empty,medicine_intent_audio/0104.mp3
+Cantonese,有咩藥適合我用,Empty,medicine_intent_audio/0105.mp3
+English,I need medication for high blood pressure,ACE Inhibitor,medicine_intent_audio/0106.mp3
+Cantonese,高血壓藥幫我搵下,ACE Inhibitor,medicine_intent_audio/0107.mp3
+English,Can you find the pills for hypertension,ACE Inhibitor,medicine_intent_audio/0108.mp3
+Cantonese,請幫我攞高血壓藥,ACE Inhibitor,medicine_intent_audio/0109.mp3
+English,Fetch ACE Inhibitor tablets for me,ACE Inhibitor,medicine_intent_audio/0110.mp3
+Cantonese,攞血管緊張素轉換酶抑制藥俾我,ACE Inhibitor,medicine_intent_audio/0111.mp3
+English,Bring me high blood pressure pills,ACE Inhibitor,medicine_intent_audio/0112.mp3
+Cantonese,高血壓藥係邊,ACE Inhibitor,medicine_intent_audio/0113.mp3
+English,Get Metformin for my diabetes,Metformin,medicine_intent_audio/0114.mp3
+Cantonese,幫我拎糖尿病藥,Metformin,medicine_intent_audio/0115.mp3
+English,Where is the diabetes medication kept,Metformin,medicine_intent_audio/0116.mp3
+Cantonese,邊度可以搵到甲福明,Metformin,medicine_intent_audio/0117.mp3
+English,I want to take Metformin now,Metformin,medicine_intent_audio/0118.mp3
+Cantonese,請攞糖尿病藥俾我,Metformin,medicine_intent_audio/0119.mp3
+English,Can you bring me diabetes pills,Metformin,medicine_intent_audio/0120.mp3
+Cantonese,攞甲福明幫幫手,Metformin,medicine_intent_audio/0121.mp3
+English,I need Atorvastatin for coronary artery disease,Atorvastatin,medicine_intent_audio/0122.mp3
+Cantonese,冠心病藥幫我搵下,Atorvastatin,medicine_intent_audio/0123.mp3
+English,Find the heart disease medication for me,Atorvastatin,medicine_intent_audio/0124.mp3
+Cantonese,攞心臟病藥俾我,Atorvastatin,medicine_intent_audio/0125.mp3
+English,Can you fetch Atorvastatin,Atorvastatin,medicine_intent_audio/0126.mp3
+Cantonese,心臟病藥邊度有,Atorvastatin,medicine_intent_audio/0127.mp3
+English,Bring my coronary disease pills,Atorvastatin,medicine_intent_audio/0128.mp3
+Cantonese,幫手攞冠心病藥,Atorvastatin,medicine_intent_audio/0129.mp3
+English,Fetch Amitriptyline for depression,Amitriptyline,medicine_intent_audio/0130.mp3
+Cantonese,請搵阿米替林,Empty,medicine_intent_audio/0131.mp3
+English,Can you find my antidepressant,Amitriptyline,medicine_intent_audio/0132.mp3
+Cantonese,幫我搵抑鬱症藥,Amitriptyline,medicine_intent_audio/0133.mp3
+English,I want to take antidepressants,Amitriptyline,medicine_intent_audio/0134.mp3
+Cantonese,請攞抑鬱症藥畀我,Amitriptyline,medicine_intent_audio/0135.mp3
+English,Where are my depression tablets,Amitriptyline,medicine_intent_audio/0136.mp3
+Cantonese,邊度有抗抑鬱藥,Amitriptyline,medicine_intent_audio/0137.mp3
+English,What medicine should I use for high blood pressure,Empty,medicine_intent_audio/0138.mp3
+Cantonese,治高血壓食咩藥,Empty,medicine_intent_audio/0139.mp3
+English,Which pills are good for heart disease,Empty,medicine_intent_audio/0140.mp3
+Cantonese,治心臟病應該用咩藥,Empty,medicine_intent_audio/0141.mp3
+English,Can you suggest the right medicine for me,Empty,medicine_intent_audio/0142.mp3
+Cantonese,我應該買咩藥,Empty,medicine_intent_audio/0143.mp3
+English,What tablets should I use for my condition,Empty,medicine_intent_audio/0144.mp3
+Cantonese,咩藥適合治療我嘅病,Empty,medicine_intent_audio/0145.mp3
+English,What time is the meeting,Empty,medicine_intent_audio/0146.mp3
+Cantonese,今日幾點開會,Empty,medicine_intent_audio/0147.mp3
+English,Can you turn on the lights,Empty,medicine_intent_audio/0148.mp3
+Cantonese,幫我開燈,Empty,medicine_intent_audio/0149.mp3
+English,Where is the nearest coffee shop,Empty,medicine_intent_audio/0150.mp3
+Cantonese,邊度有咖啡店,Empty,medicine_intent_audio/0151.mp3
+English,I need to call a taxi,Empty,medicine_intent_audio/0152.mp3
+Cantonese,幫我叫的士,Empty,medicine_intent_audio/0153.mp3
+English,What’s the weather like today,Empty,medicine_intent_audio/0154.mp3
+Cantonese,今日天氣如何,Empty,medicine_intent_audio/0155.mp3
+English,Play some relaxing music for me,Empty,medicine_intent_audio/0156.mp3
+Cantonese,播啲輕鬆嘅音樂,Empty,medicine_intent_audio/0157.mp3
+English,How do I connect to WiFi,Empty,medicine_intent_audio/0158.mp3
+Cantonese,點樣連接WiFi,Empty,medicine_intent_audio/0159.mp3
+English,Can you set an alarm for me,Empty,medicine_intent_audio/0160.mp3
+Cantonese,幫我設鬧鐘,Empty,medicine_intent_audio/0161.mp3
+English,Where is my phone,Empty,medicine_intent_audio/0162.mp3
+Cantonese,我部電話去咗邊,Empty,medicine_intent_audio/0163.mp3
+English,What’s the schedule for tomorrow,Empty,medicine_intent_audio/0164.mp3
+Cantonese,明日行程係咩,Empty,medicine_intent_audio/0165.mp3
+English,Help me find my keys,Empty,medicine_intent_audio/0166.mp3
+Cantonese,幫我搵鎖匙,Empty,medicine_intent_audio/0167.mp3
+English,Turn off the air conditioner,Empty,medicine_intent_audio/0168.mp3
+Cantonese,幫我關冷氣,Empty,medicine_intent_audio/0169.mp3
+English,Do you know any good restaurants nearby,Empty,medicine_intent_audio/0170.mp3
+Cantonese,附近有咩好餐廳,Empty,medicine_intent_audio/0171.mp3
+English,How long will it take to get there,Empty,medicine_intent_audio/0172.mp3
+Cantonese,去到嗰度要幾耐,Empty,medicine_intent_audio/0173.mp3
+English,Remind me to drink water,Empty,medicine_intent_audio/0174.mp3
+Cantonese,提醒我要飲水,Empty,medicine_intent_audio/0175.mp3
+English,What is the current time,Empty,medicine_intent_audio/0176.mp3
+Cantonese,依家幾點鐘,Empty,medicine_intent_audio/0177.mp3
+English,Can you help me open the door,Empty,medicine_intent_audio/0178.mp3
+Cantonese,幫我開門,Empty,medicine_intent_audio/0179.mp3
+English,What’s your favorite color,Empty,medicine_intent_audio/0180.mp3
+Cantonese,你最鍾意咩顏色,Empty,medicine_intent_audio/0181.mp3
+English,Where is the nearest bus stop,Empty,medicine_intent_audio/0182.mp3
+Cantonese,最近巴士站喺邊,Empty,medicine_intent_audio/0183.mp3
+English,How do I get to the train station,Empty,medicine_intent_audio/0184.mp3
+Cantonese,點樣去火車站,Empty,medicine_intent_audio/0185.mp3
+English,Can you order some food for me,Empty,medicine_intent_audio/0186.mp3
+Cantonese,幫我訂外賣,Empty,medicine_intent_audio/0187.mp3
+English,I need to check my email,Empty,medicine_intent_audio/0188.mp3
+Cantonese,我要查電郵,Empty,medicine_intent_audio/0189.mp3
+English,What’s the latest news,Empty,medicine_intent_audio/0190.mp3
+Cantonese,最新新聞有咩,Empty,medicine_intent_audio/0191.mp3
+English,Can you find my wallet,Empty,medicine_intent_audio/0192.mp3
+Cantonese,幫我搵銀包,Empty,medicine_intent_audio/0193.mp3
+English,What movies are playing nearby,Empty,medicine_intent_audio/0194.mp3
+Cantonese,附近有咩戲上映,Empty,medicine_intent_audio/0195.mp3
+English,Remind me about my appointment,Empty,medicine_intent_audio/0196.mp3
+Cantonese,記得提醒我約會,Empty,medicine_intent_audio/0197.mp3
+English,Where is the closest supermarket,Empty,medicine_intent_audio/0198.mp3
+Cantonese,最近嘅超市喺邊,Empty,medicine_intent_audio/0199.mp3
+English,Can you adjust the room temperature,Empty,medicine_intent_audio/0200.mp3
+Cantonese,幫我調室溫,Empty,medicine_intent_audio/0201.mp3
+English,What is the traffic like right now,Empty,medicine_intent_audio/0202.mp3
+Cantonese,依家交通情況如何,Empty,medicine_intent_audio/0203.mp3
+English,Let’s go for a walk,Empty,medicine_intent_audio/0204.mp3
+Cantonese,我哋出去行下啦,Empty,medicine_intent_audio/0205.mp3
+English,What’s on my to-do list today,Empty,medicine_intent_audio/0206.mp3
+Cantonese,今日有咩待辦事項,Empty,medicine_intent_audio/0207.mp3
+English,How far is the airport from here,Empty,medicine_intent_audio/0208.mp3
+Cantonese,機場距離呢度有幾遠,Empty,medicine_intent_audio/0209.mp3
+English,Can you translate this sentence for me,Empty,medicine_intent_audio/0210.mp3
+Cantonese,幫我翻譯呢句說話,Empty,medicine_intent_audio/0211.mp3
+English,I need help finding a parking spot,Empty,medicine_intent_audio/0212.mp3
+Cantonese,幫我搵個泊車位,Empty,medicine_intent_audio/0213.mp3
+English,When is the next holiday,Empty,medicine_intent_audio/0214.mp3
+Cantonese,下次假期係幾時,Empty,medicine_intent_audio/0215.mp3
+English,Give me hypertension medication,ACE Inhibitor,medicine_intent_audio/0216.mp3
+Cantonese,攞高血壓藥畀我,ACE Inhibitor,medicine_intent_audio/0217.mp3
+English,Find me the ACE Inhibitor pills,ACE Inhibitor,medicine_intent_audio/0218.mp3
+Cantonese,幫手搵血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0219.mp3
+English,I need tablets for high blood pressure,ACE Inhibitor,medicine_intent_audio/0220.mp3
+Cantonese,高血壓藥喺邊度,ACE Inhibitor,medicine_intent_audio/0221.mp3
+English,Bring me some hypertension pills,ACE Inhibitor,medicine_intent_audio/0222.mp3
+Cantonese,請幫我攞高血壓藥,ACE Inhibitor,medicine_intent_audio/0223.mp3
+English,Where is the Metformin for diabetes,Metformin,medicine_intent_audio/0224.mp3
+Cantonese,糖尿病藥邊度有,Metformin,medicine_intent_audio/0225.mp3
+English,I need Metformin now,Metformin,medicine_intent_audio/0226.mp3
+Cantonese,請攞甲福明畀我,Metformin,medicine_intent_audio/0227.mp3
+English,Fetch diabetes medication for me,Metformin,medicine_intent_audio/0228.mp3
+Cantonese,幫我拎糖尿病藥,Metformin,medicine_intent_audio/0229.mp3
+English,Can you bring me Metformin tablets,Metformin,medicine_intent_audio/0230.mp3
+Cantonese,我要糖尿病藥,Metformin,medicine_intent_audio/0231.mp3
+English,Where is the Atorvastatin for my heart,Atorvastatin,medicine_intent_audio/0232.mp3
+Cantonese,攞心臟病藥幫下手,Atorvastatin,medicine_intent_audio/0233.mp3
+English,Bring me heart disease medication,Atorvastatin,medicine_intent_audio/0234.mp3
+Cantonese,心臟病藥放喺邊,Atorvastatin,medicine_intent_audio/0235.mp3
+English,I need pills for coronary artery disease,Atorvastatin,medicine_intent_audio/0236.mp3
+Cantonese,冠脈病藥喺邊度,Atorvastatin,medicine_intent_audio/0237.mp3
+English,Fetch Atorvastatin tablets for me,Atorvastatin,medicine_intent_audio/0238.mp3
+Cantonese,阿伐他汀幫我攞,Atorvastatin,medicine_intent_audio/0239.mp3
+English,Give me antidepressants for depression,Amitriptyline,medicine_intent_audio/0240.mp3
+Cantonese,我要阿米替林,Empty,medicine_intent_audio/0241.mp3
+English,Where is the medicine for depression,Amitriptyline,medicine_intent_audio/0242.mp3
+Cantonese,幫我攞抑鬱症藥,Amitriptyline,medicine_intent_audio/0243.mp3
+English,I need Amitriptyline tablets,Amitriptyline,medicine_intent_audio/0244.mp3
+Cantonese,阿米替林係邊度,Empty,medicine_intent_audio/0245.mp3
+English,Bring depression medication for me,Amitriptyline,medicine_intent_audio/0246.mp3
+Cantonese,請攞抗抑鬱藥畀我,Amitriptyline,medicine_intent_audio/0247.mp3
+English,Where are my pills for depression,Amitriptyline,medicine_intent_audio/0248.mp3
+Cantonese,抑鬱症藥幫我搵下,Amitriptyline,medicine_intent_audio/0249.mp3
+English,Get me high blood pressure pills,ACE Inhibitor,medicine_intent_audio/0250.mp3
+Cantonese,幫我攞高血壓藥,ACE Inhibitor,medicine_intent_audio/0251.mp3
+English,Where is the ACE Inhibitor medicine,ACE Inhibitor,medicine_intent_audio/0252.mp3
+Cantonese,血管緊張素轉換酶抑制藥喺邊,ACE Inhibitor,medicine_intent_audio/0253.mp3
+English,I need medicine for hypertension,ACE Inhibitor,medicine_intent_audio/0254.mp3
+Cantonese,攞高血壓藥幫幫手,ACE Inhibitor,medicine_intent_audio/0255.mp3
+English,Fetch hypertension medication for me,ACE Inhibitor,medicine_intent_audio/0256.mp3
+Cantonese,請攞高血壓藥,ACE Inhibitor,medicine_intent_audio/0257.mp3
+English,Find the Metformin tablets for me,Metformin,medicine_intent_audio/0258.mp3
+Cantonese,幫我搵甲福明,Metformin,medicine_intent_audio/0259.mp3
+English,I want diabetes medicine,Metformin,medicine_intent_audio/0260.mp3
+Cantonese,我要糖尿病藥,Metformin,medicine_intent_audio/0261.mp3
+English,Bring me Metformin for my condition,Metformin,medicine_intent_audio/0262.mp3
+Cantonese,請攞甲福明畀我,Metformin,medicine_intent_audio/0263.mp3
+English,Can you find diabetes pills for me,Metformin,medicine_intent_audio/0264.mp3
+Cantonese,糖尿病藥幫我搵下,Metformin,medicine_intent_audio/0265.mp3
+English,Fetch me the Metformin tablets,Metformin,medicine_intent_audio/0266.mp3
+Cantonese,搵糖尿病藥俾我,Metformin,medicine_intent_audio/0267.mp3
+English,I need Atorvastatin for CAD,Atorvastatin,medicine_intent_audio/0268.mp3
+Cantonese,攞阿伐他汀,Atorvastatin,medicine_intent_audio/0269.mp3
+English,Bring coronary artery medication,Atorvastatin,medicine_intent_audio/0270.mp3
+Cantonese,請攞冠心病藥畀我,Atorvastatin,medicine_intent_audio/0271.mp3
+English,Where can I find heart disease pills,Atorvastatin,medicine_intent_audio/0272.mp3
+Cantonese,心臟病藥放喺邊,Atorvastatin,medicine_intent_audio/0273.mp3
+English,Fetch my Atorvastatin tablets,Atorvastatin,medicine_intent_audio/0274.mp3
+Cantonese,冠脈病藥幫我搵下,Atorvastatin,medicine_intent_audio/0275.mp3
+English,Give me some pills for my heart condition,Atorvastatin,medicine_intent_audio/0276.mp3
+Cantonese,幫我攞心臟病藥,Atorvastatin,medicine_intent_audio/0277.mp3
+English,Bring me pills for depression,Amitriptyline,medicine_intent_audio/0278.mp3
+Cantonese,攞抑鬱症藥俾我,Amitriptyline,medicine_intent_audio/0279.mp3
+English,Can you find my antidepressant pills,Amitriptyline,medicine_intent_audio/0280.mp3
+Cantonese,幫手搵抗抑鬱藥,Amitriptyline,medicine_intent_audio/0281.mp3
+English,I want Amitriptyline for my depression,Amitriptyline,medicine_intent_audio/0282.mp3
+Cantonese,我要阿米替林,Amitriptyline,medicine_intent_audio/0283.mp3
+English,Find me the antidepressant medication,Amitriptyline,medicine_intent_audio/0284.mp3
+Cantonese,攞抗抑鬱藥幫下手,Amitriptyline,medicine_intent_audio/0285.mp3
+English,Fetch the depression medication for me,Amitriptyline,medicine_intent_audio/0286.mp3
+Cantonese,請幫我攞抑鬱症藥,Amitriptyline,medicine_intent_audio/0287.mp3
+English,Find pills for high blood pressure,ACE Inhibitor,medicine_intent_audio/0288.mp3
+Cantonese,幫我搵高血壓藥,ACE Inhibitor,medicine_intent_audio/0289.mp3
+English,I need tablets to control hypertension,ACE Inhibitor,medicine_intent_audio/0290.mp3
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,ACE Inhibitor,medicine_intent_audio/0291.mp3
+English,Bring hypertension medicine to me,ACE Inhibitor,medicine_intent_audio/0292.mp3
+Cantonese,高血壓藥幫我拎嚟,ACE Inhibitor,medicine_intent_audio/0293.mp3
+English,Where is the ACE Inhibitor stored,ACE Inhibitor,medicine_intent_audio/0294.mp3
+Cantonese,血管緊張素轉換酶抑制藥放喺邊,ACE Inhibitor,medicine_intent_audio/0295.mp3
+English,Can you grab Metformin for me,Metformin,medicine_intent_audio/0296.mp3
+Cantonese,請幫手攞糖尿病藥,Metformin,medicine_intent_audio/0297.mp3
+English,Bring me medication for diabetes,Metformin,medicine_intent_audio/0298.mp3
+Cantonese,我要甲福明,Metformin,medicine_intent_audio/0299.mp3
+English,I need Metformin tablets urgently,Metformin,medicine_intent_audio/0300.mp3
+Cantonese,請攞糖尿病藥畀我,Metformin,medicine_intent_audio/0301.mp3
+English,Find some diabetes medication for me,Metformin,medicine_intent_audio/0302.mp3
+Cantonese,幫我搵糖尿病藥,Metformin,medicine_intent_audio/0303.mp3
+English,Grab Metformin pills for my condition,Metformin,medicine_intent_audio/0304.mp3
+Cantonese,攞糖尿病藥俾我,Metformin,medicine_intent_audio/0305.mp3
+English,Find me Atorvastatin for my heart,Atorvastatin,medicine_intent_audio/0306.mp3
+Cantonese,冠心病藥請幫手搵下,Atorvastatin,medicine_intent_audio/0307.mp3
+English,Can you fetch heart disease pills,Atorvastatin,medicine_intent_audio/0308.mp3
+Cantonese,心臟病藥幫我搵下,Atorvastatin,medicine_intent_audio/0309.mp3
+English,I need Atorvastatin pills for CAD,Atorvastatin,medicine_intent_audio/0310.mp3
+Cantonese,阿伐他汀請攞畀我,Atorvastatin,medicine_intent_audio/0311.mp3
+English,Bring me medication for coronary disease,Atorvastatin,medicine_intent_audio/0312.mp3
+Cantonese,幫我攞冠脈病藥,Atorvastatin,medicine_intent_audio/0313.mp3
+English,Fetch pills for heart disease,Atorvastatin,medicine_intent_audio/0314.mp3
+Cantonese,心臟病藥請攞,Atorvastatin,medicine_intent_audio/0315.mp3
+English,Give me depression medicine now,Amitriptyline,medicine_intent_audio/0316.mp3
+Cantonese,抑鬱症藥攞畀我,Amitriptyline,medicine_intent_audio/0317.mp3
+English,I need antidepressants quickly,Amitriptyline,medicine_intent_audio/0318.mp3
+Cantonese,幫手攞阿米替林,Amitriptyline,medicine_intent_audio/0319.mp3
+English,Bring me Amitriptyline medication,Amitriptyline,medicine_intent_audio/0320.mp3
+Cantonese,請攞抑鬱症藥畀我,Amitriptyline,medicine_intent_audio/0321.mp3
+English,Find my depression medicine,Amitriptyline,medicine_intent_audio/0322.mp3
+Cantonese,搵阿米替林俾我,Amitriptyline,medicine_intent_audio/0323.mp3
+English,Fetch antidepressants for my condition,Amitriptyline,medicine_intent_audio/0324.mp3
+Cantonese,攞抗抑鬱藥幫我,Amitriptyline,medicine_intent_audio/0325.mp3
+English,Can you find hypertension medication for me,ACE Inhibitor,medicine_intent_audio/0326.mp3
+Cantonese,幫我搵高血壓藥,ACE Inhibitor,medicine_intent_audio/0327.mp3
+English,Bring me the pills for high blood pressure,ACE Inhibitor,medicine_intent_audio/0328.mp3
+Cantonese,攞高血壓藥俾我,ACE Inhibitor,medicine_intent_audio/0329.mp3
+English,I need ACE Inhibitor for hypertension,ACE Inhibitor,medicine_intent_audio/0330.mp3
+Cantonese,血管緊張素轉換酶抑制藥幫我攞下,ACE Inhibitor,medicine_intent_audio/0331.mp3
+English,Where is the medication for hypertension,ACE Inhibitor,medicine_intent_audio/0332.mp3
+Cantonese,高血壓藥放喺邊,ACE Inhibitor,medicine_intent_audio/0333.mp3
+English,Fetch diabetes pills for me,Metformin,medicine_intent_audio/0334.mp3
+Cantonese,幫我攞糖尿病藥,Metformin,medicine_intent_audio/0335.mp3
+English,Can you bring Metformin for my diabetes,Metformin,medicine_intent_audio/0336.mp3
+Cantonese,請攞甲福明畀我,Metformin,medicine_intent_audio/0337.mp3
+English,I want the medicine for diabetes,Metformin,medicine_intent_audio/0338.mp3
+Cantonese,我要糖尿病藥,Metformin,medicine_intent_audio/0339.mp3
+English,Get the Metformin tablets for my treatment,Metformin,medicine_intent_audio/0340.mp3
+Cantonese,幫我搵甲福明,Metformin,medicine_intent_audio/0341.mp3
+English,Find medication for controlling diabetes,Metformin,medicine_intent_audio/0342.mp3
+Cantonese,糖尿病藥幫我拎,Metformin,medicine_intent_audio/0343.mp3
+English,Bring heart disease pills for me,Atorvastatin,medicine_intent_audio/0344.mp3
+Cantonese,攞心臟病藥俾我,Atorvastatin,medicine_intent_audio/0345.mp3
+English,Where are the Atorvastatin tablets stored,Atorvastatin,medicine_intent_audio/0346.mp3
+Cantonese,阿伐他汀放喺邊度,Atorvastatin,medicine_intent_audio/0347.mp3
+English,I need coronary disease medication,Atorvastatin,medicine_intent_audio/0348.mp3
+Cantonese,幫我搵冠脈病藥,Atorvastatin,medicine_intent_audio/0349.mp3
+English,Fetch medication for heart problems,Atorvastatin,medicine_intent_audio/0350.mp3
+Cantonese,心臟病藥幫我搵下,Atorvastatin,medicine_intent_audio/0351.mp3
+English,Can you grab Atorvastatin for me,Atorvastatin,medicine_intent_audio/0352.mp3
+Cantonese,阿伐他汀幫手攞下,Atorvastatin,medicine_intent_audio/0353.mp3
+English,Bring me antidepressants now,Amitriptyline,medicine_intent_audio/0354.mp3
+Cantonese,請攞抗抑鬱藥畀我,Amitriptyline,medicine_intent_audio/0355.mp3
+English,Where is my depression medication,Amitriptyline,medicine_intent_audio/0356.mp3
+Cantonese,幫我搵抑鬱症藥,Amitriptyline,medicine_intent_audio/0357.mp3
+English,I need Amitriptyline for depression,Amitriptyline,medicine_intent_audio/0358.mp3
+Cantonese,請幫我攞阿米替林,Amitriptyline,medicine_intent_audio/0359.mp3
+English,Fetch antidepressant tablets for me,Amitriptyline,medicine_intent_audio/0360.mp3
+Cantonese,搵抗抑鬱藥畀我,Amitriptyline,medicine_intent_audio/0361.mp3
+English,Give me the medicine for my depression,Amitriptyline,medicine_intent_audio/0362.mp3
+Cantonese,攞抑鬱症藥俾我,Amitriptyline,medicine_intent_audio/0363.mp3

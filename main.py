@@ -22,29 +22,24 @@ EPOCH = 1
 MAX_STEPS = 300
 
 def build_dataset():
-    Datasets.Custom_Dataset.build_new_dataset("borisPMC/grab_medicine_intent", "medicine_intent.csv")
+    Datasets.MedIntent_Dataset.build_new_dataset("borisPMC/grab_medicine_intent", "medicine_intent.csv")
 
 def train_asr():
     
-    token = {
-        "en": "<|en|>",
-        "yue": "<|yue|>",
-    }
-
-    ds = Datasets.CV17_dataset(["en", "yue"], token)
-
-    whisper = Models.Whisper_Model(repo_id="borisPMC/whisper_grab_medicine_intent", use_exist=False, ds=ds)
+    
+    ds = Datasets.MedIntent_Dataset(True)
+    whisper = Models.Whisper_Model(repo_id="borisPMC/whisper_small_grab_medicine_intent", use_exist=False, dataset=ds)
     whisper.train()
 
 def train_nlp():
 
-    custom = Datasets.Custom_Dataset("borisPMC/grab_medicine_intent", True)
-    nlp = Models.GPT2_Model("borisPMC/gpt2_grab_medicine_intent", False, custom)
+    custom = Datasets.MedIntent_Dataset(True)
+    nlp = Models.Whisper_Model("borisPMC/gpt2_grab_medicine_intent", False, custom)
     nlp.train()
 
 def predict_asr(audiopath):
 
-    pipe = pipeline("automatic-speech-recognition", model="borisPMC/whisper_grab_medicine_intent", tokenizer="openai/whisper-small")
+    pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small", processor="openai/whisper-small")
     result = pipe(audiopath)
     return result
 
@@ -94,7 +89,7 @@ def random_test(n) -> None:
     audiopath_list = df["Audio_path"].tolist()
 
     for path in tqdm(audiopath_list):
-        transcript = predict_asr("medicine_intent_audio/" + path)
+        transcript = predict_asr(path)
         class_label = predict_nlp(transcript)
         prediction.append(class_label["label"])
         confidence.append(class_label["score"])
