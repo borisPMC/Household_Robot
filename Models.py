@@ -12,14 +12,14 @@ MAX_STEPS = 300
 EVAL_STEPS = 30
 
 LLM_EPOCH = 3
-ASR_EPOCH = 3
+ASR_EPOCH = 1
 
 SEED = 42
 
 from typing import List, Optional, Union
 import numpy as np
 from transformers import (
-    WhisperForConditionalGeneration, WhisperTokenizer, WhisperFeatureExtractor,
+    WhisperForConditionalGeneration, WhisperTokenizer, WhisperFeatureExtractor, WhisperProcessor,
     BertForSequenceClassification, BertTokenizer, BertConfig,
     Wav2Vec2ForCTC, Wav2Vec2Processor,
     GPT2ForSequenceClassification, GPT2Tokenizer, GPT2Config,
@@ -54,12 +54,12 @@ class Whisper_Model:
     feature_extractor: WhisperFeatureExtractor
     tokenizer: WhisperTokenizer
 
-    def __init__(self, repo_id: Optional[str], use_exist: bool, dataset: MedIntent_Dataset):
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: MedIntent_Dataset):
         self.model_id = repo_id
         self.dataset = dataset
 
         # Use existing model or load pre-trained Whisper model
-        call_id = repo_id if use_exist & (repo_id != None) else "openai/whisper-small"
+        call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
         self._import_model_set(call_id)
         self._prepare_datasets()
@@ -120,14 +120,14 @@ class Whisper_Model:
         )
 
         training_args = Seq2SeqTrainingArguments(
-            output_dir=f"./borisPMC/whisper_small_grab_medicine_intent",
+            output_dir=f"./{self.model_id}",
             per_device_train_batch_size=BATCH_SIZE,
             per_device_eval_batch_size=EVAL_SIZE,
             gradient_accumulation_steps=1,
             gradient_checkpointing=True,
             fp16=True,
             predict_with_generate=True,
-            generation_max_length=50,
+            generation_max_length=225,
             seed=SEED,
             num_train_epochs=ASR_EPOCH,
             eval_strategy="epoch",
@@ -137,6 +137,7 @@ class Whisper_Model:
             metric_for_best_model="CER",
             greater_is_better=False,
             push_to_hub=True,
+            hub_private_repo=True,
         )
 
         self.trainer = Seq2SeqTrainer(
@@ -166,13 +167,11 @@ class Whisper_Model:
         if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")
             return
-        self.trainer.train()
+        # self.trainer.train()
         
-        # Save feature extractor and tokenizer
-        self.feature_extractor.save_pretrained(f"./{self.model_id}")
-        self.tokenizer.save_pretrained(f"./{self.model_id}")
-        self.feature_extractor.push_to_hub(repo_id=self.model_id)
-        self.tokenizer.push_to_hub(repo_id=self.model_id)
+        # Wrap feature extractor and tokenizer into a prcoessor and push to hub
+        processor = WhisperProcessor(feature_extractor=self.feature_extractor, tokenizer=self.tokenizer)
+        processor.save_pretrained(self.model_id, push_to_hub=True)
 
 class BERT_Model:
     def __init__(self, model_id: str, use_exist: bool, dataset: MedIntent_Dataset):
@@ -264,101 +263,111 @@ class BERT_Model:
         self.trainer.train()
 
 class Wav2Vec2_Model:
-    def __init__(self, repo_id: str, use_exist: bool, ds):
+    def __init__(self, repo_id: str, use_exist: bool, dataset: MedIntent_Dataset):
         self.model_id = repo_id
-        self.ds_class = ds
+        self.dataset = dataset
 
-        self._import_model_set(repo_id)
+        # Use existing model or load pre-trained Wav2Vec2 model
+        call_id = repo_id if use_exist else "facebook/wav2vec2-large-960h"
 
-        self.data_collator = DataCollatorCTCWithPadding(
-            processor=self.processor,
-            padding=True,
-        )
-
-        self.wer_metric = evaluate.load("wer")
-        self.cer_metric = evaluate.load("cer")
-
+        self._import_model_set(call_id)
+        self._prepare_datasets()
         self._prepare_training()
 
     def _import_model_set(self, repo_id):
         self.model = Wav2Vec2ForCTC.from_pretrained(repo_id)
         self.processor = Wav2Vec2Processor.from_pretrained(repo_id)
 
+    def _prepare_datasets(self):
+        # Cast audio column to 16kHz sampling rate
+        self.dataset.train_ds = self.dataset.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        self.dataset.test_ds = self.dataset.test_ds.cast_column("Audio", Audio(sampling_rate=16000))
+
+        def preprocess_function(batch):
+            audio = batch["Audio"]
+            label = batch["Speech"]
+
+            # Extract input values from audio
+            input_values = self.processor(
+                audio["array"],
+                sampling_rate=audio["sampling_rate"],
+                return_tensors="pt",
+                padding=True
+            ).input_values[0]
+
+            # Tokenize labels
+            with self.processor.as_target_processor():
+                labels = self.processor(label).input_ids
+
+            batch["input_values"] = input_values.tolist()
+            batch["labels"] = labels
+            return batch
+
+        # Apply preprocessing
+        self.train_dataset = self.dataset.train_ds.map(
+            preprocess_function, remove_columns=["Audio", "Speech"], batched=True
+        )
+        self.test_dataset = self.dataset.test_ds.map(
+            preprocess_function, remove_columns=["Audio", "Speech"], batched=True
+        )
+
     def _prepare_training(self):
+        self.cer_metric = evaluate.load("cer")
+
+        self.data_collator = DataCollatorCTCWithPadding(
+            processor=self.processor,
+            padding=True,
+        )
+
         training_args = TrainingArguments(
-            output_dir=("./" + self.model_id),
-            per_device_train_batch_size=16,
-            per_device_eval_batch_size=16,
+            output_dir=f"./{self.model_id}",
+            per_device_train_batch_size=BATCH_SIZE,
+            per_device_eval_batch_size=EVAL_SIZE,
             gradient_accumulation_steps=1,
             fp16=True,
-            evaluation_strategy="steps",
-            save_steps=EVAL_STEPS,
-            eval_steps=EVAL_STEPS,
-            logging_steps=EVAL_STEPS,
+            evaluation_strategy="epoch",
+            save_strategy="epoch",
+            logging_strategy="epoch",
+            num_train_epochs=ASR_EPOCH,
             learning_rate=2e-5,
-            num_train_epochs=3,
             weight_decay=0.01,
             save_total_limit=2,
+            push_to_hub=True,
+            hub_private_repo=True,
         )
 
         self.trainer = Trainer(
             model=self.model,
             args=training_args,
-            train_dataset=self.ds_class.train_ds,
-            eval_dataset=self.ds_class.test_ds,
+            train_dataset=self.train_dataset,
+            eval_dataset=self.test_dataset,
             data_collator=self.data_collator,
             tokenizer=self.processor.feature_extractor,
-            compute_metrics=self.compute_metrics
+            compute_metrics=self.compute_metrics,
         )
-
-    def preprocess_function(self, batch):
-        input_values_col = []
-        labels_col = []
-
-        for audio in batch["audio"]:
-            input_values = self.processor(audio["array"], sampling_rate=audio["sampling_rate"]).input_values[0]
-            input_values_col.append(input_values)
-
-        for sentence in batch["sentence"]:
-            with self.processor.as_target_processor():
-                labels = self.processor(sentence).input_ids
-            labels_col.append(labels)
-
-        batch["input_values"] = input_values_col
-        batch["labels"] = labels_col
-
-        return batch
-
-    def prepare_datasets(self):
-        for key in self.ds_class.lang_list:
-            self.ds_class.ds_by_lang[key]["train"] = self.ds_class.ds_by_lang[key]["train"].cast_column("audio", Audio(sampling_rate=16000))
-            self.ds_class.ds_by_lang[key]["eval"] = self.ds_class.ds_by_lang[key]["eval"].cast_column("audio", Audio(sampling_rate=16000))
-
-            self.ds_class.ds_by_lang[key]["train"] = self.ds_class.ds_by_lang[key]["train"].map(
-                self.preprocess_function, batched=True, remove_columns=["audio", "sentence"], batch_size=16
-            )
-            self.ds_class.ds_by_lang[key]["eval"] = self.ds_class.ds_by_lang[key]["eval"].map(
-                self.preprocess_function, batched=True, remove_columns=["audio", "sentence"], batch_size=16
-            )
 
     def compute_metrics(self, pred):
         labels_ids = pred.label_ids
         pred_ids = pred.predictions.argmax(-1)
 
+        # Decode predictions and labels
         pred_str = self.processor.batch_decode(pred_ids)
         labels_ids[labels_ids == -100] = self.processor.tokenizer.pad_token_id
         label_str = self.processor.batch_decode(labels_ids, group_tokens=False)
 
+        # Compute CER
         cer = self.cer_metric.compute(predictions=pred_str, references=label_str)
-        wer = self.wer_metric.compute(predictions=pred_str, references=label_str)
-
-        return {"cer": cer, "wer": wer}
+        return {"CER": cer}
 
     def train(self):
-        if self.ds_class.train_ds is None or self.ds_class.test_ds is None:
+        if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")
             return
         self.trainer.train()
+
+        # Save processor
+        self.processor.save_pretrained(f"./{self.model_id}")
+        self.processor.push_to_hub(repo_id=self.model_id)
 
 
 class GPT2_Model:

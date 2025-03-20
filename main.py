@@ -15,20 +15,17 @@ print("Using device:", DEVICE)
 
 login("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")
 
-# Global Hyper-param for controlled comparison
-BATCH_SIZE = 16
-NUM_WORKER = 2
-EPOCH = 1
-MAX_STEPS = 300
-
 def build_dataset():
     Datasets.MedIntent_Dataset.build_new_dataset("borisPMC/grab_medicine_intent", "medicine_intent.csv")
 
 def train_asr():
     
-    
     ds = Datasets.MedIntent_Dataset(True)
-    whisper = Models.Whisper_Model(repo_id="borisPMC/whisper_small_grab_medicine_intent", use_exist=False, dataset=ds)
+    whisper = Models.Whisper_Model(
+        repo_id="borisPMC/whisper_small_grab_medicine_intent",
+        pretrain_model="openai/whisper-small",
+        use_exist=False, 
+        dataset=ds)
     whisper.train()
 
 def train_nlp():
@@ -39,7 +36,7 @@ def train_nlp():
 
 def predict_asr(audiopath):
 
-    pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small", processor="openai/whisper-small")
+    pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small")
     result = pipe(audiopath)
     return result
 
