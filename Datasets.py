@@ -1,11 +1,15 @@
 from typing import List, Optional, Union
-from datasets import load_dataset, Dataset, interleave_datasets, Audio
+from datasets import load_dataset, Dataset, interleave_datasets, Audio, DatasetDict
 
 import numpy as np
 
 SEED = 42
 
 class MedIntent_Dataset:
+
+    train_ds: Dataset
+    test_ds: Dataset
+    valid_ds: Dataset
 
     def __init__(self, use_exist: bool, config_list=["English", "Cantonese"]):
         self._set_metadata()
@@ -19,8 +23,8 @@ class MedIntent_Dataset:
         for config in config_list:
             self.datasets[config] = load_dataset(repo, name=config)
         
-        self.train_ds, self.test_ds = self._group_train_test()
-        print("Dataset loaded successfully ", self.train_ds, self.test_ds)
+        self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+        print("Dataset loaded successfully! \n", self.train_ds, self.test_ds, self.valid_ds)
     
 
     def _set_metadata(self):
@@ -34,8 +38,9 @@ class MedIntent_Dataset:
         
         train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
         test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        valid_ds = interleave_datasets([ds["validation"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
 
-        return train_ds, test_ds
+        return train_ds, test_ds, valid_ds
     
     # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
     @staticmethod
@@ -64,11 +69,32 @@ class MedIntent_Dataset:
 
         ds = ds.map(MedIntent_Dataset.preprocess_audio)
 
-        splited_ds = ds.train_test_split(0.2, shuffle=True, seed=1, writer_batch_size=16)
+        total_amt = len(ds)
+
+        train_amt = int(total_amt * 0.8 - (total_amt * 0.8 % 32)) # 8:2 Training-test ratio -> 32 per test/valid batch, rest to test dataset.
+        test_amt = int(total_amt - train_amt)
+
+        print(ds)
+
+        splited_ds = ds.train_test_split(test_size=test_amt, shuffle=True, seed=SEED)
+        feed_ds = splited_ds["train"].train_test_split(test_size=0.2, shuffle=True, seed=SEED)
+
+        train_ds = feed_ds["train"]
+        validate_ds = feed_ds["test"]
+        test_ds = splited_ds["test"]
+
+        doneDS = DatasetDict({
+            "train": train_ds,
+            "validation": validate_ds,
+            "test": test_ds
+        })
+
+        # English: 123 train, 25 valid, 36 test -> 184
+        # Cantonese: 107 train, 33 valid, 39 test -> 179
 
         for l in ["Cantonese", "English"]:
 
-            pushing_ds = splited_ds.filter(lambda example: example["Language"] == l)
+            pushing_ds = doneDS.filter(lambda example: example["Language"] == l)
             pushing_ds = pushing_ds.remove_columns("Language")
 
             print(pushing_ds)
@@ -117,9 +143,9 @@ class MedIntent_Dataset:
 #         return ds
 
 def main():
-    # MedIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
-    ds_obj = MedIntent_Dataset(use_exist=True)
-    print(ds_obj.train_ds[0]['Audio']['array'].shape)
+    MedIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
+    # ds_obj = MedIntent_Dataset(use_exist=True)
+    # print(ds_obj.train_ds[0]['Audio']['array'].shape)
 
 if __name__ == "__main__":
     main()   

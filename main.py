@@ -1,4 +1,4 @@
-from cv2 import compare
+# from cv2 import compare
 from huggingface_hub import login
 import numpy as np
 from pandas import read_csv
@@ -95,7 +95,7 @@ def random_test(n) -> None:
 
 def main():
 
-    live_test()
+    train_asr()
 
 if __name__ == "__main__":
     main()

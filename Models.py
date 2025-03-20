@@ -6,13 +6,13 @@ This script is for storing self-defined model classes, NOT FOR CALLING DUE TO CU
 
 """
 # SET GLOBAL
-BATCH_SIZE = 16
-EVAL_SIZE = 8
+TRAIN_BATCH_SIZE = 26
+VAL_BATCH_SIZE = 6   # 8:2 Training-validation ratio -> 26 train 6 valid
 MAX_STEPS = 300
 EVAL_STEPS = 30
 
 LLM_EPOCH = 3
-ASR_EPOCH = 1
+ASR_EPOCH = 10
 
 SEED = 42
 
@@ -74,7 +74,7 @@ class Whisper_Model:
     def _prepare_datasets(self):
         # Cast audio column to 16kHz sampling rate
         self.dataset.train_ds = self.dataset.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
-        self.dataset.test_ds = self.dataset.test_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        self.dataset.valid_ds = self.dataset.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
 
         def preprocess_function(batch):
             audio = batch["Audio"]
@@ -108,7 +108,7 @@ class Whisper_Model:
 
         # Apply preprocessing
         self.train_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
-        self.test_dataset = self.dataset.test_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
+        self.test_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
 
     def _prepare_training(self):
         self.cer = evaluate.load("cer")
@@ -121,8 +121,8 @@ class Whisper_Model:
 
         training_args = Seq2SeqTrainingArguments(
             output_dir=f"./{self.model_id}",
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=EVAL_SIZE,
+            per_device_train_batch_size=TRAIN_BATCH_SIZE,
+            per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
             gradient_checkpointing=True,
             fp16=True,
@@ -167,7 +167,7 @@ class Whisper_Model:
         if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")
             return
-        # self.trainer.train()
+        self.trainer.train()
         
         # Wrap feature extractor and tokenizer into a prcoessor and push to hub
         processor = WhisperProcessor(feature_extractor=self.feature_extractor, tokenizer=self.tokenizer)
@@ -222,7 +222,7 @@ class BERT_Model:
 
         # Apply preprocessing
         self.training_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Speech", "Label", "Audio"], batched=True)
-        self.testing_dataset = self.dataset.test_ds.map(preprocess_function, remove_columns=["Speech", "Label", "Audio"], batched=True)
+        self.testing_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Speech", "Label", "Audio"], batched=True)
 
     def _prepare_training(self):
         self.evaluator = evaluate.load("f1")
@@ -230,8 +230,8 @@ class BERT_Model:
 
         training_args = TrainingArguments(
             output_dir=f"./{self.model_id}",
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=EVAL_SIZE,
+            per_device_train_batch_size=TRAIN_BATCH_SIZE,
+            per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
             gradient_checkpointing=True,
             num_train_epochs=LLM_EPOCH,
@@ -281,7 +281,7 @@ class Wav2Vec2_Model:
     def _prepare_datasets(self):
         # Cast audio column to 16kHz sampling rate
         self.dataset.train_ds = self.dataset.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
-        self.dataset.test_ds = self.dataset.test_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        self.dataset.valid_ds = self.dataset.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
 
         def preprocess_function(batch):
             audio = batch["Audio"]
@@ -307,7 +307,7 @@ class Wav2Vec2_Model:
         self.train_dataset = self.dataset.train_ds.map(
             preprocess_function, remove_columns=["Audio", "Speech"], batched=True
         )
-        self.test_dataset = self.dataset.test_ds.map(
+        self.test_dataset = self.dataset.valid_ds.map(
             preprocess_function, remove_columns=["Audio", "Speech"], batched=True
         )
 
@@ -321,8 +321,8 @@ class Wav2Vec2_Model:
 
         training_args = TrainingArguments(
             output_dir=f"./{self.model_id}",
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=EVAL_SIZE,
+            per_device_train_batch_size=TRAIN_BATCH_SIZE,
+            per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
             fp16=True,
             evaluation_strategy="epoch",
@@ -437,7 +437,7 @@ class GPT2_Model:
 
         # No language tokens for BERT
 
-        train_ds, test_ds = dataset.group_train_test()
+        train_ds, valid_ds = dataset.group_train_test()
 
         def _f(batch):
 
@@ -454,7 +454,7 @@ class GPT2_Model:
             return batch
 
         vectorized_train_ds = train_ds.map(_f, batched=True, remove_columns=["Label","Speech"], batch_size=16)
-        vectorized_test_ds = test_ds.map(_f, batched=True, remove_columns=["Label","Speech"] , batch_size=16)
+        vectorized_test_ds = valid_ds.map(_f, batched=True, remove_columns=["Label","Speech"] , batch_size=16)
 
         self.training_dataset = vectorized_train_ds
         self.testing_dataset = vectorized_test_ds
@@ -471,8 +471,8 @@ class GPT2_Model:
         self.datacollator = DataCollatorWithPadding(self.tokenizer, return_tensors="pt")
         training_args = TrainingArguments(
             output_dir=("./"+self.model_id),  # change to a repo name of your choice
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=EVAL_SIZE,
+            per_device_train_batch_size=TRAIN_BATCH_SIZE,
+            per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,  # increase by 2x for every 2x decrease in batch size Default ratio: 16/1
             gradient_checkpointing=True,
             num_train_epochs=20,
