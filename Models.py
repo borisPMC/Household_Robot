@@ -5,9 +5,9 @@ This script is for storing self-defined model classes, NOT FOR CALLING DUE TO CU
 
 
 """
-# SET GLOBAL
-TRAIN_BATCH_SIZE = 26
-VAL_BATCH_SIZE = 6   # 8:2 Training-validation ratio -> 26 train 6 valid
+# SET GLOBAL, DONT CHANGE
+TRAIN_BATCH_SIZE = 16
+VAL_BATCH_SIZE = 4   # 8:2 Training-validation ratio -> 16 train 4 valid
 MAX_STEPS = 300
 EVAL_STEPS = 30
 
@@ -45,7 +45,7 @@ import evaluate
 # Source: https://huggingface.co/openai/whisper-large-v3-turbo
 # Params: 809 M (large-v3-turbo)
 
-# Custom Repo-id: borisPMC/whisper_grab_medicine_intent
+# Custom Repo-id: borisPMC/whisper_[]_grab_medicine_intent
 
 class Whisper_Model:
 
@@ -61,18 +61,18 @@ class Whisper_Model:
         # Use existing model or load pre-trained Whisper model
         call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
-        self._import_model_set(call_id)
+        self._import_model_set(call_id, pretrain_model)
         self._prepare_datasets()
         self._prepare_training()
 
-    def _import_model_set(self, repo_id):
+    def _import_model_set(self, repo_id, pretrain_model):
 
         print("Importing model:", repo_id)
 
         self.model = WhisperForConditionalGeneration.from_pretrained(repo_id)
-        self.feature_extractor = WhisperFeatureExtractor.from_pretrained(repo_id)
+        self.feature_extractor = WhisperFeatureExtractor.from_pretrained(pretrain_model)
         self.feature_extractor.chunk_length = 5  # 5 seconds
-        self.tokenizer = WhisperTokenizer.from_pretrained(repo_id)
+        self.tokenizer = WhisperTokenizer.from_pretrained(pretrain_model)
 
     def _prepare_datasets(self):
         # Cast audio column to 16kHz sampling rate
@@ -166,7 +166,7 @@ class Whisper_Model:
         cer = self.cer.compute(predictions=pred_str, references=label_str)
         return {"CER": cer}
 
-    def train(self):
+    def train(self, use_exist: bool):
         if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")
             return
@@ -322,22 +322,27 @@ class Wav2Vec2_Model:
             padding=True,
         )
 
-        training_args = TrainingArguments(
+        training_args = Seq2SeqTrainingArguments(
             output_dir=f"./{self.model_id}",
             per_device_train_batch_size=TRAIN_BATCH_SIZE,
             per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
+            gradient_checkpointing=True,
             fp16=True,
-            evaluation_strategy="epoch",
+            predict_with_generate=True,
+            generation_max_length=225,
+            seed=SEED,
+            num_train_epochs=ASR_EPOCH,
+            eval_strategy="epoch",
             save_strategy="epoch",
             logging_strategy="epoch",
-            num_train_epochs=ASR_EPOCH,
-            learning_rate=2e-5,
-            weight_decay=0.01,
-            save_total_limit=2,
+            dataloader_drop_last=True,
+            metric_for_best_model="CER",
+            greater_is_better=False,
             push_to_hub=True,
             hub_private_repo=True,
         )
+
 
         self.trainer = Trainer(
             model=self.model,

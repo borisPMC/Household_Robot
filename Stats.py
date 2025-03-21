@@ -13,7 +13,7 @@ def get_custom(filename="medicine_intent.csv"):
     heatmap_data = pd.crosstab(df['Language'], df['Label'])
 
     # Step 3: Plot the heatmap
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(16, 12))
     sns.heatmap(heatmap_data, annot=True, fmt="d", cmap="YlGnBu")
     plt.title("Distribution of Class vs Language in Custom Dataset")
     plt.xlabel("Label")
@@ -58,7 +58,7 @@ def get_whisper_training(logged_step=300):
 
 
 def main():
-    get_whisper_training(180)
+    get_custom()
 
 if __name__ == "__main__":
     main()

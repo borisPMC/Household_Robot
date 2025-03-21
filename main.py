@@ -20,9 +20,9 @@ login("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")
 def build_dataset():
     Datasets.MedIntent_Dataset.build_new_dataset("borisPMC/grab_medicine_intent", "medicine_intent.csv")
 
-def train_asr():
+def train_asr(output_repo: str, pretrain_model: str) -> None:
     
-    ds = Datasets.MedIntent_Dataset(True)
+    ds = Datasets.MedIntent_Dataset(True, group_by_lang=True)
 
     for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
 
@@ -32,14 +32,14 @@ def train_asr():
 
         print(len(ds.train_ds), len(ds.valid_ds), len(ds.test_ds))
 
-        use_exist = os.path.exists("borisPMC/whisper_small_grab_medicine_intent")
+        use_exist = os.path.exists(output_repo)
         whisper = Models.Whisper_Model(
-            repo_id="borisPMC/whisper_small_grab_medicine_intent",
-            pretrain_model="openai/whisper-small",
+            repo_id=output_repo,
+            pretrain_model=pretrain_model,
             use_exist=use_exist, 
             dataset=ds)
         
-        whisper.train()
+        whisper.train(use_exist)
 
     # Uncomment this if you want to train on the entire dataset
     # whisper = Models.Whisper_Model(
@@ -51,21 +51,21 @@ def train_asr():
 
 def train_nlp():
 
-    custom = Datasets.MedIntent_Dataset(True)
+    custom = Datasets.MedIntent_Dataset(True, group_by_lang=True)
     nlp = Models.Whisper_Model("borisPMC/gpt2_grab_medicine_intent", False, custom)
     nlp.train()
 
-def predict_asr(audiopath):
+# def predict_asr(audiopath):
 
-    pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small")
-    result = pipe(audiopath)
-    return result
+#     pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small")
+#     result = pipe(audiopath)
+#     return result
 
-def predict_nlp(transcript):
+# def predict_nlp(transcript):
 
-    pipe = pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased")
-    result = pipe(transcript)
-    return result
+#     pipe = pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased")
+#     result = pipe(transcript)
+#     return result
 
 def evaluate(prediction: list[str], label: list[str]) -> float:
 
@@ -82,33 +82,44 @@ def evaluate(prediction: list[str], label: list[str]) -> float:
     return correct / len(prediction)
 
 # Simulates deployment on the robot
-def live_test(duration=5, sample_rate=16000) -> str:
+def live_test(asr_repo: str, nlp_repo: str, duration=5, sample_rate=16000) -> str:
 
     print("Recording for 5 seconds...")
     audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype="float32")
     sd.wait()  # Wait until recording is finished
     audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
-    transcript = predict_asr(audio_array)
-    class_label = predict_nlp(transcript)
+    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
+    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
+
+    transcript = asr_pipe(audio_array)
+    class_label = nlp_pipe(transcript)
 
     print("Transcript:", transcript)
     print("Class Label:", class_label)
 
     return class_label["label"]
 
-def random_test(n) -> None:
+def test_ds(asr_repo: str, nlp_repo: str) -> None:
+
+    ds = Datasets.MedIntent_Dataset(True, group_by_lang=False)
 
     prediction = []
     confidence = []
 
-    df = read_csv("medicine_intent.csv", nrows=n)
-    label_list = df["Label"].tolist()
-    audiopath_list = df["Audio_path"].tolist()
+    # df = read_csv("medicine_intent.csv", nrows=n)
+    # label_list = df["Label"].tolist()
+    # audiopath_list = df["Audio_path"].tolist()
 
-    for path in tqdm(audiopath_list):
-        transcript = predict_asr(path)
-        class_label = predict_nlp(transcript)
+    label_list = ds.test_ds["Label"]
+    audio_list = ds.test_ds["Audio"]
+
+    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
+    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
+
+    for audio in tqdm(audio_list):
+        transcript = asr_pipe(audio)
+        class_label = nlp_pipe(transcript)
         prediction.append(class_label["label"])
         confidence.append(class_label["score"])
 
@@ -116,7 +127,16 @@ def random_test(n) -> None:
 
 def main():
 
-    train_asr()
+    build_dataset()
+
+    # train_asr("borisPMC/whisper_tiny_grab_medicine_intent", "openai/whisper-tiny")
+    # train_asr("borisPMC/whisper_small_grab_medicine_intent", "openai/whisper-small")
+    train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
+    # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
+
+    # test_ds("borisPMC/whisper_tiny_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
 
 if __name__ == "__main__":
     main()

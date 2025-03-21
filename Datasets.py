@@ -11,20 +11,21 @@ class MedIntent_Dataset:
     test_ds: Dataset
     valid_ds: Dataset
 
-    def __init__(self, use_exist: bool, config_list=["English", "Cantonese", "Eng_Can" ,"Can_Eng"]):
+    def __init__(self, use_exist: bool, group_by_lang: bool, config_list=["English", "Cantonese", "Eng_Can" ,"Can_Eng"]):
         self._set_metadata()
         if use_exist:
-            self._call_dataset_workflow(self.repo_id, config_list)
+            self._call_dataset_workflow(self.repo_id, config_list, group_by_lang)
 
-    def _call_dataset_workflow(self, repo, config_list: List[str]):
+    def _call_dataset_workflow(self, repo, config_list: List[str], group_by_lang: bool):
 
         # Call each language dataset, then merge them and split into train and test
         self.datasets = {}
-        for config in config_list:
-            self.datasets[config] = load_dataset(repo, name=config)
         
-        # If group into a single dataset, uncomment this line
-        # self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+        for config in config_list:
+                self.datasets[config] = load_dataset(repo, name=config)
+
+        if (group_by_lang == False):
+            self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
 
         print("Dataset loaded successfully! \n")
     
@@ -73,7 +74,7 @@ class MedIntent_Dataset:
 
         total_amt = len(ds)
 
-        train_amt = int(total_amt * 0.8 - (total_amt * 0.8 % 32)) # 8:2 Training-test ratio -> 32 per test/valid batch, rest to test dataset.
+        train_amt = int(total_amt * 0.8 - (total_amt * 0.8 % 16))
         test_amt = int(total_amt - train_amt)
 
         print(ds)
