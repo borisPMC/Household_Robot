@@ -11,7 +11,7 @@ class MedIntent_Dataset:
     test_ds: Dataset
     valid_ds: Dataset
 
-    def __init__(self, use_exist: bool, config_list=["English", "Cantonese"]):
+    def __init__(self, use_exist: bool, config_list=["English", "Cantonese", "Eng_Can" ,"Can_Eng"]):
         self._set_metadata()
         if use_exist:
             self._call_dataset_workflow(self.repo_id, config_list)
@@ -23,7 +23,9 @@ class MedIntent_Dataset:
         for config in config_list:
             self.datasets[config] = load_dataset(repo, name=config)
         
-        self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+        # If group into a single dataset, uncomment this line
+        # self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+        
         print("Dataset loaded successfully! \n", self.train_ds, self.test_ds, self.valid_ds)
     
 
@@ -89,14 +91,20 @@ class MedIntent_Dataset:
             "test": test_ds
         })
 
-        # English: 123 train, 25 valid, 36 test -> 184
-        # Cantonese: 107 train, 33 valid, 39 test -> 179
+        # English: 118 train, 27 valid, 34 test -> 179
+        # Cantonese: 114 train, 30 valid, 40 test -> 184
+        # Eng_Can: 40 train, 6 valid, 14 test -> 60
+        # Can_Eng: 35 train, 14 valid, 11 test -> 60
 
-        for l in ["Cantonese", "English"]:
+        # Can_Eng: Cantonese as main, English as secondary
+        # Eng_Can: English as main, Cantonese as secondary
+
+        for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
 
             pushing_ds = doneDS.filter(lambda example: example["Language"] == l)
             pushing_ds = pushing_ds.remove_columns("Language")
 
+            print("Pushing config: " + l + "\n")
             print(pushing_ds)
 
             pushing_ds.push_to_hub(

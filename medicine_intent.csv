@@ -362,3 +362,123 @@ English,Fetch antidepressant tablets for me,Amitriptyline,medicine_intent_audio/
 Cantonese,搵抗抑鬱藥畀我,Amitriptyline,medicine_intent_audio/0361.mp3
 English,Give me the medicine for my depression,Amitriptyline,medicine_intent_audio/0362.mp3
 Cantonese,攞抑鬱症藥俾我,Amitriptyline,medicine_intent_audio/0363.mp3
+Can_Eng,幫我搵 ACE Inhibitor 藥,ACE Inhibitor,medicine_intent_audio/0364.mp3
+Eng_Can,Can you get my 高血壓藥,ACE Inhibitor,medicine_intent_audio/0365.mp3
+Can_Eng,攞 hypertension 藥畀我,ACE Inhibitor,medicine_intent_audio/0366.mp3
+Eng_Can,Where is my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0367.mp3
+Can_Eng,請幫我拎 Metformin,Metformin,medicine_intent_audio/0368.mp3
+Eng_Can,Find my 糖尿病 medication,Metformin,medicine_intent_audio/0369.mp3
+Can_Eng,幫我搵糖尿病藥 Metformin,Metformin,medicine_intent_audio/0370.mp3
+Eng_Can,Can you fetch my 甲福明 pills,Metformin,medicine_intent_audio/0371.mp3
+Can_Eng,攞 Atorvastatin 畀我,Atorvastatin,medicine_intent_audio/0372.mp3
+Eng_Can,Bring me 心臟病 medication,Atorvastatin,medicine_intent_audio/0373.mp3
+Can_Eng,幫手搵冠心病藥 Atorvastatin,Atorvastatin,medicine_intent_audio/0374.mp3
+Eng_Can,Find my 阿伐他汀 tablets,Atorvastatin,medicine_intent_audio/0375.mp3
+Can_Eng,請幫我攞 Amitriptyline, Amitriptyline,medicine_intent_audio/0376.mp3
+Eng_Can,Where is my 抗抑鬱藥,Amitriptyline,medicine_intent_audio/0377.mp3
+Can_Eng,我要 Amitriptyline 抑鬱症藥,Amitriptyline,medicine_intent_audio/0378.mp3
+Eng_Can,Fetch my 阿米替林 medication,Amitriptyline,medicine_intent_audio/0379.mp3
+Can_Eng,請問 ACE Inhibitor 喺邊,ACE Inhibitor,medicine_intent_audio/0380.mp3
+Eng_Can,Where can I find 高血壓藥,ACE Inhibitor,medicine_intent_audio/0381.mp3
+Can_Eng,幫我攞 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0382.mp3
+Eng_Can,I need my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0383.mp3
+Can_Eng,Metformin 係邊度,Metformin,medicine_intent_audio/0384.mp3
+Eng_Can,Can you bring me 糖尿病 medication,Metformin,medicine_intent_audio/0385.mp3
+Can_Eng,我要糖尿病藥 Metformin,Metformin,medicine_intent_audio/0386.mp3
+Eng_Can,Get my 甲福明 pills for me,Metformin,medicine_intent_audio/0387.mp3
+Can_Eng,幫我拎 Atorvastatin,Atorvastatin,medicine_intent_audio/0388.mp3
+Eng_Can,I need my 心臟病 medication,Atorvastatin,medicine_intent_audio/0389.mp3
+Can_Eng,請幫我搵冠心病藥 Atorvastatin,Atorvastatin,medicine_intent_audio/0390.mp3
+Eng_Can,Fetch my 阿伐他汀 tablets,Atorvastatin,medicine_intent_audio/0391.mp3
+Can_Eng,Amitriptyline 喺邊, Amitriptyline,medicine_intent_audio/0392.mp3
+Eng_Can,Where is my 抗抑鬱藥,Amitriptyline,medicine_intent_audio/0393.mp3
+Can_Eng,攞 Amitriptyline 抑鬱症藥俾我,Amitriptyline,medicine_intent_audio/0394.mp3
+Eng_Can,Can you find my 阿米替林 medication,Amitriptyline,medicine_intent_audio/0395.mp3
+Can_Eng,我要 ACE Inhibitor 幫我攞,ACE Inhibitor,medicine_intent_audio/0396.mp3
+Eng_Can,Find my 高血壓藥 for me,ACE Inhibitor,medicine_intent_audio/0397.mp3
+Can_Eng,請幫手搵 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0398.mp3
+Eng_Can,Fetch my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0399.mp3
+Can_Eng,Metformin 幫我攞嚟,Metformin,medicine_intent_audio/0400.mp3
+Eng_Can,Bring me 糖尿病 medication now,Metformin,medicine_intent_audio/0401.mp3
+Can_Eng,幫手搵 Metformin 糖尿病藥,Metformin,medicine_intent_audio/0402.mp3
+Eng_Can,Where are my 甲福明 pills,Metformin,medicine_intent_audio/0403.mp3
+Can_Eng,Atorvastatin 喺邊度,Atorvastatin,medicine_intent_audio/0404.mp3
+Eng_Can,Get me some 心臟病 medication,Atorvastatin,medicine_intent_audio/0405.mp3
+Can_Eng,幫我攞 Atorvastatin 心臟病藥,Atorvastatin,medicine_intent_audio/0406.mp3
+Eng_Can,Find my 冠心病 medication now,Atorvastatin,medicine_intent_audio/0407.mp3
+Can_Eng,我要 Amitriptyline 抗抑鬱藥,Amitriptyline,medicine_intent_audio/0408.mp3
+Eng_Can,Can you bring my 抑鬱症 medication,Amitriptyline,medicine_intent_audio/0409.mp3
+Can_Eng,幫手攞 Amitriptyline 俾我,Amitriptyline,medicine_intent_audio/0410.mp3
+Eng_Can,Where are my 阿米替林 pills,Amitriptyline,medicine_intent_audio/0411.mp3
+Can_Eng,幫我攞 ACE Inhibitor 高血壓藥,ACE Inhibitor,medicine_intent_audio/0412.mp3
+Eng_Can,Can you find my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0413.mp3
+Can_Eng,我想要 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0414.mp3
+Eng_Can,Where can I get 高血壓 medicine,ACE Inhibitor,medicine_intent_audio/0415.mp3
+Can_Eng,請幫我拎 Metformin 糖尿病藥,Metformin,medicine_intent_audio/0416.mp3
+Eng_Can,Find me my 甲福明 tablets,Metformin,medicine_intent_audio/0417.mp3
+Can_Eng,Metformin 係邊度,Metformin,medicine_intent_audio/0418.mp3
+Eng_Can,Bring me my 糖尿病 pills,Metformin,medicine_intent_audio/0419.mp3
+Can_Eng,幫手搵 Atorvastatin 心臟病藥,Atorvastatin,medicine_intent_audio/0420.mp3
+Eng_Can,Where is my 冠心病 medication,Atorvastatin,medicine_intent_audio/0421.mp3
+Can_Eng,請幫我攞阿伐他汀,Atorvastatin,medicine_intent_audio/0422.mp3
+Eng_Can,Fetch my heart disease 藥,Atorvastatin,medicine_intent_audio/0423.mp3
+Can_Eng,攞 Amitriptyline 抑鬱症藥畀我,Amitriptyline,medicine_intent_audio/0424.mp3
+Eng_Can,Find me my 抗抑鬱 medication,Amitriptyline,medicine_intent_audio/0425.mp3
+Can_Eng,阿米替林 喺邊度, Amitriptyline,medicine_intent_audio/0426.mp3
+Eng_Can,Can you grab my depression 藥,Amitriptyline,medicine_intent_audio/0427.mp3
+Can_Eng,我要 ACE Inhibitor 幫手拎,ACE Inhibitor,medicine_intent_audio/0428.mp3
+Eng_Can,Get me some 高血壓藥,ACE Inhibitor,medicine_intent_audio/0429.mp3
+Can_Eng,請幫我搵 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0430.mp3
+Eng_Can,Fetch my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0431.mp3
+Can_Eng,Metformin 幫我攞過嚟,Metformin,medicine_intent_audio/0432.mp3
+Eng_Can,Bring me some 糖尿病 medicine,Metformin,medicine_intent_audio/0433.mp3
+Can_Eng,搵 Metformin 糖尿病藥俾我,Metformin,medicine_intent_audio/0434.mp3
+Eng_Can,Where are my 甲福明 pills,Metformin,medicine_intent_audio/0435.mp3
+Can_Eng,Atorvastatin 放喺邊,Atorvastatin,medicine_intent_audio/0436.mp3
+Eng_Can,I need my 心臟病 medicine,Atorvastatin,medicine_intent_audio/0437.mp3
+Can_Eng,幫我攞 Atorvastatin 冠心病藥,Atorvastatin,medicine_intent_audio/0438.mp3
+Eng_Can,Find my 阿伐他汀 tablets now,Atorvastatin,medicine_intent_audio/0439.mp3
+Can_Eng,我要 Amitriptyline 抗抑鬱藥,Amitriptyline,medicine_intent_audio/0440.mp3
+Eng_Can,Can you find my 抑鬱症 medication,Amitriptyline,medicine_intent_audio/0441.mp3
+Can_Eng,請幫我攞 Amitriptyline, Amitriptyline,medicine_intent_audio/0442.mp3
+Eng_Can,Where is my 阿米替林, Amitriptyline,medicine_intent_audio/0443.mp3
+Can_Eng,幫我搵 ACE Inhibitor 高血壓藥,ACE Inhibitor,medicine_intent_audio/0444.mp3
+Eng_Can,Where can I get 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0445.mp3
+Can_Eng,攞 hypertension 藥畀我,ACE Inhibitor,medicine_intent_audio/0446.mp3
+Eng_Can,Can you fetch my 高血壓 medication,ACE Inhibitor,medicine_intent_audio/0447.mp3
+Can_Eng,請幫我拎 Metformin 糖尿病藥,Metformin,medicine_intent_audio/0448.mp3
+Eng_Can,Bring me my 甲福明 pills,Metformin,medicine_intent_audio/0449.mp3
+Can_Eng,我想要 Metformin,Metformin,medicine_intent_audio/0450.mp3
+Eng_Can,Find my 糖尿病 tablets,Metformin,medicine_intent_audio/0451.mp3
+Can_Eng,幫我攞 Atorvastatin 心臟病藥,Atorvastatin,medicine_intent_audio/0452.mp3
+Eng_Can,Fetch my 冠心病 medicine,Atorvastatin,medicine_intent_audio/0453.mp3
+Can_Eng,Atorvastatin 喺邊,Atorvastatin,medicine_intent_audio/0454.mp3
+Eng_Can,Can you grab my 阿伐他汀 pills,Atorvastatin,medicine_intent_audio/0455.mp3
+Can_Eng,攞 Amitriptyline 抑鬱症藥畀我,Amitriptyline,medicine_intent_audio/0456.mp3
+Eng_Can,Find my 抗抑鬱 medication,Amitriptyline,medicine_intent_audio/0457.mp3
+Can_Eng,請幫手搵 Amitriptyline, Amitriptyline,medicine_intent_audio/0458.mp3
+Eng_Can,Bring me my 阿米替林 pills,Amitriptyline,medicine_intent_audio/0459.mp3
+Can_Eng,我要 ACE Inhibitor 幫手拎,ACE Inhibitor,medicine_intent_audio/0460.mp3
+Eng_Can,Where is my 高血壓藥,ACE Inhibitor,medicine_intent_audio/0461.mp3
+Can_Eng,請幫我搵 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0462.mp3
+Eng_Can,Get me my 血管緊張素轉換酶抑制藥,ACE Inhibitor,medicine_intent_audio/0463.mp3
+Can_Eng,Metformin 幫我攞過嚟,Metformin,medicine_intent_audio/0464.mp3
+Eng_Can,Can you bring my 糖尿病 medicine,Metformin,medicine_intent_audio/0465.mp3
+Can_Eng,請幫我拎糖尿病藥 Metformin,Metformin,medicine_intent_audio/0466.mp3
+Eng_Can,Where can I find 甲福明 pills,Metformin,medicine_intent_audio/0467.mp3
+Can_Eng,Atorvastatin 放喺邊,Atorvastatin,medicine_intent_audio/0468.mp3
+Eng_Can,Give me my 心臟病 medication,Atorvastatin,medicine_intent_audio/0469.mp3
+Can_Eng,幫手攞 Atorvastatin 心臟病藥,Atorvastatin,medicine_intent_audio/0470.mp3
+Eng_Can,Fetch my 冠心病 tablets now,Atorvastatin,medicine_intent_audio/0471.mp3
+Can_Eng,請攞 Amitriptyline 俾我,Amitriptyline,medicine_intent_audio/0472.mp3
+Eng_Can,Can you find my 抑鬱症 medicine,Amitriptyline,medicine_intent_audio/0473.mp3
+Can_Eng,搵 Amitriptyline 抗抑鬱藥畀我,Amitriptyline,medicine_intent_audio/0474.mp3
+Eng_Can,Where is my 阿米替林 medication,Amitriptyline,medicine_intent_audio/0475.mp3
+Can_Eng,幫我拎 hypertension 藥,ACE Inhibitor,medicine_intent_audio/0476.mp3
+Eng_Can,I need my 高血壓 medication,ACE Inhibitor,medicine_intent_audio/0477.mp3
+Can_Eng,請幫我搵 Metformin 甲福明,Metformin,medicine_intent_audio/0478.mp3
+Eng_Can,Find my 糖尿病藥 now,Metformin,medicine_intent_audio/0479.mp3
+Can_Eng,Atorvastatin 係邊,Atorvastatin,medicine_intent_audio/0480.mp3
+Eng_Can,Bring me my 心臟病藥,Atorvastatin,medicine_intent_audio/0481.mp3
+Can_Eng,請幫我攞 Amitriptyline 抗抑鬱藥,Amitriptyline,medicine_intent_audio/0482.mp3
+Eng_Can,Can you fetch my 阿米替林 tablets,Amitriptyline,medicine_intent_audio/0483.mp3

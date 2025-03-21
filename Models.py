@@ -12,7 +12,7 @@ MAX_STEPS = 300
 EVAL_STEPS = 30
 
 LLM_EPOCH = 3
-ASR_EPOCH = 10
+ASR_EPOCH = 3
 
 SEED = 42
 
@@ -66,6 +66,9 @@ class Whisper_Model:
         self._prepare_training()
 
     def _import_model_set(self, repo_id):
+
+        print("Importing model:", repo_id)
+
         self.model = WhisperForConditionalGeneration.from_pretrained(repo_id)
         self.feature_extractor = WhisperFeatureExtractor.from_pretrained(repo_id)
         self.feature_extractor.chunk_length = 5  # 5 seconds

@@ -9,6 +9,8 @@ import Models
 import Datasets
 import sounddevice as sd
 
+import os
+
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # DEVICE = torch.device("cpu")
 print("Using device:", DEVICE)
@@ -21,12 +23,23 @@ def build_dataset():
 def train_asr():
     
     ds = Datasets.MedIntent_Dataset(True)
-    whisper = Models.Whisper_Model(
-        repo_id="borisPMC/whisper_small_grab_medicine_intent",
-        pretrain_model="openai/whisper-small",
-        use_exist=False, 
-        dataset=ds)
-    whisper.train()
+    use_exist = os.path.exists("borisPMC/whisper_small_grab_medicine_intent")
+
+    for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
+        whisper = Models.Whisper_Model(
+            repo_id="borisPMC/whisper_small_grab_medicine_intent",
+            pretrain_model="openai/whisper-small",
+            use_exist=use_exist, 
+            dataset=ds.filter(lambda example: example["Language"] == l)
+        )
+        whisper.train()
+
+    # whisper = Models.Whisper_Model(
+    #     repo_id="borisPMC/whisper_small_grab_medicine_intent",
+    #     pretrain_model="openai/whisper-small",
+    #     use_exist=use_exist, 
+    #     dataset=ds)
+    # whisper.train()
 
 def train_nlp():
 
@@ -95,7 +108,7 @@ def random_test(n) -> None:
 
 def main():
 
-    train_asr()
+    build_dataset()
 
 if __name__ == "__main__":
     main()
