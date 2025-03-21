@@ -265,6 +265,19 @@ class BERT_Model:
             return
         self.trainer.train()
 
+# List of testing Wav2Vec2 models
+
+# Source: https://huggingface.co/facebook/wav2vec2-base-960h
+# Params: 94M (base-960h) # English-specific
+
+# Source: https://huggingface.co/facebook/wav2vec2-large-960h
+# Params: 317M (large-960h) # English-specific
+
+# Source: https://huggingface.co/facebook/wav2vec2-large-xlsr-53
+# Params: 317M (large-xlsr-53) # Multilingual
+
+# Custom Repo-id: borisPMC/wav2vec2_[]_grab_medicine_intent
+
 class Wav2Vec2_Model:
     def __init__(self, repo_id: str, use_exist: bool, dataset: MedIntent_Dataset):
         self.model_id = repo_id

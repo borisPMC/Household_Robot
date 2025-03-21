@@ -127,16 +127,15 @@ def test_ds(asr_repo: str, nlp_repo: str) -> None:
 
 def main():
 
-    build_dataset()
-
     # train_asr("borisPMC/whisper_tiny_grab_medicine_intent", "openai/whisper-tiny")
     # train_asr("borisPMC/whisper_small_grab_medicine_intent", "openai/whisper-small")
-    train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
+    # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
-    # test_ds("borisPMC/whisper_tiny_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("openai/whisper-small", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
 if __name__ == "__main__":
     main()
