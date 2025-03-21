@@ -25,8 +25,8 @@ class MedIntent_Dataset:
         
         # If group into a single dataset, uncomment this line
         # self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
-        
-        print("Dataset loaded successfully! \n", self.train_ds, self.test_ds, self.valid_ds)
+
+        print("Dataset loaded successfully! \n")
     
 
     def _set_metadata(self):

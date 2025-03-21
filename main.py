@@ -23,17 +23,25 @@ def build_dataset():
 def train_asr():
     
     ds = Datasets.MedIntent_Dataset(True)
-    use_exist = os.path.exists("borisPMC/whisper_small_grab_medicine_intent")
 
     for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
+
+        ds.train_ds = ds.datasets[l]["train"]
+        ds.valid_ds = ds.datasets[l]["validation"]
+        ds.test_ds = ds.datasets[l]["test"]
+
+        print(len(ds.train_ds), len(ds.valid_ds), len(ds.test_ds))
+
+        use_exist = os.path.exists("borisPMC/whisper_small_grab_medicine_intent")
         whisper = Models.Whisper_Model(
             repo_id="borisPMC/whisper_small_grab_medicine_intent",
             pretrain_model="openai/whisper-small",
             use_exist=use_exist, 
-            dataset=ds.filter(lambda example: example["Language"] == l)
-        )
+            dataset=ds)
+        
         whisper.train()
 
+    # Uncomment this if you want to train on the entire dataset
     # whisper = Models.Whisper_Model(
     #     repo_id="borisPMC/whisper_small_grab_medicine_intent",
     #     pretrain_model="openai/whisper-small",
@@ -108,7 +116,7 @@ def random_test(n) -> None:
 
 def main():
 
-    build_dataset()
+    train_asr()
 
 if __name__ == "__main__":
     main()
