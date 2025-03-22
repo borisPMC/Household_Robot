@@ -16,19 +16,20 @@ ASR_EPOCH = 3
 
 SEED = 42
 
+import os
 from typing import List, Optional, Union
 import numpy as np
 from transformers import (
     WhisperForConditionalGeneration, WhisperTokenizer, WhisperFeatureExtractor, WhisperProcessor,
     BertForSequenceClassification, BertTokenizer, BertConfig,
-    Wav2Vec2ForCTC, Wav2Vec2Processor,
+    Wav2Vec2FeatureExtractor, Wav2Vec2Processor, Wav2Vec2CTCTokenizer, Wav2Vec2ForCTC, 
     GPT2ForSequenceClassification, GPT2Tokenizer, GPT2Config,
     Trainer, Seq2SeqTrainer, TrainingArguments, Seq2SeqTrainingArguments, DataCollatorWithPadding
 )
 from datasets import Dataset, IterableDataset, Audio
 
-from Collators import DataCollatorSpeechSeq2SeqWithPadding, DataCollatorCTCWithPadding
-from Datasets import MedIntent_Dataset
+from Collators import DataCollatorSpeechSeq2SeqWithPadding, DataCollatorForW2V2
+from Datasets import PharmaIntent_Dataset
 import evaluate
 
 # List of testing Whisper models
@@ -54,7 +55,7 @@ class Whisper_Model:
     feature_extractor: WhisperFeatureExtractor
     tokenizer: WhisperTokenizer
 
-    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: MedIntent_Dataset):
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
         self.model_id = repo_id
         self.dataset = dataset
 
@@ -166,7 +167,7 @@ class Whisper_Model:
         cer = self.cer.compute(predictions=pred_str, references=label_str)
         return {"CER": cer}
 
-    def train(self, use_exist: bool):
+    def train(self):
         if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")
             return
@@ -177,7 +178,7 @@ class Whisper_Model:
         processor.save_pretrained(self.model_id, push_to_hub=True)
 
 class BERT_Model:
-    def __init__(self, model_id: str, use_exist: bool, dataset: MedIntent_Dataset):
+    def __init__(self, model_id: str, use_exist: bool, dataset: PharmaIntent_Dataset):
         self.model_id = model_id
         self.dataset = dataset
         self.label_list = dataset.label_list
@@ -279,20 +280,50 @@ class BERT_Model:
 # Custom Repo-id: borisPMC/wav2vec2_[]_grab_medicine_intent
 
 class Wav2Vec2_Model:
-    def __init__(self, repo_id: str, use_exist: bool, dataset: MedIntent_Dataset):
+
+    model_id: str
+    model: Wav2Vec2ForCTC
+    processor: Wav2Vec2Processor
+    feature_extractor: Wav2Vec2FeatureExtractor
+    tokenizer: Wav2Vec2CTCTokenizer
+
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
         self.model_id = repo_id
         self.dataset = dataset
 
-        # Use existing model or load pre-trained Wav2Vec2 model
-        call_id = repo_id if use_exist else "facebook/wav2vec2-large-960h"
+        # Use existing model or load pre-trained Whisper model
+        call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
-        self._import_model_set(call_id)
+        self._import_model_set(call_id, repo_id)
         self._prepare_datasets()
         self._prepare_training()
 
-    def _import_model_set(self, repo_id):
-        self.model = Wav2Vec2ForCTC.from_pretrained(repo_id)
-        self.processor = Wav2Vec2Processor.from_pretrained(repo_id)
+    def _import_model_set(self, call_id, repo_id):
+        self.model = Wav2Vec2ForCTC.from_pretrained(call_id, ignore_mismatched_sizes=True)
+
+        try:
+            # Try to load the processor from the Hugging Face repository
+            self.processor = Wav2Vec2Processor.from_pretrained(repo_id)
+            print("Processor loaded successfully from Hugging Face repository.")
+        except Exception as e:
+            print(f"Processor not found in repository. Creating a new processor. Error: {e}")
+
+            # Create a new processor using a custom vocabulary file
+            vocab_path = "./vocab/vocab.json"  # Path to the custom vocabulary file
+            if not os.path.exists(vocab_path):
+                raise FileNotFoundError(f"Vocabulary file not found at {vocab_path}. Please create it first.")
+
+            self.processor = Wav2Vec2_Model.create_processor(fpath=vocab_path)
+            print("Processor created successfully using the custom vocabulary file.")
+
+            # Save the processor locally and push it to the Hugging Face Hub
+            self.processor.save_pretrained(repo_id, push_to_hub=False)
+            print(f"Processor saved and pushed to Hugging Face Hub at {repo_id}.")
+
+        self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(repo_id)
+        self.tokenizer = Wav2Vec2CTCTokenizer.from_pretrained(repo_id)
+
+        self.model.config.vocab_size = len(self.tokenizer)
 
     def _prepare_datasets(self):
         # Cast audio column to 16kHz sampling rate
@@ -303,36 +334,28 @@ class Wav2Vec2_Model:
             audio = batch["Audio"]
             label = batch["Speech"]
 
-            # Extract input values from audio
-            input_values = self.processor(
-                audio["array"],
-                sampling_rate=audio["sampling_rate"],
-                return_tensors="pt",
-                padding=True
-            ).input_values[0]
+            # Ensure audio is truncated/padded to 5 seconds (5 * 16000 samples)
+            max_length = 5 * 16000  # 5 seconds at 16kHz
+            audio_array_list = [a["array"][:max_length] if len(a["array"]) > max_length else np.pad(
+            a["array"], (0, max_length - len(a["array"])), mode="constant") for a in audio]
 
-            # Tokenize labels
+            # batched output is "un-batched" to ensure mapping is correct
+            batch["input_values"] = [self.processor(arr, sampling_rate=16000).input_values[0] for arr in audio_array_list] 
+            
             with self.processor.as_target_processor():
-                labels = self.processor(label).input_ids
-
-            batch["input_values"] = input_values.tolist()
-            batch["labels"] = labels
+                batch["labels"] = self.processor(label).input_ids
             return batch
 
+
         # Apply preprocessing
-        self.train_dataset = self.dataset.train_ds.map(
-            preprocess_function, remove_columns=["Audio", "Speech"], batched=True
-        )
-        self.test_dataset = self.dataset.valid_ds.map(
-            preprocess_function, remove_columns=["Audio", "Speech"], batched=True
-        )
+        self.train_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
+        self.test_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
 
     def _prepare_training(self):
         self.cer_metric = evaluate.load("cer")
 
-        self.data_collator = DataCollatorCTCWithPadding(
+        self.data_collator = DataCollatorForW2V2(
             processor=self.processor,
-            padding=True,
         )
 
         training_args = Seq2SeqTrainingArguments(
@@ -379,6 +402,23 @@ class Wav2Vec2_Model:
         # Compute CER
         cer = self.cer_metric.compute(predictions=pred_str, references=label_str)
         return {"CER": cer}
+    
+    @staticmethod
+    def create_processor(fpath: str):
+        
+        # Tokenizer vocab is custom from MedicIntent.create_vocab_file()
+        tokenizer = Wav2Vec2CTCTokenizer(
+            fpath, 
+            unk_token="[UNK]", 
+            pad_token="[PAD]", 
+            word_delimiter_token="|",
+            model_max_length=1024)
+        feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
+
+        processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
+
+        return processor
+
 
     def train(self):
         if not self.train_dataset or not self.test_dataset:
@@ -387,8 +427,7 @@ class Wav2Vec2_Model:
         self.trainer.train()
 
         # Save processor
-        self.processor.save_pretrained(f"./{self.model_id}")
-        self.processor.push_to_hub(repo_id=self.model_id)
+        self.processor.save_pretrained(self.model_id, push_to_hub=True)
 
 
 class GPT2_Model:
@@ -406,7 +445,7 @@ class GPT2_Model:
 
     label_list: List[str]
 
-    def __init__(self, model_id: str, use_exist: bool, dataset_class: MedIntent_Dataset):
+    def __init__(self, model_id: str, use_exist: bool, dataset_class: PharmaIntent_Dataset):
         self.model_id = model_id
         self.label_list = dataset_class.label_list
 
@@ -454,7 +493,7 @@ class GPT2_Model:
             vocab_size = len(self.tokenizer)
             self.model.resize_token_embeddings(vocab_size)
 
-    def _preprocess_dataset(self, dataset: MedIntent_Dataset):
+    def _preprocess_dataset(self, dataset: PharmaIntent_Dataset):
 
         # No language tokens for BERT
 

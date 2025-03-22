@@ -1,11 +1,14 @@
+import os
 from typing import List, Optional, Union
 from datasets import load_dataset, Dataset, interleave_datasets, Audio, DatasetDict
 
+from collections import Counter
+import json
 import numpy as np
 
 SEED = 42
 
-class MedIntent_Dataset:
+class PharmaIntent_Dataset:
 
     train_ds: Dataset
     test_ds: Dataset
@@ -31,7 +34,7 @@ class MedIntent_Dataset:
     
 
     def _set_metadata(self):
-        self.repo_id = "borisPMC/grab_medicine_intent"
+        self.repo_id = "borisPMC/PharmaIntent"
         self.audio_col = "Audio"
         self.speech_col = "Speech"
         self.label_col = "Label"
@@ -45,6 +48,53 @@ class MedIntent_Dataset:
 
         return train_ds, test_ds, valid_ds
     
+    def create_vocab_file(self, output_dir: str, vocab_filename: str = "vocab.json"):
+        """
+        Creates a vocabulary file from the sentences in the dataset.
+
+        Args:
+            output_dir (str): Directory to save the vocabulary file.
+            vocab_filename (str): Name of the vocabulary file (default: "vocab.json").
+        """
+
+        
+
+        # Combine all sentences from train, validation, and test datasets
+        print("Extracting sentences from the dataset...")
+        all_sentences = (
+            self.train_ds["Speech"] +
+            self.valid_ds["Speech"] +
+            self.test_ds["Speech"]
+        )
+
+        # Count unique characters
+        print("Counting unique characters...")
+        counter = Counter("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijiklmnopqrstuvwxyz".join(all_sentences))
+        
+        unique_chars = sorted(counter.keys())
+
+        # Create vocabulary dictionary
+        print("Creating vocabulary dictionary...")
+        vocab = {char: idx for idx, char in enumerate(unique_chars)}
+
+
+        # add special tokens
+        vocab["[UNK]"] = len(vocab)
+        vocab["[PAD]"] = len(vocab)
+        vocab["|"] = vocab[" "]
+        del vocab[" "]
+
+        # Ensure output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Save vocabulary to file
+        vocab_path = os.path.join(output_dir, vocab_filename)
+        print(f"Saving vocabulary to {vocab_path}...")
+        with open(vocab_path, "w", encoding="utf-8") as vocab_file:
+            json.dump(vocab, vocab_file, ensure_ascii=False, indent=4)
+
+        print("Vocabulary file created successfully!")
+
     # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
     @staticmethod
     def preprocess_audio(example):
@@ -70,7 +120,7 @@ class MedIntent_Dataset:
         ds = ds.cast_column("Audio_path", Audio(sampling_rate=16000))
         ds = ds.rename_column("Audio_path", "Audio")
 
-        ds = ds.map(MedIntent_Dataset.preprocess_audio)
+        ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
 
         total_amt = len(ds)
 
@@ -152,7 +202,7 @@ class MedIntent_Dataset:
 #         return ds
 
 def main():
-    MedIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
+    PharmaIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
     # ds_obj = MedIntent_Dataset(use_exist=True)
     # print(ds_obj.train_ds[0]['Audio']['array'].shape)
 

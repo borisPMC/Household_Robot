@@ -4,8 +4,9 @@
 import torch
 from dataclasses import dataclass
 from typing import Any, Dict, List, Union
-from transformers import WhisperFeatureExtractor, WhisperTokenizer, Wav2Vec2FeatureExtractor, Wav2Vec2CTCTokenizer
-
+from transformers import (
+    WhisperFeatureExtractor, WhisperTokenizer, Wav2Vec2Processor
+)
 @dataclass
 class DataCollatorSpeechSeq2SeqWithPadding:
     feature_extractor: Union[Any, WhisperFeatureExtractor]
@@ -36,33 +37,46 @@ class DataCollatorSpeechSeq2SeqWithPadding:
         return batch
     
 @dataclass
-class DataCollatorCTCWithPadding:
-    
-    feature_extractor: Union[Any, Wav2Vec2FeatureExtractor]
-    tokenizerL: Union[Any, Wav2Vec2CTCTokenizer]
+class DataCollatorForW2V2:
+    """
+    Data collator for Wav2Vec2 models. Handles padding for both input features and labels.
+    """
+    processor: Union[Any, Wav2Vec2Processor]
     padding: Union[bool, str] = True
 
     def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
-        # split inputs and labels since they have to be of different lengths and need
-        # different padding methods
+        """
+        Pads input features and labels to the same length and prepares them for training.
+
+        Args:
+            features (List[Dict[str, Union[List[int], torch.Tensor]]]): List of features containing input values and labels.
+
+        Returns:
+            Dict[str, torch.Tensor]: A dictionary containing padded input features and labels.
+        """
+        # Separate input features and labels
         input_features = [{"input_values": feature["input_values"]} for feature in features]
         label_features = [{"input_ids": feature["labels"]} for feature in features]
 
-        batch = self.processor.pad(
+        # Pad input features
+        batch = self.processor.feature_extractor.pad(
             input_features,
             padding=self.padding,
             return_tensors="pt",
         )
+
+        # Pad labels
         with self.processor.as_target_processor():
-            labels_batch = self.processor.pad(
+            labels_batch = self.processor.tokenizer.pad(
                 label_features,
                 padding=self.padding,
                 return_tensors="pt",
             )
 
-        # replace padding with -100 to ignore loss correctly
+        # Replace padding token with -100 to ignore loss correctly
         labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
 
+        # Add labels to the batch
         batch["labels"] = labels
 
         return batch

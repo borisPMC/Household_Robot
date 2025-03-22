@@ -18,11 +18,11 @@ print("Using device:", DEVICE)
 login("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")
 
 def build_dataset():
-    Datasets.MedIntent_Dataset.build_new_dataset("borisPMC/grab_medicine_intent", "medicine_intent.csv")
+    Datasets.PharmaIntent_Dataset.build_new_dataset("borisPMC/PharmaIntent", "medicine_intent.csv")
 
 def train_asr(output_repo: str, pretrain_model: str) -> None:
     
-    ds = Datasets.MedIntent_Dataset(True, group_by_lang=True)
+    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=True)
 
     for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
 
@@ -30,16 +30,16 @@ def train_asr(output_repo: str, pretrain_model: str) -> None:
         ds.valid_ds = ds.datasets[l]["validation"]
         ds.test_ds = ds.datasets[l]["test"]
 
-        print(len(ds.train_ds), len(ds.valid_ds), len(ds.test_ds))
+        print("Train:", len(ds.train_ds), "Valid:", len(ds.valid_ds), "Test:", len(ds.test_ds))
 
         use_exist = os.path.exists(output_repo)
-        whisper = Models.Whisper_Model(
+        whisper = Models.Wav2Vec2_Model(
             repo_id=output_repo,
             pretrain_model=pretrain_model,
             use_exist=use_exist, 
             dataset=ds)
         
-        whisper.train(use_exist)
+        whisper.train()
 
     # Uncomment this if you want to train on the entire dataset
     # whisper = Models.Whisper_Model(
@@ -51,7 +51,7 @@ def train_asr(output_repo: str, pretrain_model: str) -> None:
 
 def train_nlp():
 
-    custom = Datasets.MedIntent_Dataset(True, group_by_lang=True)
+    custom = Datasets.PharmaIntent_Dataset(True, group_by_lang=True)
     nlp = Models.Whisper_Model("borisPMC/gpt2_grab_medicine_intent", False, custom)
     nlp.train()
 
@@ -102,7 +102,7 @@ def live_test(asr_repo: str, nlp_repo: str, duration=5, sample_rate=16000) -> st
 
 def test_ds(asr_repo: str, nlp_repo: str) -> None:
 
-    ds = Datasets.MedIntent_Dataset(True, group_by_lang=False)
+    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=False)
 
     prediction = []
     confidence = []
@@ -127,15 +127,19 @@ def test_ds(asr_repo: str, nlp_repo: str) -> None:
 
 def main():
 
+    # build_dataset()
+
     # train_asr("borisPMC/whisper_tiny_grab_medicine_intent", "openai/whisper-tiny")
     # train_asr("borisPMC/whisper_small_grab_medicine_intent", "openai/whisper-small")
     # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
+    # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
+
     # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("openai/whisper-small", "borisPMC/bert_grab_medicine_intent")
+    test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
 if __name__ == "__main__":
     main()
