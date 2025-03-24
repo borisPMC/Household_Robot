@@ -155,10 +155,10 @@ def main():
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
     # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
-    train_nlp("borisPMC/bert_baseM_grab_medicine_intent", "bert-base-multilingual-uncased")
+    # train_nlp("borisPMC/bert_baseM_grab_medicine_intent", "bert-base-multilingual-uncased")
 
     # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
-    test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_baseM_grab_medicine_intent")
+    test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
