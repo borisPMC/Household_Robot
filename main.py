@@ -1,145 +1,107 @@
-# from cv2 import compare
-from huggingface_hub import login
+from multiprocessing import Value
+import re
+import threading
+import time
+from queue import Queue
 import numpy as np
-from pandas import read_csv
-import torch
-from tqdm import tqdm
-from transformers import pipeline
-import Models
-import Datasets
-import sounddevice as sd
+from transformers import pipeline, Pipeline
 
-import os
+def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, label_queue: Queue, finding_medicine) -> None:
 
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# DEVICE = torch.device("cpu")
-print("Using device:", DEVICE)
+    import sounddevice as sd
+    while True:
+        # Avoid listening to audio if finding_medicine is True
+        if finding_medicine.value:
+            print("Finding medicine, please wait (Audio)...")
+            time.sleep(11)  # Simulate the 10-second duration for finding a medicine
+            continue
 
-login("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")
+        audio_array = None
+        transcript = None
+        class_label = None
 
-def build_dataset():
-    Datasets.PharmaIntent_Dataset.build_new_dataset("borisPMC/PharmaIntent", "medicine_intent.csv")
+        print("Recording for 5 seconds...\n")
+        audio_data = sd.rec(int(5 * 16000), samplerate=16000, channels=1, dtype="float32")
+        sd.wait()  # Wait until recording is finished
+        audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
-def train_asr(output_repo: str, pretrain_model: str) -> None:
-    
-    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=True)
-
-    for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
-
-        ds.train_ds = ds.datasets[l]["train"]
-        ds.valid_ds = ds.datasets[l]["validation"]
-        ds.test_ds = ds.datasets[l]["test"]
-
-        print("Train:", len(ds.train_ds), "Valid:", len(ds.valid_ds), "Test:", len(ds.test_ds))
-
-        use_exist = os.path.exists(output_repo)
-        whisper = Models.Wav2Vec2_Model(
-            repo_id=output_repo,
-            pretrain_model=pretrain_model,
-            use_exist=use_exist, 
-            dataset=ds)
-        
-        whisper.train()
-
-    # Uncomment this if you want to train on the entire dataset
-    # whisper = Models.Whisper_Model(
-    #     repo_id="borisPMC/whisper_small_grab_medicine_intent",
-    #     pretrain_model="openai/whisper-small",
-    #     use_exist=use_exist, 
-    #     dataset=ds)
-    # whisper.train()
-
-def train_nlp():
-
-    custom = Datasets.PharmaIntent_Dataset(True, group_by_lang=True)
-    nlp = Models.Whisper_Model("borisPMC/gpt2_grab_medicine_intent", False, custom)
-    nlp.train()
-
-# def predict_asr(audiopath):
-
-#     pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small")
-#     result = pipe(audiopath)
-#     return result
-
-# def predict_nlp(transcript):
-
-#     pipe = pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased")
-#     result = pipe(transcript)
-#     return result
-
-def evaluate(prediction: list[str], label: list[str]) -> float:
-
-    print("Predicted:", prediction)
-    print("Label:", label)
-
-    if len(prediction) != len(label):
-        raise ValueError("Prediction and label length mismatch")
-    
-    correct = 0
-    for i in range(len(prediction)):
-        correct += (prediction[i] == label[i])
-
-    return correct / len(prediction)
-
-# Simulates deployment on the robot
-def live_test(asr_repo: str, nlp_repo: str, duration=5, sample_rate=16000) -> str:
-
-    print("Recording for 5 seconds...")
-    audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype="float32")
-    sd.wait()  # Wait until recording is finished
-    audio_array = np.squeeze(audio_data)  # Convert to 1D array
-
-    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
-    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
-
-    transcript = asr_pipe(audio_array)
-    class_label = nlp_pipe(transcript)
-
-    print("Transcript:", transcript)
-    print("Class Label:", class_label)
-
-    return class_label["label"]
-
-def test_ds(asr_repo: str, nlp_repo: str) -> None:
-
-    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=False)
-
-    prediction = []
-    confidence = []
-
-    # df = read_csv("medicine_intent.csv", nrows=n)
-    # label_list = df["Label"].tolist()
-    # audiopath_list = df["Audio_path"].tolist()
-
-    label_list = ds.test_ds["Label"]
-    audio_list = ds.test_ds["Audio"]
-
-    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
-    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
-
-    for audio in tqdm(audio_list):
-        transcript = asr_pipe(audio)
+        transcript = asr_pipe(audio_array)
         class_label = nlp_pipe(transcript)
-        prediction.append(class_label["label"])
-        confidence.append(class_label["score"])
 
-    print(evaluate(prediction, label_list))
+        print("Transcript:", transcript["text"])
+
+        # Put the label in the queue
+        if bool(re.search(r"[^a-zA-Z0-9\s'\u4e00-\u9fff]", transcript["text"])):
+            label_queue.put("Empty") # Put "Empty" in the queue if the transcript contains special characters, avoid accident inputs.
+        else:
+            label_queue.put(class_label["label"])
+        
+        # Wait 1 second before looping again
+        time.sleep(1)
+
+def find_user_thread(user_flag, finding_medicine) -> None:
+    while True:
+
+        # Avoid listening to audio if finding_medicine is True
+        if finding_medicine.value:
+            print("Finding medicine, please wait (User)")
+            time.sleep(11)  # Simulate the 10-second duration for finding a medicine
+            continue
+
+        # Simulate finding a user
+        time.sleep(5)  # Simulate the 5-second duration for finding a user
+        user_flag.value = find_user()
+
+        # Wait 1 second before looping again
+        time.sleep(1)
+
+def find_user():
+    # Simulate finding a user
+    return True
+
+def find_medicine(class_label, finding_medicine, label_queue) -> None:
+    print("Finding medicine:", class_label, "\n")
+    time.sleep(10)  # Simulate the 10-second duration for finding a medicine
+    print("Medicine found!\n")
+
+    # Reset flag
+    finding_medicine.value = False
+    label_queue.put("Empty")  # Put "Empty" in the queue to reset the label
+    return
 
 def main():
+    # Initialize ASR and NLP pipelines
+    asr_pipe = pipeline("automatic-speech-recognition", model="borisPMC/whisper_small_grab_medicine_intent")
+    nlp_pipe = pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased")
 
-    # build_dataset()
+    # Shared variables and queues
+    user_flag = Value('b', True)  # Shared boolean flag for user detection
+    finding_medicine = Value('b', False)  # Shared boolean flag for finding medicine
+    label_queue = Queue()  # Queue to store labels from the audio process
 
-    # train_asr("borisPMC/whisper_tiny_grab_medicine_intent", "openai/whisper-tiny")
-    # train_asr("borisPMC/whisper_small_grab_medicine_intent", "openai/whisper-small")
-    # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
-    # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
+    # Create threads
+    user_thread = threading.Thread(target=find_user_thread, args=(user_flag, finding_medicine), daemon=True)
+    audio_thread = threading.Thread(target=listen_audio, args=(asr_pipe, nlp_pipe, label_queue, finding_medicine), daemon=True)
 
-    # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
+    # Start threads
+    user_thread.start()
+    audio_thread.start()
+    class_label = "Empty"
 
-    # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
-    test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
+    try:
+        while True:
+            class_label = label_queue.get()  # Get the label from the queue
+            if user_flag.value and class_label != "Empty":
+                finding_medicine.value = True
+                find_medicine(class_label, finding_medicine=finding_medicine, label_queue=label_queue)  # Trigger find_medicine() if conditions are met
+            else:
+                finding_medicine.value = False
+                print("No executable commands detected, please request again.\n")
+    
+    except KeyboardInterrupt:
+        print("Stopping threads...")
+        
+
 
 if __name__ == "__main__":
     main()

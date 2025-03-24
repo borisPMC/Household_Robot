@@ -178,15 +178,15 @@ class Whisper_Model:
         processor.save_pretrained(self.model_id, push_to_hub=True)
 
 class BERT_Model:
-    def __init__(self, model_id: str, use_exist: bool, dataset: PharmaIntent_Dataset):
-        self.model_id = model_id
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
+        self.model_id = repo_id
         self.dataset = dataset
         self.label_list = dataset.label_list
 
         # Use existing model or load pre-trained BERT model
-        call_id = model_id if use_exist else "bert-base-multilingual-uncased"
+        call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
-        self._set_processor(call_id)
+        self._set_processor(pretrain_model)
         self._call_model(call_id)
         self._preprocess_dataset()
         self._prepare_training()
@@ -204,7 +204,7 @@ class BERT_Model:
             num_labels=len(self.label_list),
         )
 
-        self.model = BertForSequenceClassification.from_pretrained(model_id, config=config)
+        self.model = BertForSequenceClassification.from_pretrained(model_id, config=config, ignore_mismatched_sizes=True)
         self._resize_token_embeddings()
 
     def _resize_token_embeddings(self):
@@ -244,6 +244,7 @@ class BERT_Model:
             logging_strategy="epoch",
             dataloader_drop_last=True,
             push_to_hub=True,
+            hub_private_repo=True,
         )
 
         self.trainer = Trainer(
