@@ -1,6 +1,6 @@
-##We can decribe our provided functions here##
+## We can decribe our provided functions here ##
 
-###hand control ###
+### hand control ###
 control_hand( coordination : dict, label) 目标物体的坐标，物品类型
     .....
     identify grasp type，识别抓握类型
