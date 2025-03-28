@@ -4,3 +4,5 @@ pip install pyctcdecode js2py ultralytics paddleocr
 
 #hand part
 pip install cv2
+pip install urllib3
+pip install pykinect_azure
