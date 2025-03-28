@@ -136,7 +136,7 @@ def auto_capture_photo(fpath='./temp/photo.jpg', quality=0.8):
         f.write(binary)
     return fpath
 
-def detect_medicine_exist(im_model) -> Optional[list]:
+def detect_medicine_exist(im_model: YOLO) -> Optional[list]:
 
     # Custom Exception for Expected Error (No bottle case)
     class BottleNotFoundException(Exception):
@@ -180,12 +180,13 @@ def detect_medicine_exist(im_model) -> Optional[list]:
     finally:
         return coord, conf, image
             
-def detect_with_ocr(ocr_model, image, coord_list: list[dict], tgt_label="ACE Inhibitor"):
+def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_label="ACE Inhibitor"):
 
     class LabelNotFoundException:
         pass
 
     wanted_rois = []
+    tmp_dir = "./temp"
 
     try:
         for i, box in coord_list:
@@ -193,8 +194,35 @@ def detect_with_ocr(ocr_model, image, coord_list: list[dict], tgt_label="ACE Inh
 
             # 提取并放大ROI
             roi = image[ymin:ymax, xmin:xmax]
+            resized_roi = cv2.resize(roi, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
 
+            # 保存临时文件
+            output_path = os.path.join(tmp_dir, f"roi_{i}.jpg")
+            cv2.imwrite(output_path, resized_roi)
 
+            # OCR识别
+            ocr_result = ocr_model.ocr(output_path, det=True, rec=True)
+
+            # 检查目标文本
+            text_found = False
+            for line in ocr_result[0]:
+                current_text = line[1][0].lower()
+                if tgt_label in current_text:
+                    text_found = True
+                    break
+
+            # 只记录包含目标文本的ROI
+            if text_found:
+                roi_info = {
+                    "id": i,
+                    "coordinates": (xmin, ymin, xmax, ymax),
+                    "center": ((xmin + xmax)//2, (ymin + ymax)//2),
+                    "ocr_text": current_text  # 记录匹配到的文本
+                }
+                wanted_rois.append(roi_info)
+        if len(wanted_rois) == 0:
+            raise LabelNotFoundException
+        
     except LabelNotFoundException:
         print("⚠️ No {} detected".format(tgt_label))
     except Exception as err:
@@ -202,37 +230,64 @@ def detect_with_ocr(ocr_model, image, coord_list: list[dict], tgt_label="ACE Inh
     finally:
         return wanted_rois
 
-    
 
-def main(max_attempts=MAX_ATTEMPTS):
+
+# Main function for the master program
+def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: str, max_attempts=MAX_ATTEMPTS) -> list[dict]:
+
+    print("Detecting medicine:", target_label, "\n")
 
     # Initialise models
-    im_model = YOLO("./Object_Detection/siou150.pt")
-    ocr = PaddleOCR(use_angle_cls=True, lang='en')  # Set language to English
-    write_yaml_config(YAML_FPATH, YAML_CONFIG)
+    detect_med_model = YOLO("./Object_Detection/siou150.pt")
+    ocr_model = PaddleOCR(use_angle_cls=True, lang='en')  # Set language to English
+    # write_yaml_config(YAML_FPATH, YAML_CONFIG) # Training only
 
+    coord_list = [] # Perhaps List of Dicts
     attempted = 1
-    roi_list = []
+    roi_list = [] # {id, coordinates (xmin, ymin, xmax, ymax), center, ocr_text}
 
     while attempted <= max_attempts:
         print("[Attempt {}/{}] Start capturing in 5 seconds...".format(attempted, max_attempts))
-        coord, conf, image = detect_medicine_exist(im_model)
+        
+        coord, conf, image = detect_medicine_exist(detect_med_model)
         if coord == None and conf == None:
+            # Failed to find any medicine
             attempted += 1
             continue
-        roi_list = detect_with_ocr(ocr, coord, image)
+        
+        roi_list = detect_with_ocr(ocr_model, coord, image, target_label)
+        if len(roi_list) == 0:
+            # Fail to find specific medicine
+            attempted += 1
+            continue
+        
+        # Success to find specific medicine(s), exit the loop
+        for tgt in roi_list:
+            coord_list.append({
+                "xmin": tgt.coordinates[0],
+                "ymin": tgt.coordinates[1],
+                "xmax": tgt.coordinates[2],
+                "ymax": tgt.coordinates[3],
+            })
+
         break    
 
     # After 3 attempts, no boxes are detected.
-    if len(roi_list) == 0:
+    if len(coord_list) == 0:
         print("\n❌ Failed 3 times. Please check:")
         print("1. Ensure bottle is centered in frame")
         print("2. Adjust camera focus")
         print("3. Clean camera lens")
         print("4. Improve lighting conditions")
         print("\n🔴 System stopped: Maximum error count reached")
+    else:
+        print("Medicine found!\n")
     
-    return roi_list
+    return coord_list
+
+def main():
+    detect_medicine()
+
 
 if __name__ == "__main__":
     main()
