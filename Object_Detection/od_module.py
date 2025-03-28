@@ -136,7 +136,7 @@ def auto_capture_photo(fpath='./temp/photo.jpg', quality=0.8):
         f.write(binary)
     return fpath
 
-def detect_medicine_exist(im_model: YOLO) -> Optional[list]:
+def detect_medicine_exist(im_model: YOLO):
 
     # Custom Exception for Expected Error (No bottle case)
     class BottleNotFoundException(Exception):
@@ -180,7 +180,7 @@ def detect_medicine_exist(im_model: YOLO) -> Optional[list]:
     finally:
         return coord, conf, image
             
-def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_label="ACE Inhibitor"):
+def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_label: str):
 
     class LabelNotFoundException:
         pass
@@ -250,7 +250,7 @@ def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: 
         print("[Attempt {}/{}] Start capturing in 5 seconds...".format(attempted, max_attempts))
         
         coord, conf, image = detect_medicine_exist(detect_med_model)
-        if coord == None and conf == None:
+        if len(coord) == 0:
             # Failed to find any medicine
             attempted += 1
             continue
