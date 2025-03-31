@@ -1,6 +1,7 @@
 import torch
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers import pipeline
+from ultralytics import YOLO
 
 # Step 1: Define YOLO-specific configurations
 class YOLOConfig(PretrainedConfig):
@@ -10,17 +11,11 @@ class YOLOConfig(PretrainedConfig):
 
 # Step 2: Define a YOLO wrapper as a Hugging Face PreTrainedModel
 class YOLOModel(PreTrainedModel):
-    def __init__(self, config, model_path="path/to/your/model.pt", device="cpu"):
+    def __init__(self, config, model_path="./Object_Detection/siou150.pt"):
         super().__init__(config)
         
-        self.device = torch.device(device)
         # Load the YOLO model
-        self.model = torch.hub.load(
-            "ultralytics/yolov5", 
-            "custom", 
-            path=model_path, 
-            force_reload=True
-        ).to(self.device)
+        self.model = YOLO(model_path)
 
     def forward(self, images):
         # Perform inference
@@ -40,9 +35,9 @@ class YOLOPipeline:
         return results
 
 # Step 4: Load YOLO model as a Hugging Face-compatible model
-def load_yolo_model(model_path, device="cuda"):
+def load_yolo_model(model_path):
     config = YOLOConfig()
-    yolo_model = YOLOModel(config, model_path=model_path, device=device)
+    yolo_model = YOLOModel(config, model_path=model_path)
     return yolo_model
 
 # Step 5: Main execution logic
@@ -52,7 +47,7 @@ if __name__ == "__main__":
 
     # Load the YOLO model (use 'cpu' or 'cuda')
     device = "cuda"  # Change to 'cuda' for GPU if available
-    yolo_model = load_yolo_model(local_yolo_model_path, device=device)
+    yolo_model = load_yolo_model(local_yolo_model_path)
 
     # Wrap the YOLO model in a custom pipeline
     yolo_pipeline = YOLOPipeline(yolo_model)

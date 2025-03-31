@@ -3,7 +3,6 @@ from huggingface_hub import login
 import torch
 from ultralytics import YOLO
 import paddle
-paddle.set_device('cpu')
 from paddleocr import PaddleOCR
 import threading
 from queue import Queue

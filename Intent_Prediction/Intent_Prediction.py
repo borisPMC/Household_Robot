@@ -20,7 +20,6 @@ import asyncio
 import os
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# DEVICE = torch.device("cpu")
 print("Using device:", DEVICE)
 
 login("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")
