@@ -26,7 +26,7 @@ def find_user_thread(pose_class: PoseEstimator_ViTPose, user_flag, cmd_flag) -> 
     while True:
         # Idle when grabbing medicine
         if user_flag.value and cmd_flag.value:
-            print("SU Thread: Idle")
+            # print("SU Thread: Idle")
             time.sleep(5) 
             continue
 

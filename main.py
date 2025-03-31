@@ -68,8 +68,11 @@ def main():
 
     try:
         while True:
+            # If not grabbing, listen to command
+            if not user_flag.value or not cmd_flag.value:
+                class_label = label_queue.get()
+            
             # Get the label from the queue; Use the newest command (exclude Empty)
-            class_label = label_queue.get()
             if class_label != "Empty":
                 cache_class = class_label
             print(cache_class)
@@ -80,6 +83,7 @@ def main():
                 # Reset after grabbing
                 user_flag.value = False
                 cmd_flag.value = False
+                cache_class = "Empty"
             else:
                 if not user_flag.value:
                     print("User not found!")

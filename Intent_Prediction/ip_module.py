@@ -12,7 +12,8 @@ def listen_audio_thread(asr_pipe: Pipeline, nlp_pipe: Pipeline, user_flag, cmd_f
     while True:
         # Idle when grabbing medicine
         if user_flag.value and cmd_flag.value:
-            print("IP Thread: Idle")
+            # print("IP Thread: Idle")
+            label_queue.put("Empty")
             time.sleep(5)
             continue
         
