@@ -79,61 +79,36 @@ def write_yaml_config(fpath: str, content: str) -> None:
     finally:
         return
 
-# Define auto-capture function with 5-second delay
 def auto_capture_photo(fpath='./temp/photo.jpg', quality=0.8):
-    js = '''
-        async function autoCapture(quality) {
-            // Create UI elements
-            const div = document.createElement('div');
-            const countdown = document.createElement('div');
-            countdown.style.fontSize = '24px';
-            countdown.style.fontWeight = 'bold';
-            countdown.style.color = 'red';
-            div.appendChild(countdown);
+    # Open the default camera
+    cam = cv2.VideoCapture(0)
 
-            const video = document.createElement('video');
-            video.style.display = 'block';
-            const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    if not cam.isOpened():
+        print("Error: Could not access the camera.")
+        return False
 
-            document.body.appendChild(div);
-            div.appendChild(video);
-            video.srcObject = stream;
-            await video.play();
+    print("Starting countdown for photo capture...")
+    
+    # Countdown timer for 3 seconds
+    for seconds in range(3, 0, -1):
+        print(f"Capturing in {seconds} seconds...")
+        time.sleep(1)
 
-            // Resize the output to fit the video element
-            google.colab.output.setIframeHeight(document.documentElement.scrollHeight, true);
+    print("Capturing photo now!")
+    
+    # Capture a frame
+    ret, frame = cam.read()
+    if ret:
+        # Save the captured frame as an image
+        cv2.imwrite(fpath, frame)
+        print(f"Photo saved to {fpath}")
+    else:
+        print("Failed to capture photo.")
 
-            // Show countdown
-            let seconds = 5;
-            countdown.textContent = `Auto-capturing in ${seconds}...`;
+    # Release the camera
+    cam.release()
+    cv2.destroyAllWindows()
 
-            // Countdown timer
-            await new Promise((resolve) => {
-                const timer = setInterval(() => {
-                    seconds--;
-                    countdown.textContent = `Auto-capturing in ${seconds}...`;
-                    if (seconds <= 0) {
-                        clearInterval(timer);
-                        resolve();
-                    }
-                }, 1000);
-            });
-
-            // Capture photo
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            stream.getVideoTracks()[0].stop();
-            div.remove();
-            return canvas.toDataURL('image/jpeg', quality);
-        }
-    '''
-    # display(js)
-    data = eval_js('autoCapture({})'.format(quality))
-    binary = b64decode(data.split(',')[1])
-    with open(fpath, 'wb') as f:
-        f.write(binary)
     return fpath
 
 def detect_medicine_exist(im_model: YOLO):
@@ -152,8 +127,6 @@ def detect_medicine_exist(im_model: YOLO):
 
         if not fname:
             raise ValueError("Failed to generate photo file")
-
-        print(f'Photo automatically captured and saved to: {fname}')
 
         # Run inference
         results = im_model(fname)
@@ -175,8 +148,8 @@ def detect_medicine_exist(im_model: YOLO):
     
     except BottleNotFoundException:
         print("⚠️ No medicine bottle detected")
-    except Exception as err:
-        print(f"❌ Error occurred: {str(err)}")
+    # except Exception as err:
+    #     print(f"❌ Error occurred: {str(err)}")
     finally:
         return coord, conf, image
             
@@ -247,7 +220,7 @@ def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: 
     roi_list = [] # {id, coordinates (xmin, ymin, xmax, ymax), center, ocr_text}
 
     while attempted <= max_attempts:
-        print("[Attempt {}/{}] Start capturing in 5 seconds...".format(attempted, max_attempts))
+        print("[Attempt {}/{}] Start capturing in 3 seconds...".format(attempted, max_attempts))
         
         coord, conf, image = detect_medicine_exist(detect_med_model)
         if len(coord) == 0:

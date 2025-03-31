@@ -135,6 +135,7 @@ def test_ds(asr_repo: str, nlp_repo: str) -> None:
     audio_list = ds.test_ds["Audio"]
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
+    asr_pipe.generation_config.forced_decoder_ids = None
     nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
 
     for audio in tqdm(audio_list):
