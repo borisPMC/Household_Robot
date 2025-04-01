@@ -1,27 +1,22 @@
 from multiprocessing import Value
 import time
-from queue import Queue
-import numpy as np
-from transformers import pipeline, Pipeline
-
-def find_user():
-    # Simulate finding a user
-    return True
+from Scene_Understanding.scene_understanding import PoseEstimator_ViTPose, live_capture, process_video
+   
 
 # Main function for the Master program
 # Expected to be run forever
-def find_user_thread(user_flag, stop_receiving_commands) -> None:
-    while True:
+def find_user_thread(pose_class: PoseEstimator_ViTPose, shared_dict) -> None:
 
-        # Avoid listening to audio if stop_receiving_commands is True
-        if stop_receiving_commands.value:
-            print("Finding medicine, please wait (User)")
-            time.sleep(11)  # Simulate the 10-second duration for finding a medicine
+    while True:
+        # Idle when grabbing medicine
+        if shared_dict["user_flag"] and shared_dict["cmd_flag"]:
+            # print("SU Thread: Idle")
+            time.sleep(5) 
             continue
 
         # Simulate finding a user
-        time.sleep(5)  # Simulate the 5-second duration for finding a user
-        user_flag.value = find_user()
+        # time.sleep(5)  # Simulate the 5-second duration for finding a user
+        shared_dict["keypoints"], shared_dict["user_flag"] = live_capture(pose_class, timer=shared_dict["THREAD_PROCESS_TIMER"])
 
         # Wait 1 second before looping again
-        time.sleep(1)
+        time.sleep(2)

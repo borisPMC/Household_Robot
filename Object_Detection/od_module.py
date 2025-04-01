@@ -79,64 +79,40 @@ def write_yaml_config(fpath: str, content: str) -> None:
     finally:
         return
 
-# Define auto-capture function with 5-second delay
-def auto_capture_photo(fpath='./temp/photo.jpg', quality=0.8):
-    js = '''
-        async function autoCapture(quality) {
-            // Create UI elements
-            const div = document.createElement('div');
-            const countdown = document.createElement('div');
-            countdown.style.fontSize = '24px';
-            countdown.style.fontWeight = 'bold';
-            countdown.style.color = 'red';
-            div.appendChild(countdown);
+def auto_capture_photo(fpath, quality=0.8):
 
-            const video = document.createElement('video');
-            video.style.display = 'block';
-            const stream = await navigator.mediaDevices.getUserMedia({video: true});
+    cv2.destroyAllWindows()
 
-            document.body.appendChild(div);
-            div.appendChild(video);
-            video.srcObject = stream;
-            await video.play();
+    # Open the default camera
+    cam = cv2.VideoCapture(0)
 
-            // Resize the output to fit the video element
-            google.colab.output.setIframeHeight(document.documentElement.scrollHeight, true);
+    if not cam.isOpened():
+        print("Error: Could not access the camera.")
+        return False
 
-            // Show countdown
-            let seconds = 5;
-            countdown.textContent = `Auto-capturing in ${seconds}...`;
+    print("Starting countdown for photo capture...")
+    # Countdown timer for 3 seconds
+    for seconds in range(3, 0, -1):
+        print(f"Capturing in {seconds} seconds...")
+        time.sleep(1)
+    print("Capturing photo now!")
+    
+    # Capture a frame
+    ret, frame = cam.read()
+    if ret:
+        # Save the captured frame as an image
+        cv2.imwrite(fpath, frame)
+        print(f"Photo saved to {fpath}")
+    else:
+        print("Failed to capture photo.")
 
-            // Countdown timer
-            await new Promise((resolve) => {
-                const timer = setInterval(() => {
-                    seconds--;
-                    countdown.textContent = `Auto-capturing in ${seconds}...`;
-                    if (seconds <= 0) {
-                        clearInterval(timer);
-                        resolve();
-                    }
-                }, 1000);
-            });
+    # Release the camera
+    cam.release()
+    cv2.destroyAllWindows()
 
-            // Capture photo
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            stream.getVideoTracks()[0].stop();
-            div.remove();
-            return canvas.toDataURL('image/jpeg', quality);
-        }
-    '''
-    # display(js)
-    data = eval_js('autoCapture({})'.format(quality))
-    binary = b64decode(data.split(',')[1])
-    with open(fpath, 'wb') as f:
-        f.write(binary)
     return fpath
 
-def detect_medicine_exist(im_model: YOLO):
+def detect_medicine_exist(fname: str, im_model: YOLO) -> tuple[list[dict], list]:
 
     # Custom Exception for Expected Error (No bottle case)
     class BottleNotFoundException(Exception):
@@ -147,14 +123,6 @@ def detect_medicine_exist(im_model: YOLO):
     coord = [dict] # Format for each item: {"x_min": x_min, "y_min": y_min, "x_max": x_max, "y_max": y_max}
 
     try:
-        # Auto-capture photo with 5-second countdown
-        fname = auto_capture_photo()
-
-        if not fname:
-            raise ValueError("Failed to generate photo file")
-
-        print(f'Photo automatically captured and saved to: {fname}')
-
         # Run inference
         results = im_model(fname)
 
@@ -168,48 +136,53 @@ def detect_medicine_exist(im_model: YOLO):
             x_min, y_min, x_max, y_max = map(int, box.xyxy[0].tolist())
             coord.append({"x_min": x_min, "y_min": y_min, "x_max": x_max, "y_max": y_max})
             conf.append(box.conf.item())
-            print(f"Bounding box: ({x_min}, {y_min}, {x_max}, {y_max})")
-            print(f"Confidence: {conf*100:.1f}%")
-
-            image = cv2.imread(fname)
+            # print(f"Bounding box: ({x_min}, {y_min}, {x_max}, {y_max})")
+            # print(f"Confidence: {conf*100:.1f}%")
     
     except BottleNotFoundException:
         print("⚠️ No medicine bottle detected")
-    except Exception as err:
-        print(f"❌ Error occurred: {str(err)}")
     finally:
-        return coord, conf, image
+        return coord, conf
             
 def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_label: str):
 
-    class LabelNotFoundException:
+    # Sample input for coord_list: [<class 'dict'>, {'x_min': 237, 'y_min': 214, 'x_max': 293, 'y_max': 328}, {'x_min': 167, 'y_min': 186, 'x_max': 239, 'y_max': 329}]
+
+    class LabelNotFoundException(Exception):
         pass
 
     wanted_rois = []
     tmp_dir = "./temp"
 
     try:
-        for i, box in coord_list:
-            xmin, ymin, xmax, ymax = map(int, box[:4])
+        # Start from 1: Skip class item
+        for i in range(1, len(coord_list)):
+            print(coord_list[i])
+            xmin = coord_list[i]["x_min"]
+            ymin = coord_list[i]["y_min"]
+            xmax = coord_list[i]["x_max"]
+            ymax = coord_list[i]["y_max"]
 
             # 提取并放大ROI
             roi = image[ymin:ymax, xmin:xmax]
             resized_roi = cv2.resize(roi, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
 
             # 保存临时文件
-            output_path = os.path.join(tmp_dir, f"roi_{i}.jpg")
+            output_path = "./temp/roi_{}.jpg".format(i)
             cv2.imwrite(output_path, resized_roi)
 
             # OCR识别
             ocr_result = ocr_model.ocr(output_path, det=True, rec=True)
 
+            print(ocr_result)
+            if ocr_result[0] == None:
+                raise LabelNotFoundException
+
             # 检查目标文本
             text_found = False
-            for line in ocr_result[0]:
-                current_text = line[1][0].lower()
-                if tgt_label in current_text:
-                    text_found = True
-                    break
+            detected_text = ocr_result[0][0][1][0]
+            if tgt_label == detected_text:
+                text_found = True
 
             # 只记录包含目标文本的ROI
             if text_found:
@@ -217,16 +190,20 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
                     "id": i,
                     "coordinates": (xmin, ymin, xmax, ymax),
                     "center": ((xmin + xmax)//2, (ymin + ymax)//2),
-                    "ocr_text": current_text  # 记录匹配到的文本
+                    "ocr_text": detected_text  # 记录匹配到的文本
                 }
                 wanted_rois.append(roi_info)
+                break
+
         if len(wanted_rois) == 0:
             raise LabelNotFoundException
         
     except LabelNotFoundException:
         print("⚠️ No {} detected".format(tgt_label))
-    except Exception as err:
-        print(f"❌ Error occurred: {str(err)}")
+
+    except Exception:
+        print("Unexpected Error!")
+    
     finally:
         return wanted_rois
 
@@ -237,40 +214,43 @@ def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: 
 
     print("Detecting medicine:", target_label, "\n")
 
-    # Initialise models
-    detect_med_model = YOLO("./Object_Detection/siou150.pt")
-    ocr_model = PaddleOCR(use_angle_cls=True, lang='en')  # Set language to English
-    # write_yaml_config(YAML_FPATH, YAML_CONFIG) # Training only
-
+    snapshot_fname = './temp/photo.jpg'
     coord_list = [] # Perhaps List of Dicts
     attempted = 1
     roi_list = [] # {id, coordinates (xmin, ymin, xmax, ymax), center, ocr_text}
+    coord = []
+    conf = []
 
-    while attempted <= max_attempts:
-        print("[Attempt {}/{}] Start capturing in 5 seconds...".format(attempted, max_attempts))
-        
-        coord, conf, image = detect_medicine_exist(detect_med_model)
-        if len(coord) == 0:
-            # Failed to find any medicine
-            attempted += 1
-            continue
-        
-        roi_list = detect_with_ocr(ocr_model, coord, image, target_label)
-        if len(roi_list) == 0:
-            # Fail to find specific medicine
-            attempted += 1
-            continue
-        
-        # Success to find specific medicine(s), exit the loop
-        for tgt in roi_list:
-            coord_list.append({
-                "xmin": tgt.coordinates[0],
-                "ymin": tgt.coordinates[1],
-                "xmax": tgt.coordinates[2],
-                "ymax": tgt.coordinates[3],
-            })
+    for i in range(attempted, max_attempts+1):
 
-        break    
+        # try:
+            # Step 1: Taking a snapshot
+            print("[Attempt {}/{}] Start capturing in 3 seconds...".format(i, max_attempts))
+            auto_capture_photo(snapshot_fname)
+            image = cv2.imread(snapshot_fname)
+            
+            # Step 2: See if ANY medicine exists
+            coord, conf = detect_medicine_exist(image, detect_med_model)
+
+            # Step 3: See if the specific medicine is found
+            roi_list = detect_with_ocr(ocr_model, image, coord, target_label)
+
+            # Success to find specific medicine(s), exit the loop
+            for tgt in roi_list:
+                coord_list.append({
+                    "xmin": tgt["coordinates"][0],
+                    "ymin": tgt["coordinates"][1],
+                    "xmax": tgt["coordinates"][2],
+                    "ymax": tgt["coordinates"][3],
+                })
+            
+            if len(coord_list) > 0:
+                break
+        
+        # except Exception:
+        #     print("Error!")
+        
+
 
     # After 3 attempts, no boxes are detected.
     if len(coord_list) == 0:

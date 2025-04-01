@@ -20,7 +20,6 @@ import asyncio
 import os
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# DEVICE = torch.device("cpu")
 print("Using device:", DEVICE)
 
 login("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")
@@ -135,6 +134,7 @@ def test_ds(asr_repo: str, nlp_repo: str) -> None:
     audio_list = ds.test_ds["Audio"]
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
+    asr_pipe.generation_config.forced_decoder_ids = None
     nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
 
     for audio in tqdm(audio_list):

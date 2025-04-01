@@ -1,8 +1,4 @@
-pip install transformers datasets evaluate accelerate librosa soundfile jiwer sounddevice seaborn matplotlib
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-pip install pyctcdecode js2py ultralytics paddleocr
-
+pip install transformers datasets evaluate accelerate librosa soundfile jiwer sounddevice seaborn matplotlib pyctcdecode js2py ultralytics paddleocr paddlepaddle urllib3 pykinect_azure
+pip3 install torch==2.5 torchvision==0.20 torchaudio==2.5 --index-url https://download.pytorch.org/whl/cu124
 #hand part
-pip install cv2
-pip install urllib3
-pip install pykinect_azure
+pip install opencv-python urllib3 pykinect_azure
