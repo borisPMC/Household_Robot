@@ -157,7 +157,6 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
     try:
         # Start from 1: Skip class item
         for i in range(1, len(coord_list)):
-            print(coord_list[i])
             xmin = coord_list[i]["x_min"]
             ymin = coord_list[i]["y_min"]
             xmax = coord_list[i]["x_max"]
@@ -174,7 +173,6 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
             # OCR识别
             ocr_result = ocr_model.ocr(output_path, det=True, rec=True)
 
-            print(ocr_result)
             if ocr_result[0] == None:
                 raise LabelNotFoundException
 
@@ -225,7 +223,7 @@ def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: 
 
         # try:
             # Step 1: Taking a snapshot
-            print("[Attempt {}/{}] Start capturing in 3 seconds...".format(i, max_attempts))
+            print("[Attempt {}/{}] Start capturing in few seconds...".format(i, max_attempts))
             auto_capture_photo(snapshot_fname)
             image = cv2.imread(snapshot_fname)
             

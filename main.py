@@ -29,12 +29,12 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
 
     # time.sleep(10)  # Simulate the 10-second duration for grabbing a medicine
     coord_list = detect_medicine(model_dict["detect_med_model"], model_dict["ocr_model"], class_label, 3) # a list of dict: [{xmin, ymin, xmax, ymax}]
+    print(coord_list)
 
     # Simulate Grabbing, comment if implemeneted
     time.sleep(10)
 
     for item in coord_list:
-        print(item)
         control_hand(item, class_label)
         control_arm()
     print("Grabbing done. Return to listening...")
