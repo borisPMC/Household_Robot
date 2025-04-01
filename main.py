@@ -1,4 +1,5 @@
-from multiprocessing import Value
+from multiprocessing import Manager, Value, Array
+import time
 from huggingface_hub import login
 import torch
 from ultralytics import YOLO
@@ -28,7 +29,12 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
 
     # time.sleep(10)  # Simulate the 10-second duration for grabbing a medicine
     coord_list = detect_medicine(model_dict["detect_med_model"], model_dict["ocr_model"], class_label, 3) # a list of dict: [{xmin, ymin, xmax, ymax}]
+
+    # Simulate Grabbing, comment if implemeneted
+    time.sleep(10)
+
     for item in coord_list:
+        print(item)
         control_hand(item, class_label)
         control_arm()
     print("Grabbing done. Return to listening...")
@@ -49,46 +55,70 @@ def main():
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision
 
     # Shared variables and queues
-    user_flag = Value('b', False)   # Shared boolean flag for Scene Understanding
-    cmd_flag = Value('b', False)    # Shared boolean flag for Intent Prediction
-    label_queue = Queue()  # Queue to store labels from the audio process
 
-    stop_receiving_commands = Value('b', False)  # If the robot is grabbing, set to True then the two Threads stop listening until set False
+    manager = Manager()
+
+    # Change to a shared dict to enhance data management
+    shared_dict = manager.dict({
+        "user_flag": False,         # Bool
+        "cmd_flag": False,          # Bool
+        "label_command": "Empty",   # Str
+        "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
+        "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
+    })
+    # user_flag = Value('b', False)   # Shared boolean flag for Scene Understanding
+    # cmd_flag = Value('b', False)    # Shared boolean flag for Intent Prediction
+    # label_queue = Queue()  # Queue to store labels from the audio process
+    # keypoint_queue = Queue() # 20250402 Added: In case needed
+
+    # stop_receiving_commands = Value('b', False)  # If the robot is grabbing, set to True then the two Threads stop listening until set False
 
     # Create threads
-    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], user_flag, cmd_flag), daemon=True)
-    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], user_flag, cmd_flag, label_queue), daemon=True)
+    # user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], user_flag, cmd_flag, keypoint_queue), daemon=True)
+    # audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], user_flag, cmd_flag, label_queue), daemon=True)
+
+    # Create threads
+    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict), daemon=True)
+    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], shared_dict), daemon=True)
 
     # Start threads
     user_thread.start()
     audio_thread.start()
-    cache_class = "Empty"
+    # cache_class = "Empty"
 
     print("\nSetup done, ready to operate.\n")
 
     try:
         while True:
-            # If not grabbing, listen to command
-            if not user_flag.value or not cmd_flag.value:
-                class_label = label_queue.get()
+            # # If not grabbing, listen to command
+            # if not user_flag.value or not cmd_flag.value:
+            #     class_label = label_queue.get()
             
             # Get the label from the queue; Use the newest command (exclude Empty)
-            if class_label != "Empty":
-                cache_class = class_label
-            print(cache_class)
+            # if class_label != "Empty":
+            #     cache_class = class_label
+            # print(cache_class)
             
+            # Wait prior threads to finish detection first
+            time.sleep(7.5)
+
             # Trigger find_medicine() if conditions are met
-            if user_flag.value and cmd_flag.value:
-                grabbing_process(cache_class, model_dict=model_dict)
+
+            print("User Found:", shared_dict["user_flag"] ,"|", "Command Heard:", shared_dict["cmd_flag"])
+
+            if shared_dict["user_flag"] and shared_dict["cmd_flag"]:
+                grabbing_process(shared_dict["label_command"], model_dict=model_dict)
                 # Reset after grabbing
-                user_flag.value = False
-                cmd_flag.value = False
-                cache_class = "Empty"
-            else:
-                if not user_flag.value:
-                    print("User not found!")
-                if not cmd_flag.value:
-                    print("No executable commands!")
+                shared_dict["user_flag"] = False
+                shared_dict["cmd_flag"] = False
+                shared_dict["label_command"] = "Empty"
+                shared_dict["keypoints"] = []
+                # cache_class = "Empty"
+            # else:
+            #     if not user_flag.value:
+            #         print("User not found!")
+            #     if not cmd_flag.value:
+            #         print("No executable commands!")
     
     except KeyboardInterrupt:
         print("Stopping threads...")

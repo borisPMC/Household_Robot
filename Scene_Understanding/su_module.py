@@ -1,38 +1,22 @@
 from multiprocessing import Value
 import time
 from Scene_Understanding.scene_understanding import PoseEstimator_ViTPose, live_capture, process_video
-
-# From scene_understanding.main()
-def find_user(pose_estimator: PoseEstimator_ViTPose):
-    
-    # Initialize the pose estimator (e.g., ViTPose or YOLO)
-    pose_estimator = PoseEstimator_ViTPose() 
-
-    # Capture a 5-second footage and return the cache file path
-    live_capture()
-
-    # Process the video
-    person_detected = process_video(pose_estimator, confidence_threshold=0.5)
-
-    # Output the final result
-    # print("Person detected in video:", person_detected)
-
-    return person_detected
+   
 
 # Main function for the Master program
 # Expected to be run forever
-def find_user_thread(pose_class: PoseEstimator_ViTPose, user_flag, cmd_flag) -> None:
+def find_user_thread(pose_class: PoseEstimator_ViTPose, shared_dict) -> None:
 
     while True:
         # Idle when grabbing medicine
-        if user_flag.value and cmd_flag.value:
+        if shared_dict["user_flag"] and shared_dict["cmd_flag"]:
             # print("SU Thread: Idle")
             time.sleep(5) 
             continue
 
         # Simulate finding a user
         # time.sleep(5)  # Simulate the 5-second duration for finding a user
-        user_flag.value = find_user(pose_class)
+        shared_dict["keypoints"], shared_dict["user_flag"] = live_capture(pose_class, timer=shared_dict["THREAD_PROCESS_TIMER"])
 
         # Wait 1 second before looping again
-        time.sleep(1)
+        time.sleep(2)

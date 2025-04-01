@@ -178,11 +178,10 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
             if ocr_result[0] == None:
                 raise LabelNotFoundException
 
-            # TODO: Detect Text
             # 检查目标文本
             text_found = False
-            detected_text = ocr_result[0][0][1][0].lower()
-            if tgt_label in detected_text:
+            detected_text = ocr_result[0][0][1][0]
+            if tgt_label == detected_text:
                 text_found = True
 
             # 只记录包含目标文本的ROI
@@ -232,19 +231,17 @@ def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: 
             
             # Step 2: See if ANY medicine exists
             coord, conf = detect_medicine_exist(image, detect_med_model)
-            print(coord)
 
             # Step 3: See if the specific medicine is found
             roi_list = detect_with_ocr(ocr_model, image, coord, target_label)
-            print(roi_list)
 
             # Success to find specific medicine(s), exit the loop
             for tgt in roi_list:
                 coord_list.append({
-                    "xmin": tgt.coordinates[0],
-                    "ymin": tgt.coordinates[1],
-                    "xmax": tgt.coordinates[2],
-                    "ymax": tgt.coordinates[3],
+                    "xmin": tgt["coordinates"][0],
+                    "ymin": tgt["coordinates"][1],
+                    "xmax": tgt["coordinates"][2],
+                    "ymax": tgt["coordinates"][3],
                 })
             
             if len(coord_list) > 0:

@@ -65,11 +65,12 @@ class PoseEstimator_ViTPose:
         pose_results = self.pose_image_processor.post_process_pose_estimation(outputs, boxes=[person_boxes])
         return pose_results[0]  # results for first image
 
-    def estimate_pose(self, fpath):
+    def estimate_pose(self, fpath: str):
         image = self.load_image(fpath)
         person_boxes = self.detect_humans(image)
         keypoints = self.detect_keypoints(image, person_boxes)
         return keypoints
+
 
 """Model 2: YOLO"""
 
@@ -169,17 +170,22 @@ def process_video(pose_estimator, cache_path="./temp/", confidence_threshold=0.5
     print(f"Total detections: {total_detections}")
     return total_detections > 0  # Return True if at least one detection occurred
 
-def live_capture(output_fpath="./temp/user_det_video.mp4"):
+# Altered version for live capture to reduce latency (Used Image instead of Frame)
+def live_capture(pose_estimator: PoseEstimator_ViTPose, device=0, img_temp_fpath="./temp/su_temp.jpg", confidence_threshold=0.5, timer=5):
 
     # Live capture a footage. 0: default camera
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(device)
 
     frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     # Define the codec and create VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_fpath, fourcc, 20.0, (frame_width, frame_height))
+    # fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    # out = cv2.VideoWriter(output_fpath, fourcc, 20.0, (frame_width, frame_height))
+
+    # Define returning var
+    keypoints = []          # List[list]: List of 2 scalar (x, y) lists
+    user_exist = False
 
     start_time = time.time()
     while True:
@@ -189,20 +195,22 @@ def live_capture(output_fpath="./temp/user_det_video.mp4"):
             print("Failed to capture frame. Exiting.")
             break
 
-        # Write the frame to the output file
-        out.write(frame)
-
         # # Display the captured frame
         # cv2.imshow('Camera', frame)
+        cv2.imwrite(img_temp_fpath, frame)
 
-        # Check if 1 second is passed
-        if time.time() - start_time >= 1:
+        # Check if 5 second is passed or a person is detected
+        keypoints = pose_estimator.estimate_pose(img_temp_fpath)
+        user_exist = is_detected(keypoints, confidence_threshold)
+
+        if time.time() - start_time >= timer or user_exist:
             break
     
     cam.release()
-    out.release()
+    # out.release()
     cv2.destroyAllWindows()
-    print(f"Video saved to {output_fpath}")
+    
+    return keypoints, user_exist
 
 # Example usage
 def main():
@@ -227,19 +235,16 @@ def main():
     '''
 
     # Test video path
-    # video_path = "/content/drive/MyDrive/FYP/test_video.mp4"
+    video_path = "/content/drive/MyDrive/FYP/test_video.mp4"
 
     # Initialize the pose estimator (e.g., ViTPose or YOLO)
     pose_estimator = PoseEstimator_ViTPose()  # Replace with your actual pose estimator
-
-    # Capture a 5-second footage and return the cache file path
-    live_capture()
 
     # Process the video
     person_detected = process_video(pose_estimator, confidence_threshold=0.5)
 
     # Output the final result
-    # print("Person detected in video:", person_detected)
+    print("Person detected in video:", person_detected)
 
 if __name__ == "__main__":
     main()
