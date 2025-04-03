@@ -420,7 +420,6 @@ class Wav2Vec2_Model:
 
         return processor
 
-
     def train(self):
         if not self.train_dataset or not self.test_dataset:
             print("Missing Dataset(s)!")

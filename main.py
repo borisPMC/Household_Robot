@@ -62,8 +62,11 @@ def main():
     shared_dict = manager.dict({
         "user_flag": False,         # Bool
         "cmd_flag": False,          # Bool
+        "play_sound_flag": False,
         "label_command": "Empty",   # Str
+        "confirm_commands": [],
         "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
+        "detected_meds": [],
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
     # user_flag = Value('b', False)   # Shared boolean flag for Scene Understanding

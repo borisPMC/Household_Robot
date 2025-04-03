@@ -164,42 +164,50 @@ class PharmaIntent_Dataset:
                 private=True
             )
 
-# class CV17_dataset:
+class CV17_dataset:
+    
+    datasets: dict[Union[DatasetDict, Dataset]]
+    train_ds: Dataset
+    test_ds: Dataset
+    valid_ds: Dataset
 
-#     def __init__(self, lang_list, token: Optional[dict]=None):
-#         self.lang_list = lang_list
+    def __init__(self, lang_list, token: Optional[dict]=None):
+        self.lang_list = lang_list
 
-#         self.train_ds = self._get_compiled_ds("train", token)
-#         self.test_ds = self._get_compiled_ds("test", token)
+        self.train_ds = self._get_compiled_ds("train", token)
+        self.test_ds = self._get_compiled_ds("test", token)
 
-#         self.input_col = "audio"
-#         self.output_col = "sentence"
+        self.input_col = "audio"
+        self.output_col = "sentence"
 
-#     def _get_compiled_ds(self, split: str, token: Optional[dict]=None):
+    def _get_compiled_ds(self, split: str, token: Optional[dict]=None):
         
-#         sub_ds_list = []
-#         for l in self.lang_list:
-#             sub_ds_list.append(CV17_dataset._load_ds(l, split, token))
+        self.datasets = {}
+        for l in self.lang_list:
+            self.datasets[l] = CV17_dataset._load_ds(l, split, token)
 
-#         ds = interleave_datasets(sub_ds_list, seed=SEED, stopping_strategy="first_exhausted")
-#         ds = ds.remove_columns(["client_id", "path", "gender", "accent", "segment", "age", 'up_votes', 'down_votes', 'locale', 'variant'])
-#         return ds
+        # ds = interleave_datasets(sub_ds_list, seed=SEED, stopping_strategy="first_exhausted")
+        ds = ds.remove_columns(["client_id", "path", "gender", "accent", "segment", "age", 'up_votes', 'down_votes', 'locale', 'variant'])
+        return ds
 
-#     @staticmethod
-#     def _load_ds(lang, split, lang_token: Optional[dict]=None):
-#         ds = load_dataset(
-#             "mozilla-foundation/common_voice_17_0",
-#             lang,
-#             split=split,
-#             trust_remote_code=True,
-#             streaming=True,
-#         )
+    @staticmethod
+    def _load_ds(lang, split, lang_token: Optional[dict]=None):
+        ds = load_dataset(
+            "mozilla-foundation/common_voice_17_0",
+            lang,
+            split=split,
+            trust_remote_code=True,
+            streaming=True,
+        )
 
-#         # Add language token to the dataset
-#         if lang_token:
-#             ds = ds.map(lambda x: {"sentence": (lang_token[lang] + x["sentence"]), "audio": x["audio"]})
+        # Add language token to the dataset
+        if lang_token:
+            ds = ds.map(lambda x: {"sentence": (lang_token[lang] + x["sentence"]), "audio": x["audio"]})
 
-#         return ds
+        return ds
+    
+    def create_vocab_file(self, fpath):
+        pass
 
 def main():
     PharmaIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
