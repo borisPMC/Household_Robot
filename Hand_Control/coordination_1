@@ -50,3 +50,15 @@ except RobotError as ex:
 finally:
     rob.close()
     print("end robot arm")
+
+
+uplift: 
+rob.movej((1.5,-1.5,-2.5,-2.3,-1.6,0), relative=False)
+
+
+
+
+
+
+
+
