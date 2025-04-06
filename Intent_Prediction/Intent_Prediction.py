@@ -145,6 +145,42 @@ def test_ds(asr_repo: str, nlp_repo: str) -> None:
 
     print(evaluate(prediction, label_list))
 
+def test_manual_nlp(asr_repo: str) -> None:
+
+    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=False)
+
+    prediction = []
+    confidence = []
+
+    # df = read_csv("medicine_intent.csv", nrows=n)
+    # label_list = df["Label"].tolist()
+    # audiopath_list = df["Audio_path"].tolist()
+
+    label_list = ds.test_ds["Label"]
+    audio_list = ds.test_ds["Audio"]
+
+    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
+    asr_pipe.generation_config.forced_decoder_ids = None
+    classifier = Models.TableSearcher()
+
+    for audio in tqdm(audio_list):
+        transcript = asr_pipe(audio)["text"]
+        classifier.predict(transcript)
+        classifier.generate_response()
+
+        class_label = classifier.pop_medicine()
+
+        if class_label is None or class_label == "":
+            class_label = "Empty"
+
+        # Hard reset for testing datasets
+        classifier._reset_state()
+
+        prediction.append(class_label)
+        confidence.append(1.0)
+
+    print(evaluate(prediction, label_list))
+
 def main():
     
     # build_dataset()
@@ -157,8 +193,10 @@ def main():
     # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
     # train_nlp("borisPMC/bert_baseM_grab_medicine_intent", "bert-base-multilingual-uncased")
 
+    test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
+
     # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
-    test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    # test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 

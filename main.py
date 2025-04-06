@@ -7,11 +7,12 @@ import paddle
 from paddleocr import PaddleOCR
 import threading
 from queue import Queue
-from transformers import pipeline, Pipeline
+from transformers import pipeline
 
 # Custom modules (The 5 modules)
 # from folder.file import function
 from Scene_Understanding.scene_understanding import PoseEstimator_ViTPose
+from Intent_Prediction.Models import TableSearcher
 from Scene_Understanding.su_module import find_user_thread
 from Intent_Prediction.ip_module import listen_audio_thread
 from Object_Detection.od_module import detect_medicine
@@ -37,8 +38,8 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
     for item in coord_list:
         control_hand(item, class_label)
         control_arm()
-    print("Grabbing done. Return to listening...")
-    return
+    print("Grabbing {} done.".format(class_label))
+    return 
 
 def main():
 
@@ -50,29 +51,34 @@ def main():
         "detect_med_model": YOLO("./Object_Detection/siou150.pt"),
         "ocr_model": PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
         "pose_model": PoseEstimator_ViTPose(),
+        "manual_nlp": TableSearcher(),
     }
+
+    model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
 
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision
 
     # Shared variables and queues
-
+    
+    # Use multiprocessing.Manager to create shared variables
     manager = Manager()
-
-    # Change to a shared dict to enhance data management
     shared_dict = manager.dict({
         "user_flag": False,         # Bool
         "cmd_flag": False,          # Bool
         "play_sound_flag": False,
-        "label_command": "",   # Str
+        "label_command": "",        # Str
         "queued_commands": [],
-        "cache_requests": [],
         "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
 
+    # If it is set (True), the threads will listen. Else, clear (false) until set again. 
+    listen_event = threading.Event()
+    listen_event.set()
+
     # Create threads
-    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict), daemon=True)
-    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], shared_dict), daemon=True)
+    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict, listen_event), daemon=True)
+    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["manual_nlp"], shared_dict, listen_event), daemon=True)
 
     # Start threads
     user_thread.start()
@@ -92,21 +98,24 @@ def main():
 
             if shared_dict["user_flag"] and shared_dict["cmd_flag"]:
 
-                # Push queued label
-                shared_dict["label_command"] = shared_dict["queued_commands"].pop()
+                # Push queued label until the queue is empty
+                listen_event.clear()  # Stop listening to audio commands
+                queue = shared_dict["queued_commands"]
 
-                grabbing_process(shared_dict["label_command"], model_dict=model_dict)
+                for queue_item in queue:
+                    shared_dict["label_command"] = queue_item
+
+                    grabbing_process(shared_dict["label_command"], model_dict=model_dict)
+                
                 # Reset after grabbing
                 shared_dict["user_flag"] = False
                 shared_dict["cmd_flag"] = False
                 shared_dict["label_command"] = ""
                 shared_dict["keypoints"] = []
-                # cache_class = "Empty"
-            # else:
-            #     if not user_flag.value:
-            #         print("User not found!")
-            #     if not cmd_flag.value:
-            #         print("No executable commands!")
+                shared_dict["queued_commands"] = []
+
+                listen_event.set()  # Resume listening to audio commands
+                print("\nReturn to listening mode\n")
     
     except KeyboardInterrupt:
         print("Stopping threads...")

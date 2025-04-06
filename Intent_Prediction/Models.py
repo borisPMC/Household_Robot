@@ -16,9 +16,12 @@ ASR_EPOCH = 3
 
 SEED = 42
 
+from dataclasses import dataclass
 import os
-from typing import List, Optional, Union
+import re
+from typing import Any, Dict, List, Optional, Union
 import numpy as np
+import torch
 from transformers import (
     WhisperForConditionalGeneration, WhisperTokenizer, WhisperFeatureExtractor, WhisperProcessor,
     BertForSequenceClassification, BertTokenizer, BertConfig,
@@ -27,10 +30,16 @@ from transformers import (
     Trainer, Seq2SeqTrainer, TrainingArguments, Seq2SeqTrainingArguments, DataCollatorWithPadding
 )
 from datasets import Dataset, IterableDataset, Audio
-
-from Collators import DataCollatorSpeechSeq2SeqWithPadding, DataCollatorForW2V2
 from Datasets import PharmaIntent_Dataset
 import evaluate
+
+# To split text into Chinese characters, numbers, and English words
+def hybrid_split(text: str) -> List[str]:
+    regex = r"[\u4e00-\ufaff]|[0-9]+|[a-zA-Z]+\'*[a-z]*"
+    matches = re.findall(regex, str, re.UNICODE)
+    return matches
+
+print(hybrid_split("Testing English text我爱Python123"))
 
 # List of testing Whisper models
 
@@ -54,6 +63,35 @@ class Whisper_Model:
     model: WhisperForConditionalGeneration
     feature_extractor: WhisperFeatureExtractor
     tokenizer: WhisperTokenizer
+
+    @dataclass
+    class DataCollatorSpeechSeq2SeqWithPadding:
+        feature_extractor: Union[Any, WhisperFeatureExtractor]
+        tokenizer: Union[Any, WhisperTokenizer]
+        decoder_start_token_id: int
+
+        def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
+            # split inputs and labels since they have to be of different lengths and need different padding methods
+            # first treat the audio inputs by simply returning torch tensors
+            input_features = [{"input_features": feature["input_features"]} for feature in features]
+            batch = self.feature_extractor.pad(input_features, return_tensors="pt")
+
+            # get the tokenized label sequences
+            label_features = [{"input_ids": feature["labels"]} for feature in features]
+            # pad the labels to max length
+            labels_batch = self.tokenizer.pad(label_features, return_tensors="pt")
+
+            # replace padding with -100 to ignore loss correctly
+            labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
+
+            # if bos token is appended in previous tokenization step,
+            # cut bos token here as it's append later anyways
+            if (labels[:, 0] == self.decoder_start_token_id).all().item():
+                labels = labels[:, 1:]
+
+            batch["labels"] = labels
+
+            return batch
 
     def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
         self.model_id = repo_id
@@ -117,7 +155,7 @@ class Whisper_Model:
     def _prepare_training(self):
         self.cer = evaluate.load("cer")
 
-        self.data_collator = DataCollatorSpeechSeq2SeqWithPadding(
+        self.data_collator = self.DataCollatorSpeechSeq2SeqWithPadding(
             feature_extractor=self.feature_extractor,
             tokenizer=self.tokenizer,
             decoder_start_token_id=self.model.config.decoder_start_token_id,
@@ -288,6 +326,51 @@ class Wav2Vec2_Model:
     feature_extractor: Wav2Vec2FeatureExtractor
     tokenizer: Wav2Vec2CTCTokenizer
 
+    @dataclass
+    class DataCollatorForW2V2:
+        """
+        Data collator for Wav2Vec2 models. Handles padding for both input features and labels.
+        """
+        processor: Union[Any, Wav2Vec2Processor]
+        padding: Union[bool, str] = True
+
+        def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
+            """
+            Pads input features and labels to the same length and prepares them for training.
+
+            Args:
+                features (List[Dict[str, Union[List[int], torch.Tensor]]]): List of features containing input values and labels.
+
+            Returns:
+                Dict[str, torch.Tensor]: A dictionary containing padded input features and labels.
+            """
+            # Separate input features and labels
+            input_features = [{"input_values": feature["input_values"]} for feature in features]
+            label_features = [{"input_ids": feature["labels"]} for feature in features]
+
+            # Pad input features
+            batch = self.processor.feature_extractor.pad(
+                input_features,
+                padding=self.padding,
+                return_tensors="pt",
+            )
+
+            # Pad labels
+            with self.processor.as_target_processor():
+                labels_batch = self.processor.tokenizer.pad(
+                    label_features,
+                    padding=self.padding,
+                    return_tensors="pt",
+                )
+
+            # Replace padding token with -100 to ignore loss correctly
+            labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
+
+            # Add labels to the batch
+            batch["labels"] = labels
+
+            return batch
+
     def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
         self.model_id = repo_id
         self.dataset = dataset
@@ -355,7 +438,7 @@ class Wav2Vec2_Model:
     def _prepare_training(self):
         self.cer_metric = evaluate.load("cer")
 
-        self.data_collator = DataCollatorForW2V2(
+        self.data_collator = self.DataCollatorForW2V2(
             processor=self.processor,
         )
 
@@ -558,3 +641,199 @@ class GPT2_Model:
             print("Missing Dataset(s)!")
             return
         self.trainer.train()
+
+# 20250403: table searcher for intent prediction
+# Vocab based classifier for exploration and comparison with LLM models, should have the lowest performance (0.525 /w Whipser-small)
+class TableSearcher:
+    """
+    A custom class used to predict the intent from script without using any LLM models
+
+    """
+
+    # Origin table from paper
+    # TABLE = {
+    #     "ACE Inhibitor": ["高血壓", "血管緊張素轉換酶抑制劑", "高血壓藥", "high blood pressure", "hypertension", "ACE Inhibitor"],
+    #     "Metformin": ["糖尿病", "糖尿病藥", "甲福明", "Diabetes", "Metformin"],
+    #     "Atorvastatin": ["冠脈病", "冠心病", "心臟病", "Coronary heart disease", "CAD", "阿伐他汀", "心臟病藥", "Atorvastatin"],
+    #     "Amitriptyline": ["抑鬱症", "Depression", "Depression disorder", "阿米替林", "抗抑鬱藥", "Amitriptyline", "Antidepressant"]
+    # }
+
+    # Optimized table for better performance
+    MEDICINE_TABLE = {
+        "ACE Inhibitor": ["高血壓", "血管緊張素轉換酶抑制劑", "high blood pressure", "hypertension", "ace inhibitor"],
+        "Metformin": ["糖尿病", "甲福明", "diabetes", "metformin"],
+        "Atorvastatin": ["冠脈病", "冠心病", "心臟病", "coronary heart disease", "cad", "阿伐他汀", "atorvastatin"],
+        "Amitriptyline": ["抑鬱症", "depression", "depression disorder", "阿米替林", "amitriptyline", "antidepressant"]
+    }
+
+    # Verb for Intention (Direct & Assertive words): Commands often use imperative verbs (action words) and sound direct.
+    VERB_LIST = ["俾", "遞", "交", "攞", "拎", "揸", "執", "抓", "要", "grab", "want", "搵", "need", "find", "get",
+            "take", "bring", "fetch", "hand", "give", "pass",
+            "offer", "provide", "present", "deliver", 
+            "clutch", "grasp", "pick up", "capture" , "where"]
+
+    # Hedging words (Uncertain and Questioning): Confused statements often contain hedging words (maybe, not sure, which one) or question-like structures.
+    CONFUSE_LIST = ["邊個", "邊隻", "邊款", "which", "what", "unsure", "uncertain", "not sure", "定係", "不知", "唔知", "or", "either", "maybe", "perhaps",
+            "could", "might", "should", "may", "possibly", "likely", "probably", "seem", "seems", "seemingly", "係咪"]
+
+    # Assertive words
+    ASSERTIVE_LIST = ["yes", "ok", "係", "好", "yes", "confirm", "affirmative", "assertive", "agree"]
+
+    cache_med_list: list[str]
+    is_direct: bool
+    is_confused: bool
+    is_request_confirm: bool
+
+    def __init__(self):
+        self._reset_state()
+    
+    def _reset_state(self, reset_cache=True):
+        """
+        Reset the state of the TableSearcher object.
+        """
+        if not reset_cache:
+            self.is_direct = False
+            self.is_confused = False
+        else:
+            self.cache_med_list = []
+            self.is_direct = False
+            self.is_confused = False
+            self.is_request_confirm = False
+
+    def pop_medicine(self) -> str:
+        """
+        Get the first detected medicine from the cache.
+        """
+        if self.cache_med_list and self.is_request_confirm == False:
+            return self.cache_med_list.pop(0)
+        else:
+            print("No confirmed medicine detected in the cache.")
+        return ""
+    
+    def pop_medicine_list(self) -> list[str]:
+        """
+        Get the list of detected medicines from the cache.
+        """
+
+        if self.cache_med_list and self.is_request_confirm == False:
+            return self.cache_med_list
+        else:
+            print("No confirmed medicine detected in the cache.")
+        return []
+
+    def predict(self, script: str):
+
+        lower_script = script.lower()
+
+        print("Script:", lower_script)
+        
+        # Medicine Classification: If Medicine name is in the script, append detected_med with the corresponding key
+        if not self.is_request_confirm: # Use previous cache if requesting confirm
+            self.cache_med_list = TableSearcher._detect_medicine(lower_script)
+
+        # Semantic Analysis: if confused, return; else, see if it is response to confirmation; else, see if requesting a medicine
+        self.is_confused = TableSearcher._detect_keyword(lower_script, self.CONFUSE_LIST)
+        
+        # If the script is a request for confirmation, use the assertive list
+        # Otherwise, use the verb list
+        if self.is_request_confirm:
+                self.is_direct = TableSearcher._detect_keyword(lower_script, self.ASSERTIVE_LIST)
+                self.is_request_confirm = False
+        else:
+            self.is_direct = TableSearcher._detect_keyword(lower_script, self.VERB_LIST)
+        return
+    
+    @staticmethod
+    def _detect_keyword(script: str, searching_list: list[str]) -> bool:
+        """
+        Detects if the script contains any confused words.
+        """
+        for word in searching_list:
+            if re.search(word, script):
+                return True
+        return False
+    
+    @staticmethod
+    def _detect_medicine(script: str) -> List[str]:
+        """
+        Detects if the script contains any medicine names.
+        """
+        detected_med = []
+        for key in TableSearcher.MEDICINE_TABLE.keys():
+            for word in TableSearcher.MEDICINE_TABLE[key]:
+                if re.search(word, script):
+                    detected_med.append(key)
+                    break
+        return detected_med
+    
+    def generate_response(self) -> int:
+
+        # If detected_med has item(s), and is_direct -> Direct & Valid Command ->                                           "certain"                  
+        # If detected_med has item(s), is_confused and is_direct -> soft/polite request -> consider confirmed ->            "certain"
+        # If detected_med has item(s), but is_confused -> Don't know if need to take the med / where is it ->               "confused", ask for confirmation
+        # If detected_med is empty, but is_direct -> invalid command ->                                                     "invalid command"   
+        # Else ->                                                                                                           "invalid input"
+
+        response_type = -1
+        has_cache_med = len(self.cache_med_list) > 0
+        reset_cache = True
+
+        if has_cache_med and self.is_direct:
+            self.is_request_confirm = False
+            reset_cache = False
+            response_type = 0
+
+        if has_cache_med and self.is_confused and not self.is_direct:
+            self.is_request_confirm = True
+            reset_cache = False
+            response_type = 1
+
+        if not has_cache_med and self.is_direct:
+            response_type = 2
+
+        if not has_cache_med and self.is_confused:
+            response_type = 3
+
+        self._reset_state(reset_cache=reset_cache)
+
+        return response_type
+
+class Multitask_BERT:
+
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
+        self.model_id = repo_id
+        self.dataset = dataset
+        self.label_list = dataset.label_list
+
+        # Use existing model or load pre-trained BERT model
+        call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
+
+        self._set_processor(pretrain_model)
+        self._call_model(call_id)
+        self._preprocess_dataset()
+        self._prepare_training()
+
+    def _set_processor(self, model_id: str):
+        self.tokenizer = BertTokenizer.from_pretrained(model_id)
+
+    def _call_model(self, model_id: str):
+        id2label = {i: label for i, label in enumerate(self.label_list)}
+        label2id = {label: i for i, label in enumerate(self.label_list)}
+
+        config = BertConfig(
+            id2label=id2label,
+            label2id=label2id,
+            num_labels=len(self.label_list),
+            problem_type="multi_label_classification",
+            pad_token_id=0,
+            classifier_dropout=0.1,
+            classifier_dropout_prob=0.1,
+            hidden_dropout_prob=0.1,
+            attention_probs_dropout_prob=0.1,
+            initializer_range=0.02,
+            layer_norm_eps=1e-12,
+            max_position_embeddings=512,
+            vocab_size=len(self.tokenizer),
+        )
+
+        self.model = BertForSequenceClassification.from_pretrained(model_id, config=config, ignore_mismatched_sizes=True)

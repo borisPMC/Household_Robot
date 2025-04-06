@@ -1,13 +1,15 @@
-from multiprocessing import Value
 import time
 from Scene_Understanding.scene_understanding import PoseEstimator_ViTPose, live_capture, process_video
    
 
 # Main function for the Master program
 # Expected to be run forever
-def find_user_thread(pose_class: PoseEstimator_ViTPose, shared_dict) -> None:
+def find_user_thread(pose_class: PoseEstimator_ViTPose, shared_dict, listen_event) -> None:
 
     while True:
+
+        listen_event.wait()
+
         # Idle when grabbing medicine
         if shared_dict["user_flag"] and shared_dict["cmd_flag"]:
             # print("SU Thread: Idle")
