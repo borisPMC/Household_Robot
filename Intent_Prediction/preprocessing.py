@@ -2,7 +2,7 @@ from typing import List
 import re
 import pandas as pd
 
-def convert_sentence_to_tokens(fpath) -> pd.DataFrame:
+def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
     """
     Process the CSV file to update the NER_Tag column based on speech tokens and MED_TOKEN_LIST.
 
@@ -17,6 +17,7 @@ def convert_sentence_to_tokens(fpath) -> pd.DataFrame:
         "高血壓": "122",
         "血壓藥": "122",
         "壓血壓": "122",
+        "血管緊張素轉換酶抑制藥": "12222222222",
         "血管緊張素轉換酶抑制劑": "12222222222",
         "high blood pressure": "122",
         "hypertension": "1",
@@ -44,9 +45,6 @@ def convert_sentence_to_tokens(fpath) -> pd.DataFrame:
         "antidepressant": "7",
     }
 
-    # Read the CSV file
-    df = pd.read_excel(fpath)
-
     # Process each row in the dataframe
     for index, row in df.iterrows():
 
@@ -56,7 +54,7 @@ def convert_sentence_to_tokens(fpath) -> pd.DataFrame:
         tokens = hybrid_split(speech)
 
         # Ensure NER_Tag matches the length of tokens
-        ner_tag = ["O"] * len(tokens)
+        ner_tag = ["0"] * len(tokens)
 
         # Update NER_Tag based on MED_TOKEN_LIST matches
         for key, value in MED_TOKEN_LIST.items():
@@ -77,6 +75,29 @@ def convert_sentence_to_tokens(fpath) -> pd.DataFrame:
 
     return df
 
+def detect_language(df: pd.DataFrame):
+
+    """
+    Detect the language of string by chracter. If a Chinese character exist, consider the sentence as Cantonese (based on mixed-code property of HK Cantonese.)
+    """
+
+    # Process each row in the dataframe
+    for index, row in df.iterrows():
+
+        lang = "Unknown"
+        speech = row["Speech"]
+
+        if re.search(r"[\u4e00-\ufaff]", speech, re.UNICODE):
+            lang = "Cantonese"
+        else:
+            lang = "English"
+
+        df.at[index, "Major_Language"] = lang
+
+    return df
+
+    
+
 
 def hybrid_split(string: str) -> List[str]:
     """
@@ -96,6 +117,8 @@ def hybrid_split(string: str) -> List[str]:
 # Example usage
 fpath = "Intent_Prediction/multitask_audio/multitask_ds.xlsx"
 out_fpath = "Intent_Prediction/multitask_audio/multitask_ds_modified.xlsx"
-df = pd.read_csv(fpath)
+df = pd.read_excel(fpath)
+lang_df = detect_language(df)
+tokenized_df = convert_sentence_to_tokens(df)
 # updated_df = convert_sentence_to_tokens(fpath)
-df.to_excel(out_fpath, index=False)
+tokenized_df.to_excel(out_fpath, index=False)
