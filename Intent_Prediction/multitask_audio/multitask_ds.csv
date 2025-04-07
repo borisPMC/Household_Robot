@@ -1,0 +1,1025 @@
+Language,Speech,Audio_Path,Intent,NER_Tag
+English,Get me hypertension medicine,./Intent_Prediction/audio/0001.mp4,retrieve_med,10
+Cantonese,攞高血壓藥畀我,./Intent_Prediction/audio/0002.mp4,retrieve_med,112200
+Cantonese,幫我拎高血壓藥,./Intent_Prediction/audio/0003.mp4,retrieve_med,1122
+English,Where is the medicine for high blood pressure,./Intent_Prediction/audio/0004.mp4,search_med,122
+Cantonese,高血壓藥放邊,./Intent_Prediction/audio/0005.mp4,search_med,112200
+English,I need something for hypertension,./Intent_Prediction/audio/0006.mp4,enquire_suitable_med,1
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,./Intent_Prediction/audio/0007.mp4,retrieve_med,1222222222200
+English,Fetch Metformin for diabetes,./Intent_Prediction/audio/0008.mp4,retrieve_med,303
+Cantonese,俾糖尿病藥我,./Intent_Prediction/audio/0009.mp4,retrieve_med,34400
+Cantonese,邊度有甲福明,./Intent_Prediction/audio/0010.mp4,search_med,344
+English,Bring me pills for diabetes,./Intent_Prediction/audio/0011.mp4,retrieve_med,3
+Cantonese,我要糖尿病藥,./Intent_Prediction/audio/0012.mp4,retrieve_med,3440
+English,Where can I find diabetes medicine,./Intent_Prediction/audio/0013.mp4,search_med,30
+Cantonese,糖尿病藥喺邊,./Intent_Prediction/audio/0014.mp4,search_med,344000
+English,Give me Atorvastatin for my heart disease,./Intent_Prediction/audio/0015.mp4,retrieve_med,50056
+Cantonese,攞阿伐他汀畀我,./Intent_Prediction/audio/0016.mp4,retrieve_med,566600
+Cantonese,幫我搵心臟病藥,./Intent_Prediction/audio/0017.mp4,retrieve_med,5660
+English,Can you find me medicine for CAD,./Intent_Prediction/audio/0018.mp4,search_med,5
+Cantonese,冠心病藥喺邊,./Intent_Prediction/audio/0019.mp4,search_med,566000
+English,I need something for coronary heart disease,./Intent_Prediction/audio/0020.mp4,enquire_suitable_med,566
+Cantonese,攞冠脈病藥畀我,./Intent_Prediction/audio/0021.mp4,retrieve_med,566000
+English,Fetch Amitriptyline for depression,./Intent_Prediction/audio/0022.mp4,retrieve_med,707
+Cantonese,俾阿米替林我,./Intent_Prediction/audio/0023.mp4,retrieve_med,78880
+Cantonese,我要抗抑鬱藥,./Intent_Prediction/audio/0024.mp4,retrieve_med,780
+English,Where is the depression medicine,./Intent_Prediction/audio/0025.mp4,search_med,70
+Cantonese,抑鬱症藥喺邊,./Intent_Prediction/audio/0026.mp4,search_med,780000
+English,I need help with antidepressants,./Intent_Prediction/audio/0027.mp4,retrieve_med,0
+Cantonese,攞抑鬱症藥畀我,./Intent_Prediction/audio/0028.mp4,retrieve_med,780000
+English,What should I take for my condition,./Intent_Prediction/audio/0029.mp4,enquire_suitable_med,0
+Cantonese,我應該食咩藥,./Intent_Prediction/audio/0030.mp4,enquire_suitable_med,0
+English,Which medicine is right for me,./Intent_Prediction/audio/0031.mp4,enquire_suitable_med,0
+Cantonese,應該拎咩藥,./Intent_Prediction/audio/0032.mp4,enquire_suitable_med,0
+English,Can you find high blood pressure medicine,./Intent_Prediction/audio/0033.mp4,search_med,1220
+Cantonese,幫我攞高血壓藥,./Intent_Prediction/audio/0034.mp4,retrieve_med,1122
+Cantonese,高血壓藥搵唔到,./Intent_Prediction/audio/0035.mp4,search_med,1122000
+English,I need ACE Inhibitors,./Intent_Prediction/audio/0036.mp4,retrieve_med,0
+Cantonese,俾我血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0037.mp4,retrieve_med,12222222222
+English,Where are the hypertension pills,./Intent_Prediction/audio/0038.mp4,search_med,10
+Cantonese,幫手搵高血壓藥,./Intent_Prediction/audio/0039.mp4,search_med,1122
+English,Please bring me Metformin for diabetes,./Intent_Prediction/audio/0040.mp4,retrieve_med,303
+Cantonese,甲福明喺邊,./Intent_Prediction/audio/0041.mp4,search_med,34400
+English,Can you grab the diabetes pills,./Intent_Prediction/audio/0042.mp4,retrieve_med,30
+Cantonese,幫我攞糖尿病藥,./Intent_Prediction/audio/0043.mp4,retrieve_med,3440
+English,I am looking for Metformin,./Intent_Prediction/audio/0044.mp4,search_med,3
+Cantonese,邊度可以拎到糖尿病藥,./Intent_Prediction/audio/0045.mp4,search_med,3440
+English,Diabetes medication is what I need,./Intent_Prediction/audio/0046.mp4,retrieve_med,300000
+Cantonese,請攞甲福明,./Intent_Prediction/audio/0047.mp4,retrieve_med,344
+English,Get Atorvastatin for my CAD,./Intent_Prediction/audio/0048.mp4,retrieve_med,5005
+Cantonese,幫我搵冠脈病藥,./Intent_Prediction/audio/0049.mp4,search_med,5660
+English,Fetch my heart disease medication,./Intent_Prediction/audio/0050.mp4,retrieve_med,560
+Cantonese,攞心臟病藥畀我,./Intent_Prediction/audio/0051.mp4,retrieve_med,566000
+English,I need pills for coronary artery disease,./Intent_Prediction/audio/0052.mp4,retrieve_med,0
+Cantonese,心臟病藥喺邊,./Intent_Prediction/audio/0053.mp4,search_med,566000
+English,Where can I find Atorvastatin,./Intent_Prediction/audio/0054.mp4,search_med,5
+Cantonese,我要阿伐他汀,./Intent_Prediction/audio/0055.mp4,retrieve_med,5666
+English,Bring me Amitriptyline for depression,./Intent_Prediction/audio/0056.mp4,retrieve_med,707
+Cantonese,抗抑鬱藥係邊,./Intent_Prediction/audio/0057.mp4,search_med,78000
+English,Can I have pills for depression,./Intent_Prediction/audio/0058.mp4,retrieve_med,7
+Cantonese,攞抑鬱症藥俾我,./Intent_Prediction/audio/0059.mp4,retrieve_med,780000
+English,Where can I find antidepressants,./Intent_Prediction/audio/0060.mp4,search_med,0
+Cantonese,邊度有阿米替林,./Intent_Prediction/audio/0061.mp4,retrieve_med,7888
+English,What should I use for depression,./Intent_Prediction/audio/0062.mp4,enquire_suitable_med,7
+Cantonese,抗抑鬱藥拎唔拎得,./Intent_Prediction/audio/0063.mp4,retrieve_med,7800000
+English,Which pill do I need for diabetes,./Intent_Prediction/audio/0064.mp4,enquire_suitable_med,3
+Cantonese,我應該用咩藥,./Intent_Prediction/audio/0065.mp4,enquire_suitable_med,0
+English,Can you suggest a medicine for CAD,./Intent_Prediction/audio/0066.mp4,enquire_suitable_med,5
+Cantonese,冠心病食咩藥,./Intent_Prediction/audio/0067.mp4,enquire_suitable_med,566000
+English,Find the medicine for high blood pressure,./Intent_Prediction/audio/0068.mp4,enquire_suitable_med,122
+Cantonese,邊度有高血壓藥,./Intent_Prediction/audio/0069.mp4,search_med,1122
+English,Where can I get hypertension pills,./Intent_Prediction/audio/0070.mp4,search_med,10
+Cantonese,幫我拎血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0071.mp4,retrieve_med,12222222222
+English,Get me pills for my hypertension,./Intent_Prediction/audio/0072.mp4,retrieve_med,1
+Cantonese,請攞高血壓藥畀我,./Intent_Prediction/audio/0073.mp4,retrieve_med,112200
+English,I need ACE Inhibitor tablets,./Intent_Prediction/audio/0074.mp4,retrieve_med,120
+Cantonese,幫我搵高血壓藥,./Intent_Prediction/audio/0075.mp4,retrieve_med,1122
+English,Can you give me Metformin for diabetes,./Intent_Prediction/audio/0076.mp4,retrieve_med,303
+Cantonese,俾我糖尿病藥,./Intent_Prediction/audio/0077.mp4,retrieve_med,3440
+English,Where is the diabetes medicine kept,./Intent_Prediction/audio/0078.mp4,search_med,300
+Cantonese,糖尿病藥擺邊,./Intent_Prediction/audio/0079.mp4,search_med,344000
+English,I need to take Metformin for my condition,./Intent_Prediction/audio/0080.mp4,retrieve_med,3000
+Cantonese,攞甲福明畀我,./Intent_Prediction/audio/0081.mp4,retrieve_med,34400
+English,Grab the diabetes medication for me,./Intent_Prediction/audio/0082.mp4,retrieve_med,3000
+Cantonese,糖尿病藥幫手攞下,./Intent_Prediction/audio/0083.mp4,retrieve_med,34400000
+English,Please find my heart medication,./Intent_Prediction/audio/0084.mp4,retrieve_med,0
+Cantonese,幫我搵心臟病藥,./Intent_Prediction/audio/0085.mp4,retrieve_med,5660
+English,I need Atorvastatin tablets for CAD,./Intent_Prediction/audio/0086.mp4,retrieve_med,5005
+Cantonese,冠脈病藥放喺邊,./Intent_Prediction/audio/0087.mp4,search_med,5660000
+English,Can you grab Atorvastatin for me,./Intent_Prediction/audio/0088.mp4,retrieve_med,500
+Cantonese,攞冠心病藥,./Intent_Prediction/audio/0089.mp4,retrieve_med,5660
+English,Heart disease medicine is what I need,./Intent_Prediction/audio/0090.mp4,retrieve_med,5600000
+Cantonese,請攞阿伐他汀畀我,./Intent_Prediction/audio/0091.mp4,retrieve_med,566600
+English,Fetch depression medicine for me,./Intent_Prediction/audio/0092.mp4,retrieve_med,7000
+Cantonese,抑鬱症藥係邊,./Intent_Prediction/audio/0093.mp4,search_med,780000
+English,I want to take Amitriptyline for depression,./Intent_Prediction/audio/0094.mp4,retrieve_med,707
+Cantonese,阿米替林喺邊,./Intent_Prediction/audio/0095.mp4,search_med,788800
+English,Where are the antidepressants stored,./Intent_Prediction/audio/0096.mp4,search_med,0
+Cantonese,幫手搵抗抑鬱藥,./Intent_Prediction/audio/0097.mp4,search_med,780
+English,Give me a pill for depression,./Intent_Prediction/audio/0098.mp4,retrieve_med,7
+Cantonese,請幫我攞抑鬱症藥,./Intent_Prediction/audio/0099.mp4,retrieve_med,7800
+English,Which medicine helps with my heart condition,./Intent_Prediction/audio/0100.mp4,enquire_suitable_med,0
+Cantonese,食咩藥可以治好心臟病,./Intent_Prediction/audio/0101.mp4,enquire_suitable_med,566
+English,What do I need for my diabetes,./Intent_Prediction/audio/0102.mp4,enquire_suitable_med,3
+Cantonese,我應該攞咩藥治糖尿病,./Intent_Prediction/audio/0103.mp4,enquire_suitable_med,344
+English,Can you check what medicine suits me,./Intent_Prediction/audio/0104.mp4,enquire_suitable_med,0
+Cantonese,有咩藥適合我用,./Intent_Prediction/audio/0105.mp4,enquire_suitable_med,0
+English,I need medication for high blood pressure,./Intent_Prediction/audio/0106.mp4,enquire_suitable_med,122
+Cantonese,高血壓藥幫我搵下,./Intent_Prediction/audio/0107.mp4,search_med,11220000
+English,Can you find the pills for hypertension,./Intent_Prediction/audio/0108.mp4,search_med,1
+Cantonese,請幫我攞高血壓藥,./Intent_Prediction/audio/0109.mp4,retrieve_med,1122
+English,Fetch ACE Inhibitor tablets for me,./Intent_Prediction/audio/0110.mp4,retrieve_med,12000
+Cantonese,攞血管緊張素轉換酶抑制藥俾我,./Intent_Prediction/audio/0111.mp4,retrieve_med,1222222222200
+English,Bring me high blood pressure pills,./Intent_Prediction/audio/0112.mp4,retrieve_med,1220
+Cantonese,高血壓藥係邊,./Intent_Prediction/audio/0113.mp4,search_med,112200
+English,Get Metformin for my diabetes,./Intent_Prediction/audio/0114.mp4,retrieve_med,3003
+Cantonese,幫我拎糖尿病藥,./Intent_Prediction/audio/0115.mp4,retrieve_med,3440
+English,Where is the diabetes medication kept,./Intent_Prediction/audio/0116.mp4,search_med,300
+Cantonese,邊度可以搵到甲福明,./Intent_Prediction/audio/0117.mp4,search_med,344
+English,I want to take Metformin now,./Intent_Prediction/audio/0118.mp4,retrieve_med,30
+Cantonese,請攞糖尿病藥俾我,./Intent_Prediction/audio/0119.mp4,retrieve_med,344000
+English,Can you bring me diabetes pills,./Intent_Prediction/audio/0120.mp4,retrieve_med,30
+Cantonese,攞甲福明幫幫手,./Intent_Prediction/audio/0121.mp4,retrieve_med,344000
+English,I need Atorvastatin for coronary artery disease,./Intent_Prediction/audio/0122.mp4,retrieve_med,50000
+Cantonese,冠心病藥幫我搵下,./Intent_Prediction/audio/0123.mp4,search_med,56600000
+English,Find the heart disease medication for me,./Intent_Prediction/audio/0124.mp4,retrieve_med,56000
+Cantonese,攞心臟病藥俾我,./Intent_Prediction/audio/0125.mp4,retrieve_med,566000
+English,Can you fetch Atorvastatin,./Intent_Prediction/audio/0126.mp4,retrieve_med,5
+Cantonese,心臟病藥邊度有,./Intent_Prediction/audio/0127.mp4,search_med,5660000
+English,Bring my coronary disease pills,./Intent_Prediction/audio/0128.mp4,retrieve_med,0
+Cantonese,幫手攞冠心病藥,./Intent_Prediction/audio/0129.mp4,retrieve_med,5660
+English,Fetch Amitriptyline for depression,./Intent_Prediction/audio/0130.mp4,retrieve_med,707
+Cantonese,請搵阿米替林,./Intent_Prediction/audio/0131.mp4,search_med,7888
+English,Can you find my antidepressant,./Intent_Prediction/audio/0132.mp4,search_med,7
+Cantonese,幫我搵抑鬱症藥,./Intent_Prediction/audio/0133.mp4,search_med,7800
+English,I want to take antidepressants,./Intent_Prediction/audio/0134.mp4,retrieve_med,0
+Cantonese,請攞抑鬱症藥畀我,./Intent_Prediction/audio/0135.mp4,retrieve_med,780000
+English,Where are my depression tablets,./Intent_Prediction/audio/0136.mp4,search_med,70
+Cantonese,邊度有抗抑鬱藥,./Intent_Prediction/audio/0137.mp4,search_med,780
+English,What medicine should I use for high blood pressure,./Intent_Prediction/audio/0138.mp4,enquire_suitable_med,122
+Cantonese,治高血壓食咩藥,./Intent_Prediction/audio/0139.mp4,enquire_suitable_med,122000
+English,Which pills are good for heart disease,./Intent_Prediction/audio/0140.mp4,enquire_suitable_med,56
+Cantonese,治心臟病應該用咩藥,./Intent_Prediction/audio/0141.mp4,enquire_suitable_med,56600000
+English,Can you suggest the right medicine for me,./Intent_Prediction/audio/0142.mp4,enquire_suitable_med,0
+Cantonese,我應該買咩藥,./Intent_Prediction/audio/0143.mp4,enquire_suitable_med,0
+English,What tablets should I use for my condition,./Intent_Prediction/audio/0144.mp4,enquire_suitable_med,0
+Cantonese,咩藥適合治療我嘅病,./Intent_Prediction/audio/0145.mp4,enquire_suitable_med,0
+English,What time is the meeting,./Intent_Prediction/audio/0146.mp4,other_intents,0
+Cantonese,今日幾點開會,./Intent_Prediction/audio/0147.mp4,other_intents,0
+English,Can you turn on the lights,./Intent_Prediction/audio/0148.mp4,other_intents,0
+Cantonese,幫我開燈,./Intent_Prediction/audio/0149.mp4,other_intents,0
+English,Where is the nearest coffee shop,./Intent_Prediction/audio/0150.mp4,other_intents,0
+Cantonese,邊度有咖啡店,./Intent_Prediction/audio/0151.mp4,other_intents,0
+English,I need to call a taxi,./Intent_Prediction/audio/0152.mp4,other_intents,0
+Cantonese,幫我叫的士,./Intent_Prediction/audio/0153.mp4,other_intents,0
+English,What’s the weather like today,./Intent_Prediction/audio/0154.mp4,other_intents,0
+Cantonese,今日天氣如何,./Intent_Prediction/audio/0155.mp4,other_intents,0
+English,Play some relaxing music for me,./Intent_Prediction/audio/0156.mp4,other_intents,0
+Cantonese,播啲輕鬆嘅音樂,./Intent_Prediction/audio/0157.mp4,other_intents,0
+English,How do I connect to WiFi,./Intent_Prediction/audio/0158.mp4,other_intents,0
+Cantonese,點樣連接WiFi,./Intent_Prediction/audio/0159.mp4,other_intents,0
+English,Can you set an alarm for me,./Intent_Prediction/audio/0160.mp4,other_intents,0
+Cantonese,幫我設鬧鐘,./Intent_Prediction/audio/0161.mp4,other_intents,0
+English,Where is my phone,./Intent_Prediction/audio/0162.mp4,other_intents,0
+Cantonese,我部電話去咗邊,./Intent_Prediction/audio/0163.mp4,other_intents,0
+English,What’s the schedule for tomorrow,./Intent_Prediction/audio/0164.mp4,other_intents,0
+Cantonese,明日行程係咩,./Intent_Prediction/audio/0165.mp4,other_intents,0
+English,Help me find my keys,./Intent_Prediction/audio/0166.mp4,other_intents,0
+Cantonese,幫我搵鎖匙,./Intent_Prediction/audio/0167.mp4,other_intents,0
+English,Turn off the air conditioner,./Intent_Prediction/audio/0168.mp4,other_intents,0
+Cantonese,幫我關冷氣,./Intent_Prediction/audio/0169.mp4,other_intents,0
+English,Do you know any good restaurants nearby,./Intent_Prediction/audio/0170.mp4,other_intents,0
+Cantonese,附近有咩好餐廳,./Intent_Prediction/audio/0171.mp4,other_intents,0
+English,How long will it take to get there,./Intent_Prediction/audio/0172.mp4,other_intents,0
+Cantonese,去到嗰度要幾耐,./Intent_Prediction/audio/0173.mp4,other_intents,0
+English,Remind me to drink water,./Intent_Prediction/audio/0174.mp4,other_intents,0
+Cantonese,提醒我要飲水,./Intent_Prediction/audio/0175.mp4,other_intents,0
+English,What is the current time,./Intent_Prediction/audio/0176.mp4,other_intents,0
+Cantonese,依家幾點鐘,./Intent_Prediction/audio/0177.mp4,other_intents,0
+English,Can you help me open the door,./Intent_Prediction/audio/0178.mp4,other_intents,0
+Cantonese,幫我開門,./Intent_Prediction/audio/0179.mp4,other_intents,0
+English,What’s your favorite color,./Intent_Prediction/audio/0180.mp4,other_intents,0
+Cantonese,你最鍾意咩顏色,./Intent_Prediction/audio/0181.mp4,other_intents,0
+English,Where is the nearest bus stop,./Intent_Prediction/audio/0182.mp4,other_intents,0
+Cantonese,最近巴士站喺邊,./Intent_Prediction/audio/0183.mp4,other_intents,0
+English,How do I get to the train station,./Intent_Prediction/audio/0184.mp4,other_intents,0
+Cantonese,點樣去火車站,./Intent_Prediction/audio/0185.mp4,other_intents,0
+English,Can you order some food for me,./Intent_Prediction/audio/0186.mp4,other_intents,0
+Cantonese,幫我訂外賣,./Intent_Prediction/audio/0187.mp4,other_intents,0
+English,I need to check my email,./Intent_Prediction/audio/0188.mp4,other_intents,0
+Cantonese,我要查電郵,./Intent_Prediction/audio/0189.mp4,other_intents,0
+English,What’s the latest news,./Intent_Prediction/audio/0190.mp4,other_intents,0
+Cantonese,最新新聞有咩,./Intent_Prediction/audio/0191.mp4,other_intents,0
+English,Can you find my wallet,./Intent_Prediction/audio/0192.mp4,other_intents,0
+Cantonese,幫我搵銀包,./Intent_Prediction/audio/0193.mp4,other_intents,0
+English,What movies are playing nearby,./Intent_Prediction/audio/0194.mp4,other_intents,0
+Cantonese,附近有咩戲上映,./Intent_Prediction/audio/0195.mp4,other_intents,0
+English,Remind me about my appointment,./Intent_Prediction/audio/0196.mp4,other_intents,0
+Cantonese,記得提醒我約會,./Intent_Prediction/audio/0197.mp4,other_intents,0
+English,Where is the closest supermarket,./Intent_Prediction/audio/0198.mp4,other_intents,0
+Cantonese,最近嘅超市喺邊,./Intent_Prediction/audio/0199.mp4,other_intents,0
+English,Can you adjust the room temperature,./Intent_Prediction/audio/0200.mp4,other_intents,0
+Cantonese,幫我調室溫,./Intent_Prediction/audio/0201.mp4,other_intents,0
+English,What is the traffic like right now,./Intent_Prediction/audio/0202.mp4,other_intents,0
+Cantonese,依家交通情況如何,./Intent_Prediction/audio/0203.mp4,other_intents,0
+English,Let’s go for a walk,./Intent_Prediction/audio/0204.mp4,other_intents,0
+Cantonese,我哋出去行下啦,./Intent_Prediction/audio/0205.mp4,other_intents,0
+English,What’s on my to-do list today,./Intent_Prediction/audio/0206.mp4,other_intents,0
+Cantonese,今日有咩待辦事項,./Intent_Prediction/audio/0207.mp4,other_intents,0
+English,How far is the airport from here,./Intent_Prediction/audio/0208.mp4,other_intents,0
+Cantonese,機場距離呢度有幾遠,./Intent_Prediction/audio/0209.mp4,other_intents,0
+English,Can you translate this sentence for me,./Intent_Prediction/audio/0210.mp4,other_intents,0
+Cantonese,幫我翻譯呢句說話,./Intent_Prediction/audio/0211.mp4,other_intents,0
+English,I need help finding a parking spot,./Intent_Prediction/audio/0212.mp4,other_intents,0
+Cantonese,幫我搵個泊車位,./Intent_Prediction/audio/0213.mp4,other_intents,0
+English,When is the next holiday,./Intent_Prediction/audio/0214.mp4,other_intents,0
+Cantonese,下次假期係幾時,./Intent_Prediction/audio/0215.mp4,other_intents,0
+English,Give me hypertension medication,./Intent_Prediction/audio/0216.mp4,retrieve_med,10
+Cantonese,攞高血壓藥畀我,./Intent_Prediction/audio/0217.mp4,retrieve_med,112200
+English,Find me the ACE Inhibitor pills,./Intent_Prediction/audio/0218.mp4,search_med,120
+Cantonese,幫手搵血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0219.mp4,search_med,12222222222
+English,I need tablets for high blood pressure,./Intent_Prediction/audio/0220.mp4,retrieve_med,122
+Cantonese,高血壓藥喺邊度,./Intent_Prediction/audio/0221.mp4,search_med,1122000
+English,Bring me some hypertension pills,./Intent_Prediction/audio/0222.mp4,retrieve_med,10
+Cantonese,請幫我攞高血壓藥,./Intent_Prediction/audio/0223.mp4,retrieve_med,1122
+English,Where is the Metformin for diabetes,./Intent_Prediction/audio/0224.mp4,search_med,303
+Cantonese,糖尿病藥邊度有,./Intent_Prediction/audio/0225.mp4,search_med,3440000
+English,I need Metformin now,./Intent_Prediction/audio/0226.mp4,retrieve_med,30
+Cantonese,請攞甲福明畀我,./Intent_Prediction/audio/0227.mp4,retrieve_med,34400
+English,Fetch diabetes medication for me,./Intent_Prediction/audio/0228.mp4,retrieve_med,3000
+Cantonese,幫我拎糖尿病藥,./Intent_Prediction/audio/0229.mp4,retrieve_med,3440
+English,Can you bring me Metformin tablets,./Intent_Prediction/audio/0230.mp4,retrieve_med,30
+Cantonese,我要糖尿病藥,./Intent_Prediction/audio/0231.mp4,retrieve_med,3440
+English,Where is the Atorvastatin for my heart,./Intent_Prediction/audio/0232.mp4,search_med,5000
+Cantonese,攞心臟病藥幫下手,./Intent_Prediction/audio/0233.mp4,search_med,5660000
+English,Bring me heart disease medication,./Intent_Prediction/audio/0234.mp4,retrieve_med,560
+Cantonese,心臟病藥放喺邊,./Intent_Prediction/audio/0235.mp4,search_med,5660000
+English,I need pills for coronary artery disease,./Intent_Prediction/audio/0236.mp4,retrieve_med,0
+Cantonese,冠脈病藥喺邊度,./Intent_Prediction/audio/0237.mp4,search_med,5660000
+English,Fetch Atorvastatin tablets for me,./Intent_Prediction/audio/0238.mp4,retrieve_med,5000
+Cantonese,阿伐他汀幫我攞,./Intent_Prediction/audio/0239.mp4,retrieve_med,5666000
+English,Give me antidepressants for depression,./Intent_Prediction/audio/0240.mp4,retrieve_med,7
+Cantonese,我要阿米替林,./Intent_Prediction/audio/0241.mp4,retrieve_med,7888
+English,Where is the medicine for depression,./Intent_Prediction/audio/0242.mp4,search_med,7
+Cantonese,幫我攞抑鬱症藥,./Intent_Prediction/audio/0243.mp4,retrieve_med,7800
+English,I need Amitriptyline tablets,./Intent_Prediction/audio/0244.mp4,retrieve_med,70
+Cantonese,阿米替林係邊度,./Intent_Prediction/audio/0245.mp4,search_med,7888000
+English,Bring depression medication for me,./Intent_Prediction/audio/0246.mp4,retrieve_med,7000
+Cantonese,請攞抗抑鬱藥畀我,./Intent_Prediction/audio/0247.mp4,retrieve_med,78000
+English,Where are my pills for depression,./Intent_Prediction/audio/0248.mp4,search_med,7
+Cantonese,抑鬱症藥幫我搵下,./Intent_Prediction/audio/0249.mp4,retrieve_med,78000000
+English,Get me high blood pressure pills,./Intent_Prediction/audio/0250.mp4,retrieve_med,1220
+Cantonese,幫我攞高血壓藥,./Intent_Prediction/audio/0251.mp4,retrieve_med,1122
+English,Where is the ACE Inhibitor medicine,./Intent_Prediction/audio/0252.mp4,search_med,120
+Cantonese,血管緊張素轉換酶抑制藥喺邊,./Intent_Prediction/audio/0253.mp4,search_med,1222222222200
+English,I need medicine for hypertension,./Intent_Prediction/audio/0254.mp4,retrieve_med,1
+Cantonese,攞高血壓藥幫幫手,./Intent_Prediction/audio/0255.mp4,retrieve_med,1122000
+English,Fetch hypertension medication for me,./Intent_Prediction/audio/0256.mp4,retrieve_med,1000
+Cantonese,請攞高血壓藥,./Intent_Prediction/audio/0257.mp4,retrieve_med,1122
+English,Find the Metformin tablets for me,./Intent_Prediction/audio/0258.mp4,search_med,3000
+Cantonese,幫我搵甲福明,./Intent_Prediction/audio/0259.mp4,retrieve_med,344
+English,I want diabetes medicine,./Intent_Prediction/audio/0260.mp4,retrieve_med,30
+Cantonese,我要糖尿病藥,./Intent_Prediction/audio/0261.mp4,retrieve_med,3440
+English,Bring me Metformin for my condition,./Intent_Prediction/audio/0262.mp4,retrieve_med,3000
+Cantonese,請攞甲福明畀我,./Intent_Prediction/audio/0263.mp4,retrieve_med,34400
+English,Can you find diabetes pills for me,./Intent_Prediction/audio/0264.mp4,search_med,3000
+Cantonese,糖尿病藥幫我搵下,./Intent_Prediction/audio/0265.mp4,retrieve_med,34400000
+English,Fetch me the Metformin tablets,./Intent_Prediction/audio/0266.mp4,retrieve_med,30
+Cantonese,搵糖尿病藥俾我,./Intent_Prediction/audio/0267.mp4,retrieve_med,344000
+English,I need Atorvastatin for CAD,./Intent_Prediction/audio/0268.mp4,retrieve_med,505
+Cantonese,攞阿伐他汀,./Intent_Prediction/audio/0269.mp4,retrieve_med,5666
+English,Bring coronary artery medication,./Intent_Prediction/audio/0270.mp4,retrieve_med,0
+Cantonese,請攞冠心病藥畀我,./Intent_Prediction/audio/0271.mp4,retrieve_med,566000
+English,Where can I find heart disease pills,./Intent_Prediction/audio/0272.mp4,search_med,560
+Cantonese,心臟病藥放喺邊,./Intent_Prediction/audio/0273.mp4,search_med,5660000
+English,Fetch my Atorvastatin tablets,./Intent_Prediction/audio/0274.mp4,retrieve_med,50
+Cantonese,冠脈病藥幫我搵下,./Intent_Prediction/audio/0275.mp4,search_med,56600000
+English,Give me some pills for my heart condition,./Intent_Prediction/audio/0276.mp4,retrieve_med,0
+Cantonese,幫我攞心臟病藥,./Intent_Prediction/audio/0277.mp4,retrieve_med,5660
+English,Bring me pills for depression,./Intent_Prediction/audio/0278.mp4,retrieve_med,7
+Cantonese,攞抑鬱症藥俾我,./Intent_Prediction/audio/0279.mp4,retrieve_med,780000
+English,Can you find my antidepressant pills,./Intent_Prediction/audio/0280.mp4,search_med,70
+Cantonese,幫手搵抗抑鬱藥,./Intent_Prediction/audio/0281.mp4,search_med,780
+English,I want Amitriptyline for my depression,./Intent_Prediction/audio/0282.mp4,retrieve_med,7007
+Cantonese,我要阿米替林,./Intent_Prediction/audio/0283.mp4,retrieve_med,7888
+English,Find me the antidepressant medication,./Intent_Prediction/audio/0284.mp4,search_med,70
+Cantonese,攞抗抑鬱藥幫下手,./Intent_Prediction/audio/0285.mp4,retrieve_med,780000
+English,Fetch the depression medication for me,./Intent_Prediction/audio/0286.mp4,retrieve_med,7000
+Cantonese,請幫我攞抑鬱症藥,./Intent_Prediction/audio/0287.mp4,retrieve_med,7800
+English,Find pills for high blood pressure,./Intent_Prediction/audio/0288.mp4,search_med,122
+Cantonese,幫我搵高血壓藥,./Intent_Prediction/audio/0289.mp4,search_med,1122
+English,I need tablets to control hypertension,./Intent_Prediction/audio/0290.mp4,retrieve_med,1
+Cantonese,攞血管緊張素轉換酶抑制藥畀我,./Intent_Prediction/audio/0291.mp4,retrieve_med,1222222222200
+English,Bring hypertension medicine to me,./Intent_Prediction/audio/0292.mp4,retrieve_med,1000
+Cantonese,高血壓藥幫我拎嚟,./Intent_Prediction/audio/0293.mp4,retrieve_med,11220000
+English,Where is the ACE Inhibitor stored,./Intent_Prediction/audio/0294.mp4,search_med,120
+Cantonese,血管緊張素轉換酶抑制藥放喺邊,./Intent_Prediction/audio/0295.mp4,search_med,12222222222000
+English,Can you grab Metformin for me,./Intent_Prediction/audio/0296.mp4,retrieve_med,300
+Cantonese,請幫手攞糖尿病藥,./Intent_Prediction/audio/0297.mp4,retrieve_med,3440
+English,Bring me medication for diabetes,./Intent_Prediction/audio/0298.mp4,retrieve_med,3
+Cantonese,我要甲福明,./Intent_Prediction/audio/0299.mp4,retrieve_med,344
+English,I need Metformin tablets urgently,./Intent_Prediction/audio/0300.mp4,retrieve_med,300
+Cantonese,請攞糖尿病藥畀我,./Intent_Prediction/audio/0301.mp4,retrieve_med,344000
+English,Find some diabetes medication for me,./Intent_Prediction/audio/0302.mp4,search_med,3000
+Cantonese,幫我搵糖尿病藥,./Intent_Prediction/audio/0303.mp4,retrieve_med,3440
+English,Grab Metformin pills for my condition,./Intent_Prediction/audio/0304.mp4,retrieve_med,30000
+Cantonese,攞糖尿病藥俾我,./Intent_Prediction/audio/0305.mp4,retrieve_med,344000
+English,Find me Atorvastatin for my heart,./Intent_Prediction/audio/0306.mp4,search_med,5000
+Cantonese,冠心病藥請幫手搵下,./Intent_Prediction/audio/0307.mp4,retrieve_med,566000000
+English,Can you fetch heart disease pills,./Intent_Prediction/audio/0308.mp4,retrieve_med,560
+Cantonese,心臟病藥幫我搵下,./Intent_Prediction/audio/0309.mp4,retrieve_med,56600000
+English,I need Atorvastatin pills for CAD,./Intent_Prediction/audio/0310.mp4,retrieve_med,5005
+Cantonese,阿伐他汀請攞畀我,./Intent_Prediction/audio/0311.mp4,retrieve_med,56660000
+English,Bring me medication for coronary disease,./Intent_Prediction/audio/0312.mp4,retrieve_med,0
+Cantonese,幫我攞冠脈病藥,./Intent_Prediction/audio/0313.mp4,retrieve_med,5660
+English,Fetch pills for heart disease,./Intent_Prediction/audio/0314.mp4,retrieve_med,56
+Cantonese,心臟病藥請攞,./Intent_Prediction/audio/0315.mp4,retrieve_med,566000
+English,Give me depression medicine now,./Intent_Prediction/audio/0316.mp4,retrieve_med,700
+Cantonese,抑鬱症藥攞畀我,./Intent_Prediction/audio/0317.mp4,retrieve_med,7800000
+English,I need antidepressants quickly,./Intent_Prediction/audio/0318.mp4,retrieve_med,0
+Cantonese,幫手攞阿米替林,./Intent_Prediction/audio/0319.mp4,retrieve_med,7888
+English,Bring me Amitriptyline medication,./Intent_Prediction/audio/0320.mp4,retrieve_med,70
+Cantonese,請攞抑鬱症藥畀我,./Intent_Prediction/audio/0321.mp4,retrieve_med,780000
+English,Find my depression medicine,./Intent_Prediction/audio/0322.mp4,search_med,70
+Cantonese,搵阿米替林俾我,./Intent_Prediction/audio/0323.mp4,retrieve_med,788800
+English,Fetch antidepressants for my condition,./Intent_Prediction/audio/0324.mp4,retrieve_med,0
+Cantonese,攞抗抑鬱藥幫我,./Intent_Prediction/audio/0325.mp4,retrieve_med,78000
+English,Can you find hypertension medication for me,./Intent_Prediction/audio/0326.mp4,search_med,1000
+Cantonese,幫我搵高血壓藥,./Intent_Prediction/audio/0327.mp4,search_med,1122
+English,Bring me the pills for high blood pressure,./Intent_Prediction/audio/0328.mp4,retrieve_med,122
+Cantonese,攞高血壓藥俾我,./Intent_Prediction/audio/0329.mp4,retrieve_med,112200
+English,I need ACE Inhibitor for hypertension,./Intent_Prediction/audio/0330.mp4,retrieve_med,1201
+Cantonese,血管緊張素轉換酶抑制藥幫我攞下,./Intent_Prediction/audio/0331.mp4,retrieve_med,122222222220000
+English,Where is the medication for hypertension,./Intent_Prediction/audio/0332.mp4,search_med,1
+Cantonese,高血壓藥放喺邊,./Intent_Prediction/audio/0333.mp4,search_med,1122000
+English,Fetch diabetes pills for me,./Intent_Prediction/audio/0334.mp4,retrieve_med,3000
+Cantonese,幫我攞糖尿病藥,./Intent_Prediction/audio/0335.mp4,retrieve_med,3440
+English,Can you bring Metformin for my diabetes,./Intent_Prediction/audio/0336.mp4,retrieve_med,3003
+Cantonese,請攞甲福明畀我,./Intent_Prediction/audio/0337.mp4,retrieve_med,34400
+English,I want the medicine for diabetes,./Intent_Prediction/audio/0338.mp4,retrieve_med,3
+Cantonese,我要糖尿病藥,./Intent_Prediction/audio/0339.mp4,retrieve_med,3440
+English,Get the Metformin tablets for my treatment,./Intent_Prediction/audio/0340.mp4,retrieve_med,30000
+Cantonese,幫我搵甲福明,./Intent_Prediction/audio/0341.mp4,search_med,344
+English,Find medication for controlling diabetes,./Intent_Prediction/audio/0342.mp4,search_med,3
+Cantonese,糖尿病藥幫我拎,./Intent_Prediction/audio/0343.mp4,retrieve_med,3440000
+English,Bring heart disease pills for me,./Intent_Prediction/audio/0344.mp4,retrieve_med,56000
+Cantonese,攞心臟病藥俾我,./Intent_Prediction/audio/0345.mp4,retrieve_med,566000
+English,Where are the Atorvastatin tablets stored,./Intent_Prediction/audio/0346.mp4,search_med,500
+Cantonese,阿伐他汀放喺邊度,./Intent_Prediction/audio/0347.mp4,search_med,56660000
+English,I need coronary disease medication,./Intent_Prediction/audio/0348.mp4,retrieve_med,0
+Cantonese,幫我搵冠脈病藥,./Intent_Prediction/audio/0349.mp4,retrieve_med,5660
+English,Fetch medication for heart problems,./Intent_Prediction/audio/0350.mp4,retrieve_med,0
+Cantonese,心臟病藥幫我搵下,./Intent_Prediction/audio/0351.mp4,search_med,56600000
+English,Can you grab Atorvastatin for me,./Intent_Prediction/audio/0352.mp4,retrieve_med,500
+Cantonese,阿伐他汀幫手攞下,./Intent_Prediction/audio/0353.mp4,retrieve_med,56660000
+English,Bring me antidepressants now,./Intent_Prediction/audio/0354.mp4,retrieve_med,0
+Cantonese,請攞抗抑鬱藥畀我,./Intent_Prediction/audio/0355.mp4,retrieve_med,78000
+English,Where is my depression medication,./Intent_Prediction/audio/0356.mp4,search_med,70
+Cantonese,幫我搵抑鬱症藥,./Intent_Prediction/audio/0357.mp4,search_med,7800
+English,I need Amitriptyline for depression,./Intent_Prediction/audio/0358.mp4,retrieve_med,707
+Cantonese,請幫我攞阿米替林,./Intent_Prediction/audio/0359.mp4,retrieve_med,7888
+English,Fetch antidepressant tablets for me,./Intent_Prediction/audio/0360.mp4,retrieve_med,7000
+Cantonese,搵抗抑鬱藥畀我,./Intent_Prediction/audio/0361.mp4,search_med,78000
+English,Give me the medicine for my depression,./Intent_Prediction/audio/0362.mp4,retrieve_med,7
+Cantonese,攞抑鬱症藥俾我,./Intent_Prediction/audio/0363.mp4,retrieve_med,780000
+Cantonese,幫我搵 ACE Inhibitor 藥,./Intent_Prediction/audio/0364.mp4,search_med,120
+Cantonese,Can you get my 高血壓藥,./Intent_Prediction/audio/0365.mp4,retrieve_med,1122
+Cantonese,攞 hypertension 藥畀我,./Intent_Prediction/audio/0366.mp4,retrieve_med,1000
+Cantonese,Where is my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0367.mp4,search_med,12222222222
+Cantonese,請幫我拎 Metformin,./Intent_Prediction/audio/0368.mp4,retrieve_med,3
+Cantonese,Find my 糖尿病 medication,./Intent_Prediction/audio/0369.mp4,search_med,3440
+Cantonese,幫我搵糖尿病藥 Metformin,./Intent_Prediction/audio/0370.mp4,search_med,34403
+Cantonese,Can you fetch my 甲福明 pills,./Intent_Prediction/audio/0371.mp4,retrieve_med,3440
+Cantonese,攞 Atorvastatin 畀我,./Intent_Prediction/audio/0372.mp4,retrieve_med,500
+Cantonese,Bring me 心臟病 medication,./Intent_Prediction/audio/0373.mp4,retrieve_med,5660
+Cantonese,幫手搵冠心病藥 Atorvastatin,./Intent_Prediction/audio/0374.mp4,search_med,56605
+Cantonese,Find my 阿伐他汀 tablets,./Intent_Prediction/audio/0375.mp4,search_med,56660
+Cantonese,請幫我攞 Amitriptyline,./Intent_Prediction/audio/0376.mp4,retrieve_med,7
+Cantonese,Where is my 抗抑鬱藥,./Intent_Prediction/audio/0377.mp4,search_med,780
+Cantonese,我要 Amitriptyline 抑鬱症藥,./Intent_Prediction/audio/0378.mp4,retrieve_med,77800
+Cantonese,Fetch my 阿米替林 medication,./Intent_Prediction/audio/0379.mp4,retrieve_med,78880
+Cantonese,請問 ACE Inhibitor 喺邊,./Intent_Prediction/audio/0380.mp4,search_med,1200
+Cantonese,Where can I find 高血壓藥,./Intent_Prediction/audio/0381.mp4,search_med,1122
+Cantonese,幫我攞 hypertension 藥,./Intent_Prediction/audio/0382.mp4,retrieve_med,10
+Cantonese,I need my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0383.mp4,retrieve_med,12222222222
+Cantonese,Metformin 係邊度,./Intent_Prediction/audio/0384.mp4,search_med,3000
+Cantonese,Can you bring me 糖尿病 medication,./Intent_Prediction/audio/0385.mp4,retrieve_med,3440
+Cantonese,我要糖尿病藥 Metformin,./Intent_Prediction/audio/0386.mp4,retrieve_med,34403
+Cantonese,Get my 甲福明 pills for me,./Intent_Prediction/audio/0387.mp4,retrieve_med,344000
+Cantonese,幫我拎 Atorvastatin,./Intent_Prediction/audio/0388.mp4,retrieve_med,5
+Cantonese,I need my 心臟病 medication,./Intent_Prediction/audio/0389.mp4,retrieve_med,5660
+Cantonese,請幫我搵冠心病藥 Atorvastatin,./Intent_Prediction/audio/0390.mp4,search_med,56605
+Cantonese,Fetch my 阿伐他汀 tablets,./Intent_Prediction/audio/0391.mp4,retrieve_med,56660
+Cantonese,Amitriptyline 喺邊,./Intent_Prediction/audio/0392.mp4,search_med,700
+Cantonese,Where is my 抗抑鬱藥,./Intent_Prediction/audio/0393.mp4,search_med,780
+Cantonese,攞 Amitriptyline 抑鬱症藥俾我,./Intent_Prediction/audio/0394.mp4,retrieve_med,7780000
+Cantonese,Can you find my 阿米替林 medication,./Intent_Prediction/audio/0395.mp4,search_med,78880
+Cantonese,我要 ACE Inhibitor 幫我攞,./Intent_Prediction/audio/0396.mp4,retrieve_med,12000
+Cantonese,Find my 高血壓藥 for me,./Intent_Prediction/audio/0397.mp4,retrieve_med,112200
+Cantonese,請幫手搵 hypertension 藥,./Intent_Prediction/audio/0398.mp4,search_med,10
+Cantonese,Fetch my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0399.mp4,retrieve_med,12222222222
+Cantonese,Metformin 幫我攞嚟,./Intent_Prediction/audio/0400.mp4,retrieve_med,30000
+Cantonese,Bring me 糖尿病 medication now,./Intent_Prediction/audio/0401.mp4,retrieve_med,34400
+Cantonese,幫手搵 Metformin 糖尿病藥,./Intent_Prediction/audio/0402.mp4,search_med,33440
+Cantonese,Where are my 甲福明 pills,./Intent_Prediction/audio/0403.mp4,search_med,3440
+Cantonese,Atorvastatin 喺邊度,./Intent_Prediction/audio/0404.mp4,search_med,5000
+Cantonese,Get me some 心臟病 medication,./Intent_Prediction/audio/0405.mp4,retrieve_med,5660
+Cantonese,幫我攞 Atorvastatin 心臟病藥,./Intent_Prediction/audio/0406.mp4,retrieve_med,55660
+Cantonese,Find my 冠心病 medication now,./Intent_Prediction/audio/0407.mp4,search_med,56600
+Cantonese,我要 Amitriptyline 抗抑鬱藥,./Intent_Prediction/audio/0408.mp4,retrieve_med,70780
+Cantonese,Can you bring my 抑鬱症 medication,./Intent_Prediction/audio/0409.mp4,search_med,7800
+Cantonese,幫手攞 Amitriptyline 俾我,./Intent_Prediction/audio/0410.mp4,retrieve_med,700
+Cantonese,Where are my 阿米替林 pills,./Intent_Prediction/audio/0411.mp4,search_med,78880
+Cantonese,幫我攞 ACE Inhibitor 高血壓藥,./Intent_Prediction/audio/0412.mp4,retrieve_med,121122
+Cantonese,Can you find my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0413.mp4,search_med,12222222222
+Cantonese,我想要 hypertension 藥,./Intent_Prediction/audio/0414.mp4,retrieve_med,10
+Cantonese,Where can I get 高血壓 medicine,./Intent_Prediction/audio/0415.mp4,search_med,1220
+Cantonese,請幫我拎 Metformin 糖尿病藥,./Intent_Prediction/audio/0416.mp4,retrieve_med,33440
+Cantonese,Find me my 甲福明 tablets,./Intent_Prediction/audio/0417.mp4,search_med,3440
+Cantonese,Metformin 係邊度,./Intent_Prediction/audio/0418.mp4,search_med,3000
+Cantonese,Bring me my 糖尿病 pills,./Intent_Prediction/audio/0419.mp4,retrieve_med,3440
+Cantonese,幫手搵 Atorvastatin 心臟病藥,./Intent_Prediction/audio/0420.mp4,search_med,55660
+Cantonese,Where is my 冠心病 medication,./Intent_Prediction/audio/0421.mp4,search_med,5660
+Cantonese,請幫我攞阿伐他汀,./Intent_Prediction/audio/0422.mp4,retrieve_med,5666
+Cantonese,Fetch my heart disease 藥,./Intent_Prediction/audio/0423.mp4,retrieve_med,560
+Cantonese,攞 Amitriptyline 抑鬱症藥畀我,./Intent_Prediction/audio/0424.mp4,retrieve_med,7780000
+Cantonese,Find me my 抗抑鬱 medication,./Intent_Prediction/audio/0425.mp4,search_med,780
+Cantonese,阿米替林 喺邊度,./Intent_Prediction/audio/0426.mp4,search_med,7888000
+Cantonese,Can you grab my depression 藥,./Intent_Prediction/audio/0427.mp4,retrieve_med,70
+Cantonese,我要 ACE Inhibitor 幫手拎,./Intent_Prediction/audio/0428.mp4,retrieve_med,12000
+Cantonese,Get me some 高血壓藥,./Intent_Prediction/audio/0429.mp4,retrieve_med,1122
+Cantonese,請幫我搵 hypertension 藥,./Intent_Prediction/audio/0430.mp4,retrieve_med,10
+Cantonese,Fetch my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0431.mp4,retrieve_med,12222222222
+Cantonese,Metformin 幫我攞過嚟,./Intent_Prediction/audio/0432.mp4,retrieve_med,300000
+Cantonese,Bring me some 糖尿病 medicine,./Intent_Prediction/audio/0433.mp4,retrieve_med,3440
+Cantonese,搵 Metformin 糖尿病藥俾我,./Intent_Prediction/audio/0434.mp4,retrieve_med,3344000
+Cantonese,Where are my 甲福明 pills,./Intent_Prediction/audio/0435.mp4,search_med,3440
+Cantonese,Atorvastatin 放喺邊,./Intent_Prediction/audio/0436.mp4,search_med,5000
+Cantonese,I need my 心臟病 medicine,./Intent_Prediction/audio/0437.mp4,retrieve_med,5660
+Cantonese,幫我攞 Atorvastatin 冠心病藥,./Intent_Prediction/audio/0438.mp4,retrieve_med,55660
+Cantonese,Find my 阿伐他汀 tablets now,./Intent_Prediction/audio/0439.mp4,search_med,566600
+Cantonese,我要 Amitriptyline 抗抑鬱藥,./Intent_Prediction/audio/0440.mp4,retrieve_med,70780
+Cantonese,Can you find my 抑鬱症 medication,./Intent_Prediction/audio/0441.mp4,search_med,7800
+Cantonese,請幫我攞 Amitriptyline,./Intent_Prediction/audio/0442.mp4,retrieve_med,7
+Cantonese,Where is my 阿米替林,./Intent_Prediction/audio/0443.mp4,search_med,7888
+Cantonese,幫我搵 ACE Inhibitor 高血壓藥,./Intent_Prediction/audio/0444.mp4,search_med,121122
+Cantonese,Where can I get 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0445.mp4,search_med,12222222222
+Cantonese,攞 hypertension 藥畀我,./Intent_Prediction/audio/0446.mp4,retrieve_med,1000
+Cantonese,Can you fetch my 高血壓 medication,./Intent_Prediction/audio/0447.mp4,retrieve_med,1220
+Cantonese,請幫我拎 Metformin 糖尿病藥,./Intent_Prediction/audio/0448.mp4,retrieve_med,33440
+Cantonese,Bring me my 甲福明 pills,./Intent_Prediction/audio/0449.mp4,retrieve_med,3440
+Cantonese,我想要 Metformin,./Intent_Prediction/audio/0450.mp4,retrieve_med,3
+Cantonese,Find my 糖尿病 tablets,./Intent_Prediction/audio/0451.mp4,search_med,3440
+Cantonese,幫我攞 Atorvastatin 心臟病藥,./Intent_Prediction/audio/0452.mp4,retrieve_med,55660
+Cantonese,Fetch my 冠心病 medicine,./Intent_Prediction/audio/0453.mp4,retrieve_med,5660
+Cantonese,Atorvastatin 喺邊,./Intent_Prediction/audio/0454.mp4,search_med,500
+Cantonese,Can you grab my 阿伐他汀 pills,./Intent_Prediction/audio/0455.mp4,retrieve_med,56660
+Cantonese,攞 Amitriptyline 抑鬱症藥畀我,./Intent_Prediction/audio/0456.mp4,retrieve_med,7780000
+Cantonese,Find my 抗抑鬱 medication,./Intent_Prediction/audio/0457.mp4,search_med,780
+Cantonese,請幫手搵 Amitriptyline,./Intent_Prediction/audio/0458.mp4,search_med,7
+Cantonese,Bring me my 阿米替林 pills,./Intent_Prediction/audio/0459.mp4,retrieve_med,78880
+Cantonese,我要 ACE Inhibitor 幫手拎,./Intent_Prediction/audio/0460.mp4,retrieve_med,12000
+Cantonese,Where is my 高血壓藥,./Intent_Prediction/audio/0461.mp4,search_med,1122
+Cantonese,請幫我搵 hypertension 藥,./Intent_Prediction/audio/0462.mp4,retrieve_med,10
+Cantonese,Get me my 血管緊張素轉換酶抑制藥,./Intent_Prediction/audio/0463.mp4,retrieve_med,12222222222
+Cantonese,Metformin 幫我攞過嚟,./Intent_Prediction/audio/0464.mp4,retrieve_med,300000
+Cantonese,Can you bring my 糖尿病 medicine,./Intent_Prediction/audio/0465.mp4,search_med,3440
+Cantonese,請幫我拎糖尿病藥 Metformin,./Intent_Prediction/audio/0466.mp4,retrieve_med,34403
+Cantonese,Where can I find 甲福明 pills,./Intent_Prediction/audio/0467.mp4,search_med,3440
+Cantonese,Atorvastatin 放喺邊,./Intent_Prediction/audio/0468.mp4,search_med,5000
+Cantonese,Give me my 心臟病 medication,./Intent_Prediction/audio/0469.mp4,retrieve_med,5660
+Cantonese,幫手攞 Atorvastatin 心臟病藥,./Intent_Prediction/audio/0470.mp4,retrieve_med,55660
+Cantonese,Fetch my 冠心病 tablets now,./Intent_Prediction/audio/0471.mp4,retrieve_med,56600
+Cantonese,請攞 Amitriptyline 俾我,./Intent_Prediction/audio/0472.mp4,retrieve_med,700
+Cantonese,Can you find my 抑鬱症 medicine,./Intent_Prediction/audio/0473.mp4,search_med,7800
+Cantonese,搵 Amitriptyline 抗抑鬱藥畀我,./Intent_Prediction/audio/0474.mp4,retrieve_med,7078000
+Cantonese,Where is my 阿米替林 medication,./Intent_Prediction/audio/0475.mp4,search_med,78880
+Cantonese,幫我拎 hypertension 藥,./Intent_Prediction/audio/0476.mp4,retrieve_med,10
+Cantonese,I need my 高血壓 medication,./Intent_Prediction/audio/0477.mp4,retrieve_med,1220
+Cantonese,請幫我搵 Metformin 甲福明,./Intent_Prediction/audio/0478.mp4,retrieve_med,3344
+Cantonese,Find my 糖尿病藥 now,./Intent_Prediction/audio/0479.mp4,search_med,34400
+Cantonese,Atorvastatin 係邊,./Intent_Prediction/audio/0480.mp4,search_med,500
+Cantonese,Bring me my 心臟病藥,./Intent_Prediction/audio/0481.mp4,retrieve_med,5660
+Cantonese,請幫我攞 Amitriptyline 抗抑鬱藥,./Intent_Prediction/audio/0482.mp4,retrieve_med,70780
+Cantonese,Can you fetch my 阿米替林 tablets,./Intent_Prediction/audio/0483.mp4,search_med,78880
+Cantonese,俾ACE Inhibitor我啊,./Intent_Prediction/audio/0484.mp4,retrieve_med,1200
+Cantonese,俾高血壓藥我啊,./Intent_Prediction/audio/0485.mp4,retrieve_med,112200
+Cantonese,俾血管緊張素轉換酶抑制劑我啊,./Intent_Prediction/audio/0486.mp4,retrieve_med,1222222222200
+Cantonese,俾High blood pressure藥我啊,./Intent_Prediction/audio/0487.mp4,retrieve_med,122000
+Cantonese,俾Hypertension藥我啊,./Intent_Prediction/audio/0488.mp4,retrieve_med,1000
+Cantonese,俾Ace inhibitor我啊,./Intent_Prediction/audio/0489.mp4,retrieve_med,1200
+Cantonese,俾Metformin我啊,./Intent_Prediction/audio/0490.mp4,retrieve_med,300
+Cantonese,俾糖尿病藥我啊,./Intent_Prediction/audio/0491.mp4,retrieve_med,344000
+Cantonese,俾甲福明我啊,./Intent_Prediction/audio/0492.mp4,retrieve_med,34400
+Cantonese,俾Diabetes我啊,./Intent_Prediction/audio/0493.mp4,retrieve_med,300
+Cantonese,俾Metformin我啊,./Intent_Prediction/audio/0494.mp4,retrieve_med,300
+Cantonese,拎嗰支Atorvastatin俾我,./Intent_Prediction/audio/0495.mp4,retrieve_med,500
+Cantonese,拎嗰支Amitriptyline俾我,./Intent_Prediction/audio/0496.mp4,retrieve_med,700
+Cantonese,拎嗰支抑鬱症藥俾我,./Intent_Prediction/audio/0497.mp4,retrieve_med,780000
+Cantonese,拎嗰支Depression藥俾我,./Intent_Prediction/audio/0498.mp4,retrieve_med,7000
+Cantonese,拎嗰支Depression disorder藥俾我,./Intent_Prediction/audio/0499.mp4,retrieve_med,70000
+Cantonese,拎嗰支阿米替林俾我,./Intent_Prediction/audio/0500.mp4,retrieve_med,788800
+Cantonese,拎嗰支Amitriptyline俾我,./Intent_Prediction/audio/0501.mp4,retrieve_med,700
+Cantonese,拎嗰支Antidepressant俾我,./Intent_Prediction/audio/0502.mp4,retrieve_med,700
+Cantonese,MedicGrabber我想要ACE Inhibitor可唔可以遞俾我,./Intent_Prediction/audio/0503.mp4,retrieve_med,120000000
+Cantonese,MedicGrabber我想要高血壓藥可唔可以遞俾我,./Intent_Prediction/audio/0504.mp4,retrieve_med,11220000000
+Cantonese,MedicGrabber我想要血管緊張素轉換酶抑制劑可唔可以遞俾我,./Intent_Prediction/audio/0505.mp4,retrieve_med,122222222220000000
+Cantonese,MedicGrabber我想要High blood pressure藥可唔可以遞俾我,./Intent_Prediction/audio/0506.mp4,retrieve_med,12200000000
+Cantonese,MedicGrabber我想要High blood pressure藥可唔可以遞俾我,./Intent_Prediction/audio/0507.mp4,retrieve_med,12200000000
+Cantonese,MedicGrabber我想要Hypertension藥可唔可以遞俾我,./Intent_Prediction/audio/0508.mp4,retrieve_med,100000000
+Cantonese,MedicGrabber我想要Ace inhibitor可唔可以遞俾我,./Intent_Prediction/audio/0509.mp4,retrieve_med,120000000
+Cantonese,MedicGrabber我想要糖尿病藥可唔可以遞俾我,./Intent_Prediction/audio/0510.mp4,retrieve_med,34400000000
+Cantonese,MedicGrabber我想要甲福明可唔可以遞俾我,./Intent_Prediction/audio/0511.mp4,retrieve_med,3440000000
+Cantonese,MedicGrabber我想要Diabetes可唔可以遞俾我,./Intent_Prediction/audio/0512.mp4,retrieve_med,30000000
+Cantonese,MedicGrabber我想要Metformin可唔可以遞俾我,./Intent_Prediction/audio/0513.mp4,retrieve_med,30000000
+Cantonese,MedicGrabber我想要冠脈病藥可唔可以遞俾我,./Intent_Prediction/audio/0514.mp4,retrieve_med,56600000000
+Cantonese,MedicGrabber我想要冠心病藥可唔可以遞俾我,./Intent_Prediction/audio/0515.mp4,retrieve_med,56600000000
+Cantonese,MedicGrabber我想要心臟病藥可唔可以遞俾我,./Intent_Prediction/audio/0516.mp4,retrieve_med,56600000000
+Cantonese,MedicGrabber我想要Coronary heart disease藥可唔可以遞俾我,./Intent_Prediction/audio/0517.mp4,retrieve_med,56600000000
+Cantonese,MedicGrabber我想要Cad可唔可以遞俾我,./Intent_Prediction/audio/0518.mp4,retrieve_med,50000000
+Cantonese,MedicGrabber我想要阿伐他汀可唔可以遞俾我,./Intent_Prediction/audio/0519.mp4,retrieve_med,56660000000
+Cantonese,MedicGrabber我想要Atorvastatin可唔可以遞俾我,./Intent_Prediction/audio/0520.mp4,retrieve_med,50000000
+Cantonese,MedicGrabber我想要抑鬱症藥可唔可以遞俾我,./Intent_Prediction/audio/0521.mp4,retrieve_med,78000000000
+Cantonese,MedicGrabber我想要Depression藥可唔可以遞俾我,./Intent_Prediction/audio/0522.mp4,retrieve_med,700000000
+Cantonese,MedicGrabber我想要Depression disorder藥可唔可以遞俾我,./Intent_Prediction/audio/0523.mp4,retrieve_med,7000000000
+Cantonese,MedicGrabber我想要阿米替林可唔可以遞俾我,./Intent_Prediction/audio/0524.mp4,retrieve_med,78880000000
+Cantonese,MedicGrabber我想要Amitriptyline可唔可以遞俾我,./Intent_Prediction/audio/0525.mp4,retrieve_med,70000000
+Cantonese,MedicGrabber我想要Antidepressant可唔可以遞俾我,./Intent_Prediction/audio/0526.mp4,retrieve_med,70000000
+Cantonese,有冇ACE Inhibitor或者Metformin,./Intent_Prediction/audio/0527.mp4,retrieve_med,12003
+Cantonese,有冇ACE Inhibitor或者Atorvastatin,./Intent_Prediction/audio/0528.mp4,retrieve_med,12005
+Cantonese,有冇ACE Inhibitor或者Amitriptyline,./Intent_Prediction/audio/0529.mp4,retrieve_med,12007
+Cantonese,有冇Metformin或者Atorvastatin,./Intent_Prediction/audio/0530.mp4,retrieve_med,3005
+Cantonese,有冇Metformin或者Amitriptyline,./Intent_Prediction/audio/0531.mp4,retrieve_med,3007
+Cantonese,有冇Atorvastatin或者Amitriptyline,./Intent_Prediction/audio/0532.mp4,retrieve_med,5007
+Cantonese,有冇高血壓藥或者血管緊張素轉換酶抑制劑,./Intent_Prediction/audio/0533.mp4,retrieve_med,11220012222222222
+Cantonese,有冇高血壓藥或者High blood pressure藥,./Intent_Prediction/audio/0534.mp4,retrieve_med,1122001220
+Cantonese,有冇高血壓藥或者Hypertension藥,./Intent_Prediction/audio/0535.mp4,retrieve_med,11220010
+Cantonese,有冇高血壓藥或者ace inhibitor,./Intent_Prediction/audio/0536.mp4,retrieve_med,11220012
+Cantonese,有冇血管緊張素轉換酶抑制劑或者High blood pressure藥,./Intent_Prediction/audio/0537.mp4,retrieve_med,12222222222001220
+Cantonese,有冇血管緊張素轉換酶抑制劑或者Hypertension藥,./Intent_Prediction/audio/0538.mp4,retrieve_med,122222222220010
+Cantonese,有冇血管緊張素轉換酶抑制劑或者ace inhibitor,./Intent_Prediction/audio/0539.mp4,retrieve_med,122222222220012
+Cantonese,有冇High blood pressure藥或者Hypertension藥,./Intent_Prediction/audio/0540.mp4,retrieve_med,12200010
+Cantonese,有冇High blood pressure藥或者ace inhibitor,./Intent_Prediction/audio/0541.mp4,retrieve_med,12200012
+Cantonese,有冇Hypertension藥或者ace inhibitor,./Intent_Prediction/audio/0542.mp4,retrieve_med,100012
+Cantonese,有冇糖尿病藥或者甲福明,./Intent_Prediction/audio/0543.mp4,retrieve_med,344000344
+Cantonese,有冇糖尿病藥或者diabetes,./Intent_Prediction/audio/0544.mp4,retrieve_med,3440003
+Cantonese,有冇糖尿病藥或者metformin,./Intent_Prediction/audio/0545.mp4,retrieve_med,3440003
+Cantonese,有冇甲福明或者diabetes,./Intent_Prediction/audio/0546.mp4,retrieve_med,344003
+Cantonese,有冇甲福明或者metformin,./Intent_Prediction/audio/0547.mp4,retrieve_med,344003
+Cantonese,有冇diabetes或者metformin,./Intent_Prediction/audio/0548.mp4,retrieve_med,3003
+Cantonese,有冇冠脈病藥或者冠心病藥,./Intent_Prediction/audio/0549.mp4,retrieve_med,5660005660
+Cantonese,有冇冠脈病藥或者心臟病藥,./Intent_Prediction/audio/0550.mp4,retrieve_med,5660005660
+Cantonese,有冇冠脈病藥或者Coronary heart disease藥,./Intent_Prediction/audio/0551.mp4,retrieve_med,5660005660
+Cantonese,有冇冠脈病藥或者cad,./Intent_Prediction/audio/0552.mp4,retrieve_med,5660005
+Cantonese,有冇冠脈病藥或者阿伐他汀,./Intent_Prediction/audio/0553.mp4,retrieve_med,5660005666
+Cantonese,有冇冠脈病藥或者atorvastatin,./Intent_Prediction/audio/0554.mp4,retrieve_med,5660005
+Cantonese,有冇冠心病藥或者心臟病藥,./Intent_Prediction/audio/0555.mp4,retrieve_med,5660005660
+Cantonese,有冇冠心病藥或者Coronary heart disease藥,./Intent_Prediction/audio/0556.mp4,retrieve_med,5660005660
+Cantonese,有冇冠心病藥或者cad,./Intent_Prediction/audio/0557.mp4,retrieve_med,5660005
+Cantonese,有冇冠心病藥或者阿伐他汀,./Intent_Prediction/audio/0558.mp4,retrieve_med,5660005666
+Cantonese,有冇冠心病藥或者atorvastatin,./Intent_Prediction/audio/0559.mp4,retrieve_med,5660005
+Cantonese,有冇心臟病藥或者Coronary heart disease藥,./Intent_Prediction/audio/0560.mp4,retrieve_med,5660005660
+Cantonese,有冇心臟病藥或者cad,./Intent_Prediction/audio/0561.mp4,retrieve_med,5660005
+Cantonese,有冇心臟病藥或者阿伐他汀,./Intent_Prediction/audio/0562.mp4,retrieve_med,5660005666
+Cantonese,有冇心臟病藥或者atorvastatin,./Intent_Prediction/audio/0563.mp4,retrieve_med,5660005
+Cantonese,有冇Coronary heart disease藥或者cad,./Intent_Prediction/audio/0564.mp4,retrieve_med,5660005
+Cantonese,有冇Coronary heart disease藥或者阿伐他汀,./Intent_Prediction/audio/0565.mp4,retrieve_med,5660005666
+Cantonese,有冇Coronary heart disease藥或者atorvastatin,./Intent_Prediction/audio/0566.mp4,retrieve_med,5660005
+Cantonese,有冇cad或者阿伐他汀,./Intent_Prediction/audio/0567.mp4,retrieve_med,5005666
+Cantonese,有冇cad或者atorvastatin,./Intent_Prediction/audio/0568.mp4,retrieve_med,5005
+Cantonese,有冇阿伐他汀或者atorvastatin,./Intent_Prediction/audio/0569.mp4,retrieve_med,5666005
+Cantonese,有冇抑鬱症藥或者Depression藥,./Intent_Prediction/audio/0570.mp4,retrieve_med,78000070
+Cantonese,有冇抑鬱症藥或者Depression disorder藥,./Intent_Prediction/audio/0571.mp4,retrieve_med,780000700
+Cantonese,有冇抑鬱症藥或者阿米替林,./Intent_Prediction/audio/0572.mp4,retrieve_med,7800007888
+Cantonese,有冇抑鬱症藥或者amitriptyline,./Intent_Prediction/audio/0573.mp4,retrieve_med,7800007
+Cantonese,有冇抑鬱症藥或者antidepressant,./Intent_Prediction/audio/0574.mp4,retrieve_med,7800007
+Cantonese,有冇Depression藥或者Depression disorder藥,./Intent_Prediction/audio/0575.mp4,retrieve_med,7000700
+Cantonese,有冇Depression藥或者阿米替林,./Intent_Prediction/audio/0576.mp4,retrieve_med,70007888
+Cantonese,有冇Depression藥或者amitriptyline,./Intent_Prediction/audio/0577.mp4,retrieve_med,70007
+Cantonese,有冇Depression藥或者antidepressant,./Intent_Prediction/audio/0578.mp4,retrieve_med,70007
+Cantonese,有冇Depression disorder藥或者阿米替林,./Intent_Prediction/audio/0579.mp4,retrieve_med,700007888
+Cantonese,有冇Depression disorder藥或者amitriptyline,./Intent_Prediction/audio/0580.mp4,retrieve_med,700007
+Cantonese,有冇Depression disorder藥或者antidepressant,./Intent_Prediction/audio/0581.mp4,retrieve_med,700007
+Cantonese,有冇阿米替林或者amitriptyline,./Intent_Prediction/audio/0582.mp4,retrieve_med,7888007
+Cantonese,有冇阿米替林或者antidepressant,./Intent_Prediction/audio/0583.mp4,retrieve_med,7888007
+Cantonese,有冇amitriptyline或者antidepressant,./Intent_Prediction/audio/0584.mp4,retrieve_med,7007
+Cantonese,有冇高血壓藥或者糖尿病藥,./Intent_Prediction/audio/0585.mp4,retrieve_med,1122003440
+Cantonese,有冇高血壓藥或者甲福明,./Intent_Prediction/audio/0586.mp4,retrieve_med,112200344
+Cantonese,有冇高血壓藥或者diabetes,./Intent_Prediction/audio/0587.mp4,retrieve_med,1122003
+Cantonese,有冇高血壓藥或者metformin,./Intent_Prediction/audio/0588.mp4,retrieve_med,1122003
+Cantonese,有冇血管緊張素轉換酶抑制劑或者糖尿病藥,./Intent_Prediction/audio/0589.mp4,retrieve_med,12222222222003440
+Cantonese,有冇血管緊張素轉換酶抑制劑或者甲福明,./Intent_Prediction/audio/0590.mp4,retrieve_med,1222222222200344
+Cantonese,有冇血管緊張素轉換酶抑制劑或者diabetes,./Intent_Prediction/audio/0591.mp4,retrieve_med,12222222222003
+Cantonese,有冇血管緊張素轉換酶抑制劑或者metformin,./Intent_Prediction/audio/0592.mp4,retrieve_med,12222222222003
+Cantonese,有冇High blood pressure藥或者糖尿病藥,./Intent_Prediction/audio/0593.mp4,retrieve_med,1220003440
+Cantonese,有冇High blood pressure藥或者甲福明,./Intent_Prediction/audio/0594.mp4,retrieve_med,122000344
+Cantonese,有冇High blood pressure藥或者diabetes,./Intent_Prediction/audio/0595.mp4,retrieve_med,1220003
+Cantonese,有冇High blood pressure藥或者metformin,./Intent_Prediction/audio/0596.mp4,retrieve_med,1220003
+Cantonese,有冇Hypertension藥或者糖尿病藥,./Intent_Prediction/audio/0597.mp4,retrieve_med,10003440
+Cantonese,有冇Hypertension藥或者甲福明,./Intent_Prediction/audio/0598.mp4,retrieve_med,1000344
+Cantonese,有冇Hypertension藥或者diabetes,./Intent_Prediction/audio/0599.mp4,retrieve_med,10003
+Cantonese,有冇Hypertension藥或者metformin,./Intent_Prediction/audio/0600.mp4,retrieve_med,10003
+Cantonese,有冇ace inhibitor或者糖尿病藥,./Intent_Prediction/audio/0601.mp4,retrieve_med,12003440
+Cantonese,有冇ace inhibitor或者甲福明,./Intent_Prediction/audio/0602.mp4,retrieve_med,1200344
+Cantonese,有冇ace inhibitor或者diabetes,./Intent_Prediction/audio/0603.mp4,retrieve_med,12003
+Cantonese,有冇ace inhibitor或者metformin,./Intent_Prediction/audio/0604.mp4,retrieve_med,12003
+Cantonese,有冇冠脈病藥或者抑鬱症藥,./Intent_Prediction/audio/0605.mp4,retrieve_med,5660007800
+Cantonese,有冇冠脈病藥或者Depression藥,./Intent_Prediction/audio/0606.mp4,retrieve_med,56600070
+Cantonese,有冇冠脈病藥或者Depression disorder藥,./Intent_Prediction/audio/0607.mp4,retrieve_med,566000700
+Cantonese,有冇冠脈病藥或者阿米替林,./Intent_Prediction/audio/0608.mp4,retrieve_med,5660007888
+Cantonese,有冇冠脈病藥或者amitriptyline,./Intent_Prediction/audio/0609.mp4,retrieve_med,5660007
+Cantonese,有冇冠脈病藥或者antidepressant,./Intent_Prediction/audio/0610.mp4,retrieve_med,5660007
+Cantonese,有冇冠心病藥或者抑鬱症藥,./Intent_Prediction/audio/0611.mp4,retrieve_med,5660007800
+Cantonese,有冇冠心病藥或者Depression藥,./Intent_Prediction/audio/0612.mp4,retrieve_med,56600070
+Cantonese,有冇冠心病藥或者Depression disorder藥,./Intent_Prediction/audio/0613.mp4,retrieve_med,566000700
+Cantonese,有冇冠心病藥或者阿米替林,./Intent_Prediction/audio/0614.mp4,retrieve_med,5660007888
+Cantonese,有冇心臟病或者amitriptyline,./Intent_Prediction/audio/0615.mp4,retrieve_med,566007
+Cantonese,有冇心臟病或者antidepressant,./Intent_Prediction/audio/0616.mp4,retrieve_med,566007
+Cantonese,有冇心臟病或者Depression disorder藥,./Intent_Prediction/audio/0617.mp4,retrieve_med,56600700
+Cantonese,有冇心臟病或者阿米替林,./Intent_Prediction/audio/0618.mp4,retrieve_med,566007888
+Cantonese,有冇心臟病或者amitriptyline,./Intent_Prediction/audio/0619.mp4,retrieve_med,566007
+Cantonese,有冇心臟病或者antidepressant,./Intent_Prediction/audio/0620.mp4,retrieve_med,566007
+Cantonese,有冇心臟病或者Depression disorder藥,./Intent_Prediction/audio/0621.mp4,retrieve_med,56600700
+Cantonese,可能要高血壓嘅藥啦  ,./Intent_Prediction/audio/0622.mp4,enquire_suitable_med,122000
+Cantonese,唔知係咪要糖尿病嗰隻  ,./Intent_Prediction/audio/0623.mp4,enquire_suitable_med,34400
+Cantonese,我諗緊要唔要阿伐他汀  ,./Intent_Prediction/audio/0624.mp4,enquire_suitable_med,5666
+Cantonese,係咪應該攞返抑鬱症嗰啲呀  ,./Intent_Prediction/audio/0625.mp4,enquire_suitable_med,780000
+Cantonese,未必係甲福明但應該差唔多  ,./Intent_Prediction/audio/0626.mp4,enquire_suitable_med,344000000
+Cantonese,可能係hypertension  ,./Intent_Prediction/audio/0627.mp4,enquire_suitable_med,1
+Cantonese,我記得好似係metformin  ,./Intent_Prediction/audio/0628.mp4,enquire_suitable_med,3
+Cantonese,應該係depression用開嗰隻  ,./Intent_Prediction/audio/0629.mp4,enquire_suitable_med,70000
+Cantonese,會唔會係antidepressant呀  ,./Intent_Prediction/audio/0630.mp4,enquire_suitable_med,70
+Cantonese,可能係cad嗰種  ,./Intent_Prediction/audio/0631.mp4,enquire_suitable_med,500
+Cantonese,都唔太肯定係阿米替林定係amitriptyline  ,./Intent_Prediction/audio/0632.mp4,enquire_suitable_med,7888007
+Cantonese,我估應該係coronary heart disease嗰啲  ,./Intent_Prediction/audio/0633.mp4,enquire_suitable_med,56600
+Cantonese,係唔係血管緊張素轉換酶抑制劑呀  ,./Intent_Prediction/audio/0634.mp4,enquire_suitable_med,122222222220
+Cantonese,可能係diabetes用開嗰隻藥  ,./Intent_Prediction/audio/0635.mp4,enquire_suitable_med,300000
+Cantonese,未必係高血壓不過好似係咁  ,./Intent_Prediction/audio/0636.mp4,enquire_suitable_med,122000000
+Cantonese,我唔太記得係atorvastatin定其他  ,./Intent_Prediction/audio/0637.mp4,enquire_suitable_med,5000
+Cantonese,可能要搵返阿伐他汀  ,./Intent_Prediction/audio/0638.mp4,enquire_suitable_med,5666
+Cantonese,我懷疑係depression disorder  ,./Intent_Prediction/audio/0639.mp4,enquire_suitable_med,70
+Cantonese,唔知係咪抓錯咗high blood pressure  ,./Intent_Prediction/audio/0640.mp4,enquire_suitable_med,122
+Cantonese,應該係amitriptyline咁上下啦  ,./Intent_Prediction/audio/0641.mp4,enquire_suitable_med,70000
+Cantonese,應該係某種糖尿病藥但唔記得名  ,./Intent_Prediction/audio/0642.mp4,enquire_suitable_med,344000000
+Cantonese,可能係心臟病嗰隻嚟嘅  ,./Intent_Prediction/audio/0643.mp4,enquire_suitable_med,5660000
+Cantonese,會唔會係high blood pressure個款  ,./Intent_Prediction/audio/0644.mp4,enquire_suitable_med,12200
+Cantonese,都唔肯定係唔係ace inhibitor  ,./Intent_Prediction/audio/0645.mp4,enquire_suitable_med,12
+Cantonese,我估可能係阿米替林定其他啲類似嘅  ,./Intent_Prediction/audio/0646.mp4,enquire_suitable_med,78880000000
+Cantonese,記得包裝上面寫住metformin定乜乜咁  ,./Intent_Prediction/audio/0647.mp4,enquire_suitable_med,30000
+Cantonese,可能係hypertension但唔係好確定  ,./Intent_Prediction/audio/0648.mp4,enquire_suitable_med,1000000
+Cantonese,可能係俾冠心病用嘅藥  ,./Intent_Prediction/audio/0649.mp4,enquire_suitable_med,566000
+Cantonese,聽人講好似係atorvastatin  ,./Intent_Prediction/audio/0650.mp4,enquire_suitable_med,5
+Cantonese,我唔記得係咪depression定係其他情緒嗰啲  ,./Intent_Prediction/audio/0651.mp4,enquire_suitable_med,700000000
+Cantonese,可能係用嚟壓血壓嗰類  ,./Intent_Prediction/audio/0652.mp4,enquire_suitable_med,12200
+Cantonese,有機會係antidepressant但我唔識分  ,./Intent_Prediction/audio/0653.mp4,enquire_suitable_med,700000
+Cantonese,阿醫生上次講好似係cad定coronary咁嘅名  ,./Intent_Prediction/audio/0654.mp4,enquire_suitable_med,500000
+Cantonese,我唔係好識英文藥名但好似係嗰啲  ,./Intent_Prediction/audio/0655.mp4,enquire_suitable_med,0
+Cantonese,唔太肯定係唔係抑鬱症用嗰啲藥  ,./Intent_Prediction/audio/0656.mp4,enquire_suitable_med,7800000
+Cantonese,可能要試下找返甲福明睇下啱唔啱  ,./Intent_Prediction/audio/0657.mp4,enquire_suitable_med,34400000
+Cantonese,感覺上係diabetes相關嘅嘢  ,./Intent_Prediction/audio/0658.mp4,enquire_suitable_med,30000
+Cantonese,我估可能係抓咗錯藥都唔定  ,./Intent_Prediction/audio/0659.mp4,enquire_suitable_med,0
+Cantonese,都唔知係邊隻比較啱用喎  ,./Intent_Prediction/audio/0660.mp4,enquire_suitable_med,0
+Cantonese,會唔會係嗰啲血壓藥其中一種呢  ,./Intent_Prediction/audio/0661.mp4,enquire_suitable_med,12200000
+Cantonese,可能係降血壓嗰啲藥啦  ,./Intent_Prediction/audio/0662.mp4,enquire_suitable_med,0
+Cantonese,唔知係糖尿病藥定抗抑鬱藥  ,./Intent_Prediction/audio/0663.mp4,enquire_suitable_med,344000780
+Cantonese,應該係控制血脂嗰類掛  ,./Intent_Prediction/audio/0664.mp4,enquire_suitable_med,56000
+Cantonese,記得上次好似開咗啲心臟病藥  ,./Intent_Prediction/audio/0665.mp4,enquire_suitable_med,5660
+Cantonese,我估係一種精神科藥但唔太肯定  ,./Intent_Prediction/audio/0666.mp4,enquire_suitable_med,0
+Cantonese,有機會係嗰啲糖尿病控制藥  ,./Intent_Prediction/audio/0667.mp4,enquire_suitable_med,344000
+Cantonese,可能係兩隻藥其中一隻啦  ,./Intent_Prediction/audio/0668.mp4,enquire_suitable_med,0
+Cantonese,我都唔記得係邊種血壓藥  ,./Intent_Prediction/audio/0669.mp4,enquire_suitable_med,122
+Cantonese,係咪嗰啲情緒藥呀唔肯定  ,./Intent_Prediction/audio/0670.mp4,enquire_suitable_med,0
+Cantonese,醫生開過類似高血壓定糖尿病嗰啲  ,./Intent_Prediction/audio/0671.mp4,enquire_suitable_med,122034400
+Cantonese,可能係一種長期病嘅藥但唔記得咩名  ,./Intent_Prediction/audio/0672.mp4,enquire_suitable_med,0
+Cantonese,係咪嗰啲膽固醇藥呀唔確定  ,./Intent_Prediction/audio/0673.mp4,enquire_suitable_med,56660000
+Cantonese,應該係身體狀況穩定用開嗰種藥  ,./Intent_Prediction/audio/0674.mp4,enquire_suitable_med,0
+Cantonese,可能係嗰啲成日要食嘅慢性病藥  ,./Intent_Prediction/audio/0675.mp4,enquire_suitable_med,0
+Cantonese,我聽過類似但唔記得係血壓定糖藥  ,./Intent_Prediction/audio/0676.mp4,enquire_suitable_med,0
+Cantonese,未必係抑鬱症但應該係精神類藥  ,./Intent_Prediction/audio/0677.mp4,enquire_suitable_med,78000000000
+Cantonese,唔知係咪當初開過血脂藥  ,./Intent_Prediction/audio/0678.mp4,enquire_suitable_med,560
+Cantonese,有機會係血糖定抗抑鬱其中一種  ,./Intent_Prediction/audio/0679.mp4,enquire_suitable_med,780000
+Cantonese,可能兩種藥都差唔多我分唔出  ,./Intent_Prediction/audio/0680.mp4,enquire_suitable_med,0
+Cantonese,都唔係好記得邊隻係心臟藥邊隻係情緒藥,./Intent_Prediction/audio/0681.mp4,enquire_suitable_med,0
+Cantonese,唔知係咪要攞埋高血壓同糖尿病嗰啲  ,./Intent_Prediction/audio/0682.mp4,enquire_suitable_med,122034400
+Cantonese,可能要拎抑鬱症同膽固醇藥啦  ,./Intent_Prediction/audio/0683.mp4,enquire_suitable_med,780056660
+Cantonese,醫生係咪叫我攞哂所有嗰啲慢性病藥呀  ,./Intent_Prediction/audio/0684.mp4,enquire_suitable_med,0
+Cantonese,我記得好似要執返三種唔同嘅藥但唔肯定  ,./Intent_Prediction/audio/0685.mp4,enquire_suitable_med,0
+Cantonese,應該係要血壓糖尿同埋情緒嗰幾隻  ,./Intent_Prediction/audio/0686.mp4,enquire_suitable_med,0
+Cantonese,可能都要攞番冠心病同糖尿病用嗰啲  ,./Intent_Prediction/audio/0687.mp4,enquire_suitable_med,5660344000
+Cantonese,我懷疑係高血壓阿伐他汀同阿米替林都有份  ,./Intent_Prediction/audio/0688.mp4,enquire_suitable_med,122566607888000
+Cantonese,有冇可能係攞齊幾種藥一齊食嗰種情況  ,./Intent_Prediction/audio/0689.mp4,enquire_suitable_med,0
+Cantonese,係咪拎多幾隻一齊會穩定啲架  ,./Intent_Prediction/audio/0690.mp4,enquire_suitable_med,0
+Cantonese,上次醫生好似話要三種都要食  ,./Intent_Prediction/audio/0691.mp4,enquire_suitable_med,0
+Cantonese,可能要血壓藥膽固醇藥再加埋抑鬱症嗰啲  ,./Intent_Prediction/audio/0692.mp4,enquire_suitable_med,122566600078000
+Cantonese,我唔肯定係咪淨係拎兩隻定係全部  ,./Intent_Prediction/audio/0693.mp4,enquire_suitable_med,0
+Cantonese,我估係嗰啲長期病藥幾種一齊啦  ,./Intent_Prediction/audio/0694.mp4,enquire_suitable_med,0
+Cantonese,拎哂佢哋會唔會好啲呀我唔太記得  ,./Intent_Prediction/audio/0695.mp4,enquire_suitable_med,0
+Cantonese,應該係血壓糖尿加埋精神科藥一齊嘅  ,./Intent_Prediction/audio/0696.mp4,enquire_suitable_med,0
+Cantonese,有機會係要三種唔同病症用嗰啲藥  ,./Intent_Prediction/audio/0697.mp4,enquire_suitable_med,0
+Cantonese,唔知拎晒全部穩陣啲定點呢  ,./Intent_Prediction/audio/0698.mp4,enquire_suitable_med,0
+Cantonese,可能係一次過拎齊全部啱啱好  ,./Intent_Prediction/audio/0699.mp4,enquire_suitable_med,0
+Cantonese,我諗應該係醫生講過要成套咁食嗰啲藥  ,./Intent_Prediction/audio/0700.mp4,enquire_suitable_med,0
+Cantonese,幫我拎高血壓藥  ,./Intent_Prediction/audio/0701.mp4,retrieve_med,1122
+Cantonese,攞番糖尿病嗰隻藥俾我  ,./Intent_Prediction/audio/0702.mp4,retrieve_med,34400000
+Cantonese,我要嗰隻膽固醇藥  ,./Intent_Prediction/audio/0703.mp4,retrieve_med,5666
+Cantonese,俾我抑鬱症用嗰隻  ,./Intent_Prediction/audio/0704.mp4,retrieve_med,780000
+Cantonese,拎番阿伐他汀過嚟  ,./Intent_Prediction/audio/0705.mp4,retrieve_med,566600
+Cantonese,幫我搵返阿米替林  ,./Intent_Prediction/audio/0706.mp4,retrieve_med,7888
+Cantonese,我想要嗰隻血管緊張素轉換酶抑制劑  ,./Intent_Prediction/audio/0707.mp4,retrieve_med,12222222222
+Cantonese,攞番嗰隻甲福明啦  ,./Intent_Prediction/audio/0708.mp4,retrieve_med,3440
+Cantonese,俾我amitriptyline嗰隻  ,./Intent_Prediction/audio/0709.mp4,retrieve_med,700
+Cantonese,拎番atorvastatin比我啦  ,./Intent_Prediction/audio/0710.mp4,retrieve_med,5000
+English,What's the weather like today,./Intent_Prediction/audio/0711.mp4,other_intents,0
+English,Can you tell me a joke,./Intent_Prediction/audio/0712.mp4,other_intents,0
+English,How do I cook rice properly,./Intent_Prediction/audio/0713.mp4,other_intents,0
+English,Where's a good place to go hiking,./Intent_Prediction/audio/0714.mp4,other_intents,0
+English,Do you know any good movies,./Intent_Prediction/audio/0715.mp4,other_intents,0
+English,What's your favorite song,./Intent_Prediction/audio/0716.mp4,other_intents,0
+English,How do I fix a flat tire,./Intent_Prediction/audio/0717.mp4,other_intents,0
+English,Can you help me plan a trip,./Intent_Prediction/audio/0718.mp4,other_intents,0
+English,Should I wear a jacket today,./Intent_Prediction/audio/0719.mp4,other_intents,0
+English,What time is it now,./Intent_Prediction/audio/0720.mp4,other_intents,0
+English,Turn off the lights,./Intent_Prediction/audio/0721.mp4,other_intents,0
+English,Set a reminder for 6 PM,./Intent_Prediction/audio/0722.mp4,other_intents,0
+English,Call my mom,./Intent_Prediction/audio/0723.mp4,other_intents,0
+English,Take a screenshot,./Intent_Prediction/audio/0724.mp4,other_intents,0
+English,Play some relaxing music,./Intent_Prediction/audio/0725.mp4,other_intents,0
+English,Close the window,./Intent_Prediction/audio/0726.mp4,other_intents,0
+English,Send a message to John,./Intent_Prediction/audio/0727.mp4,other_intents,0
+English,Write an email to my teacher,./Intent_Prediction/audio/0728.mp4,other_intents,0
+English,Open the curtains,./Intent_Prediction/audio/0729.mp4,other_intents,0
+English,Start the vacuum cleaner,./Intent_Prediction/audio/0730.mp4,other_intents,0
+English,What’s the best way to learn a language,./Intent_Prediction/audio/0731.mp4,other_intents,0
+English,Can I bring my dog here,./Intent_Prediction/audio/0732.mp4,other_intents,0
+English,What should I eat for dinner,./Intent_Prediction/audio/0733.mp4,other_intents,0
+English,How do I get to the train station,./Intent_Prediction/audio/0734.mp4,other_intents,0
+English,Should I bring an umbrella,./Intent_Prediction/audio/0735.mp4,other_intents,0
+English,What's your favorite TV show,./Intent_Prediction/audio/0736.mp4,other_intents,0
+English,Can you recommend a good restaurant,./Intent_Prediction/audio/0737.mp4,other_intents,0
+English,Where can I find the nearest coffee shop,./Intent_Prediction/audio/0738.mp4,other_intents,0
+English,What should I do if my computer is slow,./Intent_Prediction/audio/0739.mp4,other_intents,0
+English,Do you know any good books to read,./Intent_Prediction/audio/0740.mp4,other_intents,0
+English,Can you teach me how to meditate,./Intent_Prediction/audio/0741.mp4,other_intents,0
+English,What are the best ways to stay healthy,./Intent_Prediction/audio/0742.mp4,other_intents,0
+English,What time does the movie start,./Intent_Prediction/audio/0743.mp4,other_intents,0
+English,Where can I buy a new phone,./Intent_Prediction/audio/0744.mp4,other_intents,0
+English,Can you help me book a hotel room,./Intent_Prediction/audio/0745.mp4,other_intents,0
+English,How do I apply for a visa,./Intent_Prediction/audio/0746.mp4,other_intents,0
+English,Do you know any fun activities for the weekend,./Intent_Prediction/audio/0747.mp4,other_intents,0
+English,Can I get some help with my homework,./Intent_Prediction/audio/0748.mp4,other_intents,0
+English,How can I improve my writing skills,./Intent_Prediction/audio/0749.mp4,other_intents,0
+English,Where can I get some good coffee,./Intent_Prediction/audio/0750.mp4,other_intents,0
+English,Do you know the latest news,./Intent_Prediction/audio/0751.mp4,other_intents,0
+English,How do I organize my closet,./Intent_Prediction/audio/0752.mp4,other_intents,0
+English,Can you show me how to make pancakes,./Intent_Prediction/audio/0753.mp4,other_intents,0
+English,Where can I buy a new laptop,./Intent_Prediction/audio/0754.mp4,other_intents,0
+English,What’s the fastest way to get to the airport,./Intent_Prediction/audio/0755.mp4,other_intents,0
+Cantonese,今日天氣點呀,./Intent_Prediction/audio/0756.mp4,other_intents,0
+Cantonese,幫我講個笑話,./Intent_Prediction/audio/0757.mp4,other_intents,0
+Cantonese,點樣煮飯好味啲,./Intent_Prediction/audio/0758.mp4,other_intents,0
+Cantonese,有冇好地方可以行山,./Intent_Prediction/audio/0759.mp4,other_intents,0
+Cantonese,你識唔識整電話,./Intent_Prediction/audio/0760.mp4,other_intents,0
+Cantonese,可唔可以推薦一本好書,./Intent_Prediction/audio/0761.mp4,other_intents,0
+Cantonese,你覺得邊間餐廳好食,./Intent_Prediction/audio/0762.mp4,other_intents,0
+Cantonese,我應該著咩衫出街,./Intent_Prediction/audio/0763.mp4,other_intents,0
+Cantonese,幫我計劃旅行啦,./Intent_Prediction/audio/0764.mp4,other_intents,0
+Cantonese,今日幾點鐘啊,./Intent_Prediction/audio/0765.mp4,other_intents,0
+Cantonese,開窗,./Intent_Prediction/audio/0766.mp4,other_intents,0
+Cantonese,關燈,./Intent_Prediction/audio/0767.mp4,other_intents,0
+Cantonese,播首輕音樂,./Intent_Prediction/audio/0768.mp4,other_intents,0
+Cantonese,影張相,./Intent_Prediction/audio/0769.mp4,other_intents,0
+Cantonese,幫我打畀爸爸,./Intent_Prediction/audio/0770.mp4,other_intents,0
+Cantonese,寫封電郵畀老師,./Intent_Prediction/audio/0771.mp4,other_intents,0
+Cantonese,開冷氣,./Intent_Prediction/audio/0772.mp4,other_intents,0
+Cantonese,倒垃圾,./Intent_Prediction/audio/0773.mp4,other_intents,0
+Cantonese,播歌啦,./Intent_Prediction/audio/0774.mp4,other_intents,0
+Cantonese,發個訊息畀阿明,./Intent_Prediction/audio/0775.mp4,other_intents,0
+Cantonese,你鍾意睇咩戲,./Intent_Prediction/audio/0776.mp4,other_intents,0
+Cantonese,今日要帶遮嗎,./Intent_Prediction/audio/0777.mp4,other_intents,0
+Cantonese,點樣去旺角,./Intent_Prediction/audio/0778.mp4,other_intents,0
+Cantonese,可以養狗嗎,./Intent_Prediction/audio/0779.mp4,other_intents,0
+Cantonese,咩時候開始落雨,./Intent_Prediction/audio/0780.mp4,other_intents,0
+Cantonese,有冇人可以幫我修理電腦,./Intent_Prediction/audio/0781.mp4,other_intents,0
+Cantonese,唔該你幫我查下餐廳位置,./Intent_Prediction/audio/0782.mp4,other_intents,0
+Cantonese,點解我的手機變慢,./Intent_Prediction/audio/0783.mp4,other_intents,0
+Cantonese,你有冇好書推介,./Intent_Prediction/audio/0784.mp4,other_intents,0
+Cantonese,點樣學好寫作,./Intent_Prediction/audio/0785.mp4,other_intents,0
+Cantonese,有冇地方可以買咖啡,./Intent_Prediction/audio/0786.mp4,other_intents,0
+Cantonese,點樣改善我的中文,./Intent_Prediction/audio/0787.mp4,other_intents,0
+Cantonese,可以教我如何冥想嗎,./Intent_Prediction/audio/0788.mp4,other_intents,0
+Cantonese,點樣保持健康,./Intent_Prediction/audio/0789.mp4,other_intents,0
+Cantonese,電影幾點鐘開,./Intent_Prediction/audio/0790.mp4,other_intents,0
+Cantonese,最近有咩好買嘅電話,./Intent_Prediction/audio/0791.mp4,other_intents,0
+Cantonese,可以幫我預訂間酒店嗎,./Intent_Prediction/audio/0792.mp4,other_intents,0
+Cantonese,怎樣先可以申請簽證,./Intent_Prediction/audio/0793.mp4,other_intents,0
+Cantonese,這個週末有冇有趣的活動,./Intent_Prediction/audio/0794.mp4,other_intents,0
+Cantonese,我應該點整理衣櫃,./Intent_Prediction/audio/0795.mp4,other_intents,0
+Cantonese,可以教我煎蛋餅嗎,./Intent_Prediction/audio/0796.mp4,other_intents,0
+Cantonese,我唔知點先可以搭的士,./Intent_Prediction/audio/0797.mp4,other_intents,0
+Cantonese,呢度有冇新消息,./Intent_Prediction/audio/0798.mp4,other_intents,0
+English,Can you recommend a good book,./Intent_Prediction/audio/0799.mp4,other_intents,0
+English,Where can I find a good coffee shop,./Intent_Prediction/audio/0800.mp4,other_intents,0
+English,How do I change my phone’s wallpaper,./Intent_Prediction/audio/0801.mp4,other_intents,0
+English,What’s your favorite way to relax,./Intent_Prediction/audio/0802.mp4,other_intents,0
+English,What time is the meeting tomorrow,./Intent_Prediction/audio/0803.mp4,other_intents,0
+English,Where’s a good place to eat lunch,./Intent_Prediction/audio/0804.mp4,other_intents,0
+English,Can you help me with my computer problem,./Intent_Prediction/audio/0805.mp4,other_intents,0
+English,What should I wear to the party,./Intent_Prediction/audio/0806.mp4,other_intents,0
+English,Do you know any good podcasts,./Intent_Prediction/audio/0807.mp4,other_intents,0
+English,Can you help me organize my files,./Intent_Prediction/audio/0808.mp4,other_intents,0
+English,What’s the best way to make a salad,./Intent_Prediction/audio/0809.mp4,other_intents,0
+English,Can you show me how to make a smoothie,./Intent_Prediction/audio/0810.mp4,other_intents,0
+English,Where can I buy a new pair of shoes,./Intent_Prediction/audio/0811.mp4,other_intents,0
+English,How do I start a new hobby,./Intent_Prediction/audio/0812.mp4,other_intents,0
+English,What’s the best way to spend the weekend,./Intent_Prediction/audio/0813.mp4,other_intents,0
+English,Can you help me study for my exam,./Intent_Prediction/audio/0814.mp4,other_intents,0
+English,How do I fix my printer,./Intent_Prediction/audio/0815.mp4,other_intents,0
+English,What’s a good way to stay motivated,./Intent_Prediction/audio/0816.mp4,other_intents,0
+English,Can you recommend a workout routine,./Intent_Prediction/audio/0817.mp4,other_intents,0
+English,Where can I buy a phone charger,./Intent_Prediction/audio/0818.mp4,other_intents,0
+English,How do I cancel a subscription,./Intent_Prediction/audio/0819.mp4,other_intents,0
+English,What’s the best way to save money,./Intent_Prediction/audio/0820.mp4,other_intents,0
+English,Can you show me how to tie a tie,./Intent_Prediction/audio/0821.mp4,other_intents,0
+English,Where can I buy groceries,./Intent_Prediction/audio/0822.mp4,other_intents,0
+English,Do you know how to bake a cake,./Intent_Prediction/audio/0823.mp4,other_intents,0
+English,What’s the best way to relax after work,./Intent_Prediction/audio/0824.mp4,other_intents,0
+English,How do I deal with stress,./Intent_Prediction/audio/0825.mp4,other_intents,0
+English,What’s your favorite movie genre,./Intent_Prediction/audio/0826.mp4,other_intents,0
+English,Can you suggest a weekend getaway,./Intent_Prediction/audio/0827.mp4,other_intents,0
+English,What’s the best way to learn to cook,./Intent_Prediction/audio/0828.mp4,other_intents,0
+English,How do I create a budget,./Intent_Prediction/audio/0829.mp4,other_intents,0
+English,Can you recommend some good TV shows,./Intent_Prediction/audio/0830.mp4,other_intents,0
+English,Where’s a good place to go on a road trip,./Intent_Prediction/audio/0831.mp4,other_intents,0
+English,What’s your favorite hobby,./Intent_Prediction/audio/0832.mp4,other_intents,0
+English,Can you recommend a workout playlist,./Intent_Prediction/audio/0833.mp4,other_intents,0
+English,How do I start a journal,./Intent_Prediction/audio/0834.mp4,other_intents,0
+English,Where can I get a new phone case,./Intent_Prediction/audio/0835.mp4,other_intents,0
+English,How do I organize a party,./Intent_Prediction/audio/0836.mp4,other_intents,0
+English,Can you recommend some healthy snacks,./Intent_Prediction/audio/0837.mp4,other_intents,0
+English,Where can I buy a new laptop bag,./Intent_Prediction/audio/0838.mp4,other_intents,0
+English,How do I improve my speaking skills,./Intent_Prediction/audio/0839.mp4,other_intents,0
+English,What’s your idea of a perfect vacation,./Intent_Prediction/audio/0840.mp4,other_intents,0
+English,How do I stay productive throughout the day,./Intent_Prediction/audio/0841.mp4,other_intents,0
+English,Can you recommend a good movie to watch,./Intent_Prediction/audio/0842.mp4,other_intents,0
+English,How do I make my own website,./Intent_Prediction/audio/0843.mp4,other_intents,0
+English,Where can I find a good dentist,./Intent_Prediction/audio/0844.mp4,other_intents,0
+Cantonese,有冇好書推介,./Intent_Prediction/audio/0845.mp4,other_intents,0
+Cantonese,邊度有間好嘅咖啡店,./Intent_Prediction/audio/0846.mp4,other_intents,0
+Cantonese,點樣換手機壁紙,./Intent_Prediction/audio/0847.mp4,other_intents,0
+Cantonese,你鍾意點放鬆,./Intent_Prediction/audio/0848.mp4,other_intents,0
+Cantonese,明天開會幾點鐘,./Intent_Prediction/audio/0849.mp4,other_intents,0
+Cantonese,有冇地方可以食午餐,./Intent_Prediction/audio/0850.mp4,other_intents,0
+Cantonese,可唔可以幫我解決電腦問題,./Intent_Prediction/audio/0851.mp4,other_intents,0
+Cantonese,我應該著咩去派對,./Intent_Prediction/audio/0852.mp4,other_intents,0
+Cantonese,有冇好聽嘅Podcast,./Intent_Prediction/audio/0853.mp4,other_intents,0
+Cantonese,可以幫我整理文件嗎,./Intent_Prediction/audio/0854.mp4,other_intents,0
+Cantonese,咩方法做沙律最好,./Intent_Prediction/audio/0855.mp4,other_intents,0
+Cantonese,可以教我做Smoothie嗎,./Intent_Prediction/audio/0856.mp4,other_intents,0
+Cantonese,邊度有得買新鞋,./Intent_Prediction/audio/0857.mp4,other_intents,0
+Cantonese,點樣開始一個新興趣,./Intent_Prediction/audio/0858.mp4,other_intents,0
+Cantonese,有冇推薦嘅週末活動,./Intent_Prediction/audio/0859.mp4,other_intents,0
+Cantonese,可唔可以幫我溫習考試,./Intent_Prediction/audio/0860.mp4,other_intents,0
+Cantonese,點樣修理打印機,./Intent_Prediction/audio/0861.mp4,other_intents,0
+Cantonese,點樣保持動力,./Intent_Prediction/audio/0862.mp4,other_intents,0
+Cantonese,有冇推薦嘅運動計劃,./Intent_Prediction/audio/0863.mp4,other_intents,0
+Cantonese,邊度可以買手機充電器,./Intent_Prediction/audio/0864.mp4,other_intents,0
+Cantonese,點樣取消訂閱,./Intent_Prediction/audio/0865.mp4,other_intents,0
+Cantonese,點樣儲錢最有效,./Intent_Prediction/audio/0866.mp4,other_intents,0
+Cantonese,可以教我點綁領帶嗎,./Intent_Prediction/audio/0867.mp4,other_intents,0
+Cantonese,邊度可以買到雜貨,./Intent_Prediction/audio/0868.mp4,other_intents,0
+Cantonese,你識唔識做蛋糕,./Intent_Prediction/audio/0869.mp4,other_intents,0
+Cantonese,點樣放鬆工作後,./Intent_Prediction/audio/0870.mp4,other_intents,0
+Cantonese,點樣處理壓力,./Intent_Prediction/audio/0871.mp4,other_intents,0
+Cantonese,你鍾意邊種電影,./Intent_Prediction/audio/0872.mp4,other_intents,0
+Cantonese,有冇推薦嘅週末短途旅行,./Intent_Prediction/audio/0873.mp4,other_intents,0
+Cantonese,點樣學做煮食,./Intent_Prediction/audio/0874.mp4,other_intents,0
+Cantonese,如何編排預算,./Intent_Prediction/audio/0875.mp4,other_intents,0
+Cantonese,有冇好嘅電視劇推介,./Intent_Prediction/audio/0876.mp4,other_intents,0
+Cantonese,邊度有好嘅路上旅行地點,./Intent_Prediction/audio/0877.mp4,other_intents,0
+Cantonese,你最鍾意做咩嗜好,./Intent_Prediction/audio/0878.mp4,other_intents,0
+Cantonese,有冇一啲健身音樂推介,./Intent_Prediction/audio/0879.mp4,other_intents,0
+Cantonese,點樣開始寫日記,./Intent_Prediction/audio/0880.mp4,other_intents,0
+Cantonese,邊度有得買新手機殼,./Intent_Prediction/audio/0881.mp4,other_intents,0
+Cantonese,點樣組織派對,./Intent_Prediction/audio/0882.mp4,other_intents,0
+Cantonese,有冇推薦嘅健康小食,./Intent_Prediction/audio/0883.mp4,other_intents,0
+Cantonese,邊度有得買新電腦袋,./Intent_Prediction/audio/0884.mp4,other_intents,0
+Cantonese,點樣提高口語表達能力,./Intent_Prediction/audio/0885.mp4,other_intents,0
+Cantonese,你理想嘅度假係點樣,./Intent_Prediction/audio/0886.mp4,other_intents,0
+Cantonese,點樣保持一日高效,./Intent_Prediction/audio/0887.mp4,other_intents,0
+Cantonese,有冇啲好電影推薦,./Intent_Prediction/audio/0888.mp4,other_intents,0
+Cantonese,點樣自己開設網站,./Intent_Prediction/audio/0889.mp4,other_intents,0
+Cantonese,邊度有得搵到好嘅牙醫,./Intent_Prediction/audio/0890.mp4,other_intents,0
+English,Where can I find Metformin,./Intent_Prediction/audio/0891.mp4,search_med,3
+English,Can you help me find pills for hypertension,./Intent_Prediction/audio/0892.mp4,search_med,1
+English,"I’m looking for Atorvastatin, can you help",./Intent_Prediction/audio/0893.mp4,search_med,5000
+English,Where can I get Amitriptyline,./Intent_Prediction/audio/0894.mp4,search_med,7
+English,Do you know where I can buy Metformin,./Intent_Prediction/audio/0895.mp4,search_med,3
+English,Can you find a pharmacy that sells ACE Inhibitors,./Intent_Prediction/audio/0896.mp4,search_med,0
+English,Where are the diabetes medications located,./Intent_Prediction/audio/0897.mp4,search_med,300
+English,Is Atorvastatin available in the store,./Intent_Prediction/audio/0898.mp4,search_med,50000
+English,Where can I pick up medication for high blood pressure,./Intent_Prediction/audio/0899.mp4,search_med,122
+English,Can you help me find coronary heart disease pills,./Intent_Prediction/audio/0900.mp4,search_med,5660
+English,"I’m trying to find Amitriptyline for depression, can you help",./Intent_Prediction/audio/0901.mp4,search_med,707000
+English,Do you know where I can purchase Metformin for diabetes,./Intent_Prediction/audio/0902.mp4,search_med,303
+English,Can you search for blood pressure medication,./Intent_Prediction/audio/0903.mp4,search_med,0
+English,Where can I buy heart disease medication,./Intent_Prediction/audio/0904.mp4,search_med,560
+English,I need to find depression medication,./Intent_Prediction/audio/0905.mp4,search_med,70
+English,Where are the pills for hypertension,./Intent_Prediction/audio/0906.mp4,search_med,1
+English,Is Metformin available for purchase,./Intent_Prediction/audio/0907.mp4,search_med,3000
+English,Can you locate diabetes medication for me,./Intent_Prediction/audio/0908.mp4,search_med,3000
+English,I need to find ACE Inhibitors for my high blood pressure,./Intent_Prediction/audio/0909.mp4,search_med,122
+English,Where can I find antidepressants like Amitriptyline,./Intent_Prediction/audio/0910.mp4,search_med,7
+English,Can you find me some medication for CAD,./Intent_Prediction/audio/0911.mp4,search_med,5
+English,I need to search for Metformin for diabetes,./Intent_Prediction/audio/0912.mp4,search_med,303
+English,Can you help me find my heart disease pills,./Intent_Prediction/audio/0913.mp4,search_med,560
+English,Where can I purchase hypertension medication,./Intent_Prediction/audio/0914.mp4,search_med,10
+English,Do you have any information on where I can get Amitriptyline,./Intent_Prediction/audio/0915.mp4,search_med,7
+English,I need help finding coronary artery disease medication,./Intent_Prediction/audio/0916.mp4,search_med,0
+English,Where can I find blood pressure medicine in this store,./Intent_Prediction/audio/0917.mp4,search_med,0
+English,What medicine is good for high blood pressure,./Intent_Prediction/audio/0918.mp4,enquire_suitable_med,122
+English,Can you suggest something for my diabetes,./Intent_Prediction/audio/0919.mp4,enquire_suitable_med,3
+English,What medication should I take for depression,./Intent_Prediction/audio/0920.mp4,enquire_suitable_med,7
+English,What’s the best treatment for coronary artery disease,./Intent_Prediction/audio/0921.mp4,enquire_suitable_med,0
+English,Can you recommend a medicine for heart disease,./Intent_Prediction/audio/0922.mp4,enquire_suitable_med,56
+English,What’s a good medication for hypertension,./Intent_Prediction/audio/0923.mp4,enquire_suitable_med,1
+English,Which medicine is suitable for my condition,./Intent_Prediction/audio/0924.mp4,enquire_suitable_med,0
+English,What pills should I take for CAD,./Intent_Prediction/audio/0925.mp4,enquire_suitable_med,5
+English,What’s the right medicine for managing diabetes,./Intent_Prediction/audio/0926.mp4,enquire_suitable_med,3
+English,Can you tell me what medication is suitable for heart disease,./Intent_Prediction/audio/0927.mp4,enquire_suitable_med,56
+English,Which medicine is best for treating depression,./Intent_Prediction/audio/0928.mp4,enquire_suitable_med,7
+English,What’s the best drug for controlling high blood pressure,./Intent_Prediction/audio/0929.mp4,enquire_suitable_med,122
+English,Which medicine can I take for my high cholesterol,./Intent_Prediction/audio/0930.mp4,enquire_suitable_med,0
+English,Can you recommend something for my coronary heart disease,./Intent_Prediction/audio/0931.mp4,enquire_suitable_med,566
+English,What’s the most effective medication for CAD,./Intent_Prediction/audio/0932.mp4,enquire_suitable_med,5
+English,Can you help me find a good medicine for depression,./Intent_Prediction/audio/0933.mp4,enquire_suitable_med,7
+English,What medicine would you suggest for controlling hypertension,./Intent_Prediction/audio/0934.mp4,enquire_suitable_med,1
+English,Which medication is best for diabetes,./Intent_Prediction/audio/0935.mp4,enquire_suitable_med,3
+English,What’s the right medication for treating heart disease,./Intent_Prediction/audio/0936.mp4,enquire_suitable_med,56
+English,What pills should I take for my depression disorder,./Intent_Prediction/audio/0937.mp4,enquire_suitable_med,70
+English,Can you suggest a good drug for blood pressure management,./Intent_Prediction/audio/0938.mp4,enquire_suitable_med,0
+English,What is the most effective treatment for hypertension,./Intent_Prediction/audio/0939.mp4,enquire_suitable_med,1
+English,Can you recommend a medicine to manage my blood sugar,./Intent_Prediction/audio/0940.mp4,enquire_suitable_med,0
+English,What is the best option for treating coronary artery disease,./Intent_Prediction/audio/0941.mp4,enquire_suitable_med,0
+English,What kind of medication is suitable for managing depression,./Intent_Prediction/audio/0942.mp4,enquire_suitable_med,7
+English,Where can I find Metformin and Atorvastatin,./Intent_Prediction/audio/0943.mp4,search_med,305
+English,Can you help me find ACE Inhibitors and Metformin,./Intent_Prediction/audio/0944.mp4,search_med,3
+English,"I’m looking for Atorvastatin and Amitriptyline, can you help",./Intent_Prediction/audio/0945.mp4,search_med,507000
+English,Where can I get both Metformin and ACE Inhibitors,./Intent_Prediction/audio/0946.mp4,search_med,3000
+English,Do you know where I can buy Amitriptyline and diabetes medication,./Intent_Prediction/audio/0947.mp4,search_med,7030
+English,Can you find a pharmacy that sells both Atorvastatin and Metformin,./Intent_Prediction/audio/0948.mp4,search_med,503
+English,Where are the diabetes medications and hypertension pills located,./Intent_Prediction/audio/0949.mp4,search_med,300100
+English,Can you help me find coronary heart disease pills and antidepressants,./Intent_Prediction/audio/0950.mp4,search_med,566000
+English,Where can I pick up Metformin and hypertension medication,./Intent_Prediction/audio/0951.mp4,search_med,3010
+English,Can you find me some ACE Inhibitors and pills for depression,./Intent_Prediction/audio/0952.mp4,search_med,7
+English,"I’m trying to find Atorvastatin and diabetes medication, can you help",./Intent_Prediction/audio/0953.mp4,search_med,5030000
+English,"Can you search for Metformin, ACE Inhibitors, and blood pressure medication",./Intent_Prediction/audio/0954.mp4,search_med,3000000
+English,Where can I buy Amitriptyline and coronary heart disease medication,./Intent_Prediction/audio/0955.mp4,search_med,705660
+English,I need to find both hypertension and heart disease medication,./Intent_Prediction/audio/0956.mp4,search_med,10560
+English,Where are the pills for high blood pressure and depression,./Intent_Prediction/audio/0957.mp4,search_med,12207
+English,Is Metformin and Atorvastatin available for purchase,./Intent_Prediction/audio/0958.mp4,search_med,305000
+English,Can you locate diabetes medication and blood pressure pills for me,./Intent_Prediction/audio/0959.mp4,search_med,30000000
+English,I need to find ACE Inhibitors and antidepressants for my condition,./Intent_Prediction/audio/0960.mp4,search_med,0
+English,Where can I find Amitriptyline and Metformin in the pharmacy,./Intent_Prediction/audio/0961.mp4,search_med,703000
+English,Can you find me some Atorvastatin and ACE Inhibitors for high blood pressure,./Intent_Prediction/audio/0962.mp4,search_med,50000122
+English,"Where can I buy Metformin, Amitriptyline, and heart disease medication",./Intent_Prediction/audio/0963.mp4,search_med,370560
+English,Can you help me find my blood pressure medication and Metformin,./Intent_Prediction/audio/0964.mp4,search_med,3
+English,Where can I get both ACE Inhibitors and Atorvastatin,./Intent_Prediction/audio/0965.mp4,search_med,5
+English,What medicine is good for high blood pressure and diabetes,./Intent_Prediction/audio/0966.mp4,enquire_suitable_med,12203
+English,Can you suggest something for my diabetes and coronary heart disease,./Intent_Prediction/audio/0967.mp4,enquire_suitable_med,30566
+English,What medication should I take for depression and hypertension,./Intent_Prediction/audio/0968.mp4,enquire_suitable_med,701
+English,What’s the best treatment for coronary artery disease and high blood pressure,./Intent_Prediction/audio/0969.mp4,enquire_suitable_med,122
+English,Can you recommend a medicine for heart disease and blood pressure,./Intent_Prediction/audio/0970.mp4,enquire_suitable_med,56000
+English,What’s a good medication for hypertension and depression,./Intent_Prediction/audio/0971.mp4,enquire_suitable_med,107
+English,Which medicine is suitable for both CAD and diabetes,./Intent_Prediction/audio/0972.mp4,enquire_suitable_med,503
+English,What pills should I take for heart disease and blood sugar control,./Intent_Prediction/audio/0973.mp4,enquire_suitable_med,560000
+English,What’s the right medicine for managing diabetes and depression,./Intent_Prediction/audio/0974.mp4,enquire_suitable_med,307
+English,Can you tell me what medication is suitable for heart disease and hypertension,./Intent_Prediction/audio/0975.mp4,enquire_suitable_med,5601
+English,Which medicine is best for treating depression and high blood pressure,./Intent_Prediction/audio/0976.mp4,enquire_suitable_med,70122
+English,What’s the best drug for controlling high blood pressure and diabetes,./Intent_Prediction/audio/0977.mp4,enquire_suitable_med,12203
+English,Which medicine can I take for my high cholesterol and hypertension,./Intent_Prediction/audio/0978.mp4,enquire_suitable_med,1
+English,Can you recommend something for my coronary heart disease and diabetes,./Intent_Prediction/audio/0979.mp4,enquire_suitable_med,56603
+English,What’s the most effective medication for CAD and blood pressure management,./Intent_Prediction/audio/0980.mp4,enquire_suitable_med,50000
+English,Can you help me find a good medicine for depression and heart disease,./Intent_Prediction/audio/0981.mp4,enquire_suitable_med,7056
+English,What medicine would you suggest for controlling hypertension and depression,./Intent_Prediction/audio/0982.mp4,enquire_suitable_med,107
+English,Which medication is best for diabetes and coronary artery disease,./Intent_Prediction/audio/0983.mp4,enquire_suitable_med,30000
+English,What’s the right medication for treating heart disease and blood sugar issues,./Intent_Prediction/audio/0984.mp4,enquire_suitable_med,560000
+English,What pills should I take for my depression disorder and CAD,./Intent_Prediction/audio/0985.mp4,enquire_suitable_med,7005
+English,Can you suggest a good drug for blood pressure management and depression,./Intent_Prediction/audio/0986.mp4,enquire_suitable_med,7
+English,What is the most effective treatment for hypertension and diabetes,./Intent_Prediction/audio/0987.mp4,enquire_suitable_med,103
+English,Can you recommend a medicine to manage both blood sugar and heart disease,./Intent_Prediction/audio/0988.mp4,enquire_suitable_med,56
+English,What is the best option for treating coronary artery disease and high blood pressure,./Intent_Prediction/audio/0989.mp4,enquire_suitable_med,122
+English,What kind of medication is suitable for managing depression and hypertension,./Intent_Prediction/audio/0990.mp4,enquire_suitable_med,701
+English,What’s the best medication for controlling both high blood pressure and diabetes,./Intent_Prediction/audio/0991.mp4,enquire_suitable_med,12203
+English,Can you recommend a suitable medicine for both coronary artery disease and hypertension,./Intent_Prediction/audio/0992.mp4,enquire_suitable_med,1
+English,Which medicine would be effective for managing both depression and heart disease,./Intent_Prediction/audio/0993.mp4,enquire_suitable_med,7056
+English,What medications should I take for both diabetes and high blood pressure,./Intent_Prediction/audio/0994.mp4,enquire_suitable_med,30122
+English,Can you suggest a drug that works for both CAD and hypertension,./Intent_Prediction/audio/0995.mp4,enquire_suitable_med,501
+English,What’s the most suitable treatment for managing both depression and diabetes,./Intent_Prediction/audio/0996.mp4,enquire_suitable_med,703
+English,Which pills are good for both high blood pressure and coronary artery disease,./Intent_Prediction/audio/0997.mp4,enquire_suitable_med,1220000
+English,What’s the best option for managing both heart disease and blood sugar levels,./Intent_Prediction/audio/0998.mp4,enquire_suitable_med,560000
+English,Can you recommend a medication for treating both hypertension and depression,./Intent_Prediction/audio/0999.mp4,enquire_suitable_med,107
+English,What’s the best combination of drugs for managing high blood pressure and heart disease,./Intent_Prediction/audio/01000.mp4,enquire_suitable_med,122056
+English,Can you help me find a medicine for both CAD and blood sugar control,./Intent_Prediction/audio/01001.mp4,enquire_suitable_med,50000
+English,Which medication would be appropriate for treating both hypertension and CAD,./Intent_Prediction/audio/01002.mp4,enquire_suitable_med,105
+English,"What’s the best medication for high blood pressure, heart disease, and diabetes",./Intent_Prediction/audio/01003.mp4,enquire_suitable_med,1225603
+English,Can you recommend any pills for managing both depression and CAD,./Intent_Prediction/audio/01004.mp4,enquire_suitable_med,705
+English,What’s the right medicine to control both diabetes and coronary artery disease,./Intent_Prediction/audio/01005.mp4,enquire_suitable_med,30000
+English,Which medication is effective for both heart disease and high blood pressure,./Intent_Prediction/audio/01006.mp4,enquire_suitable_med,560122
+English,What medicine can I use for both hypertension and depression management,./Intent_Prediction/audio/01007.mp4,enquire_suitable_med,1070
+English,Can you suggest a medication for managing both high cholesterol and heart disease,./Intent_Prediction/audio/01008.mp4,enquire_suitable_med,56
+English,What is the best treatment for depression and coronary artery disease combined,./Intent_Prediction/audio/01009.mp4,enquire_suitable_med,700000
+English,What pills should I use for managing both blood pressure and depression,./Intent_Prediction/audio/01010.mp4,enquire_suitable_med,7
+English,Can you help me find something for both hypertension and diabetes,./Intent_Prediction/audio/01011.mp4,enquire_suitable_med,103
+English,What’s the best drug for managing both CAD and blood pressure issues,./Intent_Prediction/audio/01012.mp4,enquire_suitable_med,50000
+English,Can you recommend a medication for treating both depression and high blood pressure,./Intent_Prediction/audio/01013.mp4,enquire_suitable_med,70122
+English,What medications are good for both heart disease and diabetes,./Intent_Prediction/audio/01014.mp4,enquire_suitable_med,5603
+English,Can you help me with a medication plan for both hypertension and depression,./Intent_Prediction/audio/01015.mp4,enquire_suitable_med,107
+English,What is the most effective medicine for both CAD and high blood pressure,./Intent_Prediction/audio/01016.mp4,enquire_suitable_med,50122
+English,What is a good treatment for both coronary artery disease and blood sugar control,./Intent_Prediction/audio/01017.mp4,enquire_suitable_med,0
+English,Which medications should I take for both hypertension and heart disease,./Intent_Prediction/audio/01018.mp4,enquire_suitable_med,1056
+English,Can you suggest a suitable combination of drugs for managing both depression and blood pressure,./Intent_Prediction/audio/01019.mp4,enquire_suitable_med,7000
+English,What medicine is recommended for controlling both diabetes and CAD,./Intent_Prediction/audio/01020.mp4,enquire_suitable_med,305
+English,Can you help me find the right medication for managing both depression and hypertension,./Intent_Prediction/audio/01021.mp4,enquire_suitable_med,701
+English,What’s the most suitable drug for both heart disease and high blood sugar,./Intent_Prediction/audio/01022.mp4,enquire_suitable_med,560000
+English,Which medicine would work well for both high blood pressure and diabetes,./Intent_Prediction/audio/01023.mp4,enquire_suitable_med,12203
+English,Can you find a suitable drug for managing both depression and coronary artery disease,./Intent_Prediction/audio/01024.mp4,enquire_suitable_med,70000

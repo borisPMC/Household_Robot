@@ -92,13 +92,10 @@ def detect_language(df: pd.DataFrame):
         else:
             lang = "English"
 
-        df.at[index, "Major_Language"] = lang
+        df.at[index, "Language"] = lang
 
     return df
-
     
-
-
 def hybrid_split(string: str) -> List[str]:
     """
     Split a string into tokens using a hybrid regex.
@@ -120,5 +117,8 @@ out_fpath = "Intent_Prediction/multitask_audio/multitask_ds_modified.xlsx"
 df = pd.read_excel(fpath)
 lang_df = detect_language(df)
 tokenized_df = convert_sentence_to_tokens(df)
+
+
+
 # updated_df = convert_sentence_to_tokens(fpath)
 tokenized_df.to_excel(out_fpath, index=False)

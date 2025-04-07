@@ -13,8 +13,9 @@ import pandas as pd
 from transformers import BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, EvalPrediction
 import torch
 from torch import nn
-from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
+from datasets import DatasetDict
+from sklearn.model_selection import train_test_split
 
 """
 CLASS LABEL LIST
@@ -43,6 +44,7 @@ class Multitask_BERT(nn.Module):
         self.intent_classifier = nn.Linear(self.bert.config.hidden_size, num_intent_labels)
         self.ner_classifier = nn.Linear(self.bert.config.hidden_size, num_ner_labels)
         self.dropout = nn.Dropout(self.bert.config.hidden_dropout_prob)
+        
 
     def forward(self, input_ids, attention_mask, intent_label=None, ner_labels=None):
         """
@@ -111,19 +113,15 @@ class MultitaskDataset(Dataset):
             dtype=str,
             usecols=["Speech", "Intent", "NER_Tag", "Major_Language", "Audio_Path"],
             skiprows=[lambda x: x["Major_Language"] != config["language"]])
-        # self.data = self._filter_by_language(self.data, config["language"])
-        self.train_data, self.valid_data, self.test_data = self._split_data(self.data, config["train_ratio"])
+        
+        # Split the dataset into train, validation, and test sets
+        train_ratio = config.get("train_ratio", 0.8)
+        train_data, test_valid_data = train_test_split(self.data, test_size=1 - train_ratio, random_state=42, shuffle=True)
+        valid_data, test_data = train_test_split(test_valid_data, test_size=0.5, random_state=42, shuffle=True)
 
-    # def _filter_by_language(self, df: pd.DataFrame, language: str) -> pd.DataFrame:
-
-    #     if "Major_Language" not in df.columns:
-    #         raise ValueError("The dataset must contain a 'Major_Language' column.")
-    #     return df[df["Major_Language"] == language]
-
-    def _split_data(self, df: pd.DataFrame, train_ratio: float) -> tuple:
-
-        #TODO: split df into train (train_ratio), valid ((1-train_ratio) / 2), and test ((1-train_ratio) / 2) sets
-        pass
+        self.train_data = train_data.reset_index(drop=True)
+        self.valid_data = valid_data.reset_index(drop=True)
+        self.test_data = test_data.reset_index(drop=True)
 
     def _prepare_data(self, df: pd.DataFrame) -> pd.DataFrame:
 
@@ -174,7 +172,7 @@ class MultitaskDataset(Dataset):
         """
         row = self.data.iloc[idx]
         text = row["Speech"]
-        intent_label = int(row["Intent_Label"])
+        intent_label = INTENT_LABEL.index(row["Intent"])
         ner_labels = [int(tag) for tag in row["NER_Tag"]]
 
         # Tokenize the text
@@ -254,6 +252,13 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset
             "intent_accuracy": intent_accuracy,
             "ner_accuracy": ner_accuracy
         }
+    
+
+    new_ds = DatasetDict({
+        "train": dataset.get_split("train"),
+        "valid": dataset.get_split("valid"),
+        "test": dataset.get_split("test"),
+    })
 
     training_args = TrainingArguments(
         output_dir="Intent_Prediction/results",
@@ -273,8 +278,8 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=dataset.get_split("train"),
-        eval_dataset=dataset.get_split("valid"),
+        train_dataset=new_ds["train"],
+        eval_dataset=new_ds["valid"],
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
     )
