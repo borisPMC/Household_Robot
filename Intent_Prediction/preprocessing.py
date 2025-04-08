@@ -68,7 +68,7 @@ def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
                     ner_tag[i:(i + key_length)] = list(value[:key_length])
 
         # Join the NER_Tag list back into a string
-        ner_tag_str = "".join(ner_tag)
+        ner_tag_str = "'" + "".join(ner_tag)
 
         # Update the dataframe
         df.at[index, "NER_Tag"] = ner_tag_str
@@ -86,12 +86,10 @@ def detect_language(df: pd.DataFrame):
 
         lang = "Unknown"
         speech = row["Speech"]
-
         if re.search(r"[\u4e00-\ufaff]", speech, re.UNICODE):
             lang = "Cantonese"
         else:
             lang = "English"
-
         df.at[index, "Language"] = lang
 
     return df
@@ -99,12 +97,6 @@ def detect_language(df: pd.DataFrame):
 def hybrid_split(string: str) -> List[str]:
     """
     Split a string into tokens using a hybrid regex.
-
-    Args:
-        string (str): Input string.
-
-    Returns:
-        List[str]: List of tokens.
     """
     regex = r"[\u4e00-\ufaff]|[0-9]+|[a-zA-Z]+\'*[a-z]*"
     matches = re.findall(regex, string, re.UNICODE)
@@ -114,6 +106,7 @@ def hybrid_split(string: str) -> List[str]:
 # Example usage
 fpath = "Intent_Prediction/multitask_audio/multitask_ds.xlsx"
 out_fpath = "Intent_Prediction/multitask_audio/multitask_ds_modified.xlsx"
+out_csv = "Intent_Prediction/multitask_audio/multitask_ds_modified.csv"
 df = pd.read_excel(fpath)
 lang_df = detect_language(df)
 tokenized_df = convert_sentence_to_tokens(df)
@@ -121,4 +114,5 @@ tokenized_df = convert_sentence_to_tokens(df)
 
 
 # updated_df = convert_sentence_to_tokens(fpath)
-tokenized_df.to_excel(out_fpath, index=False)
+# tokenized_df.to_excel(out_fpath, index=False)
+tokenized_df.to_csv(out_csv, index=False)

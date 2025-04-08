@@ -491,8 +491,8 @@ Cantonese,俾Ace inhibitor我啊,./Intent_Prediction/audio/0489.mp3,retrieve_med
 Cantonese,俾Metformin我啊,./Intent_Prediction/audio/0490.mp3,retrieve_med,'0300
 Cantonese,俾糖尿病藥我啊,./Intent_Prediction/audio/0491.mp3,retrieve_med,'0344000
 Cantonese,俾甲福明我啊,./Intent_Prediction/audio/0492.mp3,retrieve_med,'034400
-Cantonese,俾Diabetes藥我啊,./Intent_Prediction/audio/0493.mp3,retrieve_med,'0300
-Cantonese,拎嗰支Atorvastatin俾我,./Intent_Prediction/audio/0494.mp3,retrieve_med,'0005000
+Cantonese,俾Diabetes藥我啊,./Intent_Prediction/audio/0493.mp3,retrieve_med,'03000
+Cantonese,拎嗰支Atorvastatin俾我,./Intent_Prediction/audio/0494.mp3,retrieve_med,'000500
 Cantonese,拎嗰支Amitriptyline俾我,./Intent_Prediction/audio/0495.mp3,retrieve_med,'000700
 Cantonese,拎嗰支抑鬱症藥俾我,./Intent_Prediction/audio/0496.mp3,retrieve_med,'000780000
 Cantonese,拎嗰支Depression藥俾我,./Intent_Prediction/audio/0497.mp3,retrieve_med,'0007000
@@ -610,10 +610,10 @@ Cantonese,有冇冠心病藥或者抑鬱症藥,./Intent_Prediction/audio/0608.mp
 Cantonese,有冇冠心病藥或者Depression藥,./Intent_Prediction/audio/0609.mp3,retrieve_med,'0056600070
 Cantonese,有冇冠心病藥或者Depression disorder藥,./Intent_Prediction/audio/0610.mp3,retrieve_med,'00566000700
 Cantonese,有冇冠心病藥或者阿米替林,./Intent_Prediction/audio/0611.mp3,retrieve_med,'005660007888
-Cantonese,有冇心臟病藥或者amitriptyline,./Intent_Prediction/audio/0612.mp3,retrieve_med,'005666007
-Cantonese,有冇心臟病藥或者antidepressant,./Intent_Prediction/audio/0613.mp3,retrieve_med,'005666007
-Cantonese,有冇心臟病藥或者Depression disorder藥,./Intent_Prediction/audio/0614.mp3,retrieve_med,'00566600700
-Cantonese,有冇心臟病藥或者阿米替林,./Intent_Prediction/audio/0615.mp3,retrieve_med,'005666007888
+Cantonese,有冇心臟病藥或者amitriptyline,./Intent_Prediction/audio/0612.mp3,retrieve_med,'005660007
+Cantonese,有冇心臟病藥或者antidepressant,./Intent_Prediction/audio/0613.mp3,retrieve_med,'005660007
+Cantonese,有冇心臟病藥或者Depression disorder藥,./Intent_Prediction/audio/0614.mp3,retrieve_med,'00566000700
+Cantonese,有冇心臟病藥或者阿米替林,./Intent_Prediction/audio/0615.mp3,retrieve_med,'005660007888
 Cantonese,可能要高血壓嘅藥啦  ,./Intent_Prediction/audio/0616.mp3,enquire_suitable_med,'000122000
 Cantonese,唔知係咪要糖尿病嗰隻  ,./Intent_Prediction/audio/0617.mp3,enquire_suitable_med,'0000034400
 Cantonese,我諗緊要唔要阿伐他汀  ,./Intent_Prediction/audio/0618.mp3,enquire_suitable_med,'0000005666

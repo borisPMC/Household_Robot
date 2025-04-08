@@ -42,10 +42,14 @@ class Multitask_BERT(nn.Module):
         """
         super(Multitask_BERT, self).__init__()
         self.bert = BertModel.from_pretrained(model_name)
+        self.dropout = nn.Dropout(self.bert.config.hidden_dropout_prob)
+
         self.intent_classifier = nn.Linear(self.bert.config.hidden_size, num_intent_labels)
         self.ner_classifier = nn.Linear(self.bert.config.hidden_size, num_ner_labels)
-        self.dropout = nn.Dropout(self.bert.config.hidden_dropout_prob)
         
+        self.intent_softmax = nn.Softmax(dim=1)
+        self.ner_softmax = nn.Softmax(dim=1)
+
 
     def forward(self, input_ids, attention_mask, intent_label=None, ner_labels=None):
         """
@@ -64,17 +68,20 @@ class Multitask_BERT(nn.Module):
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
 
         sequence_output = outputs.last_hidden_state  # For NER
-        sequence_output = self.dropout(sequence_output)
         ner_logits = self.ner_classifier(sequence_output)
+        ner_probs = self.ner_softmax(ner_logits)
 
         pooled_output = outputs.pooler_output       # For intent classification
         pooled_output = self.dropout(pooled_output)
         intent_logits = self.intent_classifier(pooled_output)
+        intent_probs = self.intent_softmax(intent_logits)
 
         # Prepare output dictionary
         output = {
             "intent_logits": intent_logits,
-            "ner_logits": ner_logits
+            "ner_logits": ner_logits,
+            "intent_probs": intent_probs,
+            "ner_probs": ner_probs
         }
 
         # Compute losses if labels are provided
@@ -86,8 +93,6 @@ class Multitask_BERT(nn.Module):
             # Flatten NER logits and labels for loss computation
             ner_loss = ner_loss_fn(ner_logits.view(-1, ner_logits.size(-1)), ner_labels.view(-1))
 
-            output["intent_loss"] = intent_loss
-            output["ner_loss"] = ner_loss
             output["loss"] = intent_loss + ner_loss # Total loss
 
         return output
@@ -206,6 +211,56 @@ def hybrid_split(string: str) -> List[str]:
 
 def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max_length=128):
 
+    def align_predictions_by_row(predictions, labels):
+        """
+        Align predictions and labels to the original rows using tokenizer's word_ids.
+
+        Args:
+            predictions (np.ndarray): Model's token-level predictions.
+            labels (np.ndarray): Token-level ground truth labels.
+
+        Returns:
+            tuple: Aligned predictions and labels at the row level.
+        """
+        aligned_preds = []
+        aligned_labels = []
+
+        for pred, label in zip(predictions, labels):
+            word_ids = tokenizer.word_ids()  # Get word IDs for the current input
+            row_preds = []
+            row_labels = []
+
+            previous_word_id = None
+            current_word_preds = []
+            current_word_labels = []
+
+            for token_pred, token_label, word_id in zip(pred, label, word_ids):
+                if word_id is None:
+                    continue  # Skip special tokens like [CLS] and [SEP]
+
+                if word_id != previous_word_id:
+                    # Start of a new word
+                    if current_word_preds:
+                        # Append the aggregated prediction and label for the previous word
+                        row_preds.append(current_word_preds)
+                        row_labels.append(current_word_labels)
+                    current_word_preds = []
+                    current_word_labels = []
+
+                current_word_preds.append(token_pred)
+                current_word_labels.append(token_label)
+                previous_word_id = word_id
+
+            # Append the last word's predictions and labels
+            if current_word_preds:
+                row_preds.append(current_word_preds)
+                row_labels.append(current_word_labels)
+
+            aligned_preds.append(row_preds)
+            aligned_labels.append(row_labels)
+
+        return aligned_preds, aligned_labels
+
     def compute_metrics(pred: EvalPrediction):
         """
         Compute metrics for multitask learning.
@@ -219,29 +274,31 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max
             dict: A dictionary containing accuracy metrics for intent and NER.
         """
         # Unpack predictions and labels per batch (16)
-        logits, labels = pred.predictions, pred.label_ids #(1024*4, 1024*128*9, 64, 64)
+        logits, labels = pred.predictions, pred.label_ids 
+        
+        # logits:   (79*4, 79*128*9, 5, 5)
+        # labels:   (79, 79*128)
 
         if isinstance(logits, tuple) and len(logits) == 4:
-            intent_logits, ner_logits = logits[0], logits[1]
+            intent_probs, ner_probs = logits[2], logits[3]
         else:
             raise ValueError(f"Unexpected logics structure: {len(logits[1][0][0])}")
         
         intent_labels, ner_labels = labels[0], labels[1]
-
+        intent_preds = np.argmax(intent_probs, axis=1)
+        ner_pred = np.argmax(ner_probs, axis=2)  # Get predicted NER labels
 
         # Intent classification metrics
-        intent_preds = np.argmax(intent_logits, axis=1)  # Get predicted intent labels
         intent_accuracy = evaluator.compute(predictions=intent_preds, references=intent_labels, average="weighted") 
 
-        # NER metrics
-        ner_preds = np.argmax(ner_logits, axis=2)  # Get predicted NER labels
         # Flatten predictions and labels for token-level comparison
-        ner_preds_flat = ner_preds.flatten()
+        ner_preds_flat = ner_pred.flatten()
         ner_labels_flat = ner_labels.flatten()
 
-        ner_preds_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_preds_flat)))
-        ner_label_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_labels_flat)))
-        ner_accuracy = evaluator.compute(predictions=ner_preds_detected_med, references=ner_label_detected_med, average="weighted")
+        # ner_preds_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_preds_flat)))
+        # ner_label_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_labels_flat)))
+        ner_accuracy = evaluator.compute(predictions=ner_preds_flat, references=ner_labels_flat, average="weighted")
+        # print(ner_preds_detected_med, ner_label_detected_med)
 
         return {
             "intent_accuracy": intent_accuracy,
@@ -250,9 +307,15 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max
     
     def preprocess(example, tokenizer, max_length):
 
-        text = example["Tokenized_Speech"]
+        text = example["Speech"]
         intent_label = INTENT_LABEL.index(example["Intent"])
-        ner_labels = [int(tag) for tag in example["NER_Tag"]]
+
+        if type(example["NER_Labels"][0]) == list:
+            ner_labels = example["NER_Labels"][0] + ([0] * (max_length - len(example["NER_Labels"][0]))) # padding
+        elif type(example["NER_Labels"][0]) == int:
+            ner_labels = example["NER_Labels"] + ([0] * (max_length - len(example["NER_Labels"]))) # padding
+        else:
+            raise Exception("Preprocess fail")
 
         # Tokenize the text
         encoding = tokenizer(
@@ -263,12 +326,15 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max
             return_tensors="pt",
         )
 
+        ner_labels = [torch.tensor(tag, dtype=torch.short) for tag in ner_labels]
+
+
         # Prepare the item
         item = {
             "input_ids": encoding["input_ids"].squeeze(0),
             "attention_mask": encoding["attention_mask"].squeeze(0),
-            "intent_label": torch.tensor(intent_label, dtype=torch.long),
-            "ner_labels": torch.tensor(ner_labels, dtype=torch.long),
+            "intent_label": torch.tensor(intent_label, dtype=torch.short),
+            "ner_labels": ner_labels,
         }
         return item
 
@@ -318,7 +384,8 @@ def main():
 
     for lang in ds.datasets.keys():
         # Train the model on each dataset
-        train_multitask_model(model, tokenizer, evaluator, ds.datasets[lang])
+        lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
+        train_multitask_model(model, tokenizer, evaluator, lang_ds)
 
 if __name__ == "__main__":
     main()

@@ -174,6 +174,7 @@ class New_PharmaIntent_Dataset:
     # O: irelevant B: beginning I: inside
     NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
 
+    datasets: dict[DatasetDict]
     train_ds: Dataset
     test_ds: Dataset
     valid_ds: Dataset
@@ -192,7 +193,7 @@ class New_PharmaIntent_Dataset:
         
         for lang in config["languages"]:
                 lang_ds = load_dataset(self.repo_id, name=lang)
-                processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset._postdownload_process)
+                processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
                 self.datasets[lang] = processed_lang_ds
 
         if (config["merge_language"]):
@@ -296,50 +297,54 @@ class New_PharmaIntent_Dataset:
         
         example["Audio"]["array"] = audio_array
 
-        # Process speech
-        tokenized_speech = []
-        ner_labels = []
+        # # Process speech
+        # tokenized_speech = []
+        # ner_labels = []
 
-        speech = example["Speech"]
-        ner_tag = example["NER_Tag"]
+        # speech = example["Speech"]
+        # ner_tag = example["NER_Tag"]
 
-        # Tokenize the speech
-        tokens = hybrid_split(speech)
-        tokenized_speech.append(tokens)
+        # # Tokenize the speech
+        # tokens = hybrid_split(speech)
+        # tokenized_speech.append(tokens)
 
-        # Ensure NER_Tag length matches the number of tokens
-        if len(ner_tag) != len(tokens):
-            raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
+        # # Ensure NER_Tag length matches the number of tokens
+        # if (len(ner_tag)-1) != len(tokens):
+        #     raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
 
-        ner_labels.append([int(tag) for tag in ner_tag])
+        # ner_labels.append([int(tag) for tag in ner_tag])
 
-        example["Tokenized_Speech"] = tokenized_speech
-        example["NER_Labels"] = ner_labels
+        # example["Tokenized_Speech"] = tokenized_speech
+        # example["NER_Labels"] = ner_labels
 
         return example
 
     @staticmethod
-    def _postdownload_process(example):
+    def postdownload_process(example):
 
         tokenized_speech = []
         ner_labels = []
         speech = example["Speech"]
-        ner_tag = example["NER_Tag"][1:] # Remove quotation mark in raw data
+
+        if example["NER_Tag"][0] == "'":
+            ner_tag = example["NER_Tag"][1:]
+        else:
+            ner_tag = example["NER_Tag"]
 
         tokens = hybrid_split(speech)
-        tokenized_speech.append(tokens)
+        tokenized_speech = tokens
 
         
         # Ensure NER_Tag length matches the number of tokens
         if len(ner_tag) != len(tokens):
             raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
 
-        ner_labels.append([int(tag) for tag in ner_tag])
+        ner_labels = [int(tag) for tag in ner_tag]
         
         example["Tokenized_Speech"] = tokenized_speech
         example["NER_Labels"] = ner_labels
 
-        return example  
+        return example
 
     @staticmethod
     def  build_new_dataset(repo_id, config):
