@@ -174,32 +174,32 @@ class New_PharmaIntent_Dataset:
     # O: irelevant B: beginning I: inside
     NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
 
-
     train_ds: Dataset
     test_ds: Dataset
     valid_ds: Dataset
 
-    def __init__(self, use_exist: bool, group_by_lang: bool, config_list=["English", "Cantonese"]):
-        self._set_metadata()
-        if use_exist:
-            self._call_dataset_workflow(self.repo_id, config_list, group_by_lang)
+    def __init__(self, repo_id: str, config: dict):
+        self.repo_id = repo_id
 
-    def _call_dataset_workflow(self, repo, config_list: List[str], group_by_lang: bool):
+        self._set_metadata()
+        if config["use_exist"]:
+            self._call_dataset_workflow(config)
+
+    def _call_dataset_workflow(self, config:dict):
 
         # Call each language dataset, then merge them and split into train and test
         self.datasets = {}
         
-        for config in config_list:
-                self.datasets[config] = load_dataset(repo, name=config)
+        for lang in config["languages"]:
+                self.datasets[lang] = load_dataset(self.repo_id, name=config)
 
-        if (group_by_lang == False):
+        if (config["merge_language"]):
             self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
 
         print("Dataset loaded successfully! \n")
     
 
     def _set_metadata(self):
-        self.repo_id = "borisPMC/NewPharmaIntent"
         self.audio_col = "Audio_Path"
         self.speech_col = "Speech"
         self.intent = "Intent"
@@ -413,12 +413,7 @@ def hybrid_split(string: str) -> List[str]:
     matches = re.findall(regex, string, re.UNICODE)
     return matches
 
-def main():
-    # PharmaIntent_Dataset.build_new_dataset("grab_medicine_intent", "medicine_intent.csv")
-    # ds_obj = MedIntent_Dataset(use_exist=True)
-    # print(ds_obj.train_ds[0]['Audio']['array'].shape)
-    # ds = read_excel("Intent_Prediction/multitask_audio/multitask_ds.xlsx")
-    # ds.to_csv("Intent_Prediction/multitask_audio/multitask_ds.csv", index=False)
+def build_dataset():
     New_PharmaIntent_Dataset.build_new_dataset(
         "new_grab_medicine_intent", 
         "./Intent_Prediction/multitask_audio/multitask_ds.csv", 
@@ -426,6 +421,24 @@ def main():
             "lang": ["Cantonese", "English"],
             "train_ratio": 0.8,
         })
+
+def convert_excel_to_csv(rpath, wpath):
+    ds = read_excel(rpath, dtype=str)
+    ds.to_csv(wpath)
+
+def call_dataset():
+    ds = New_PharmaIntent_Dataset(
+        "PharmaIntent_v2", 
+        config={
+            "use_exist": True,
+            "languages": ["Cantonese", "English"],
+            "merge_language": False,
+        })
+    
+    print(ds["Cantonese"]["train"][0])
+
+def main():
+    convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "Intent_Prediction\ds.csv")
 
 if __name__ == "__main__":
     main()   
