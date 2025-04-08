@@ -302,12 +302,12 @@ class New_PharmaIntent_Dataset:
 
 
     @staticmethod
-    def  build_new_dataset(repo_id, fpath, config):
-        ds = load_dataset("csv", data_files=fpath, split="train")
+    def  build_new_dataset(repo_id, config):
+        ds = load_dataset("csv", data_files=config["data_file"], split="train")
 
         # Load Audio into dataset
-        ds = ds.cast_column("Audio_path", Audio(sampling_rate=16000))
-        ds = ds.rename_column("Audio_path", "Audio")
+        ds = ds.cast_column("Audio_Path", Audio(sampling_rate=16000))
+        ds = ds.rename_column("Audio_Path", "Audio")
 
         ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
 
@@ -415,9 +415,9 @@ def hybrid_split(string: str) -> List[str]:
 
 def build_dataset():
     New_PharmaIntent_Dataset.build_new_dataset(
-        "new_grab_medicine_intent", 
-        "./Intent_Prediction/multitask_audio/multitask_ds.csv", 
+        "PharmaIntent_v2", 
         config={
+            "data_file": "temp\ds.csv", 
             "lang": ["Cantonese", "English"],
             "train_ratio": 0.8,
         })
@@ -438,7 +438,8 @@ def call_dataset():
     print(ds["Cantonese"]["train"][0])
 
 def main():
-    convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "Intent_Prediction\ds.csv")
+    convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "temp\ds.csv")
+    build_dataset()
 
 if __name__ == "__main__":
     main()   
