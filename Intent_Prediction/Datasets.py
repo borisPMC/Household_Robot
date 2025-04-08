@@ -191,7 +191,9 @@ class New_PharmaIntent_Dataset:
         self.datasets = {}
         
         for lang in config["languages"]:
-                self.datasets[lang] = load_dataset(self.repo_id, name=config)
+                lang_ds = load_dataset(self.repo_id, name=lang)
+                processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset._postdownload_process)
+                self.datasets[lang] = processed_lang_ds
 
         if (config["merge_language"]):
             self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
@@ -209,7 +211,7 @@ class New_PharmaIntent_Dataset:
         
         train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
         test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
-        valid_ds = interleave_datasets([ds["validation"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
 
         return train_ds, test_ds, valid_ds
     
@@ -260,9 +262,25 @@ class New_PharmaIntent_Dataset:
 
         print("Vocabulary file created successfully!")
 
+    # Use for validation / deployment
+    @staticmethod
+    def check_NER(NER_Tag: str) -> list[str]:
+        
+        tag_list = list(NER_Tag)
+        detect_med = set()
+
+        for token in tag_list:
+            detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:])
+
+        return list(detect_med)
+    
+    """
+    The preprocessing here can be applied to ALL models. Reason: Avoid uploading List data to maintain consistancy
+    """
+
     # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
     @staticmethod
-    def preprocess_data(example):
+    def _preprocess_data(example):
 
         # Process audio
         max_length = 5 * 16000  # 5 seconds at 16kHz
@@ -300,6 +318,28 @@ class New_PharmaIntent_Dataset:
 
         return example
 
+    @staticmethod
+    def _postdownload_process(example):
+
+        tokenized_speech = []
+        ner_labels = []
+        speech = example["Speech"]
+        ner_tag = example["NER_Tag"][1:] # Remove quotation mark in raw data
+
+        tokens = hybrid_split(speech)
+        tokenized_speech.append(tokens)
+
+        
+        # Ensure NER_Tag length matches the number of tokens
+        if len(ner_tag) != len(tokens):
+            raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
+
+        ner_labels.append([int(tag) for tag in ner_tag])
+        
+        example["Tokenized_Speech"] = tokenized_speech
+        example["NER_Labels"] = ner_labels
+
+        return example  
 
     @staticmethod
     def  build_new_dataset(repo_id, config):
@@ -316,8 +356,6 @@ class New_PharmaIntent_Dataset:
         train_amt = int(total_amt * config["train_ratio"] - (total_amt * config["train_ratio"] % 16))
         test_amt = int(total_amt - train_amt)
 
-        print(ds)
-
         splited_ds = ds.train_test_split(test_size=test_amt, shuffle=True, seed=SEED)
         feed_ds = splited_ds["train"].train_test_split(test_size=1-config["train_ratio"], shuffle=True, seed=SEED)
 
@@ -327,7 +365,7 @@ class New_PharmaIntent_Dataset:
 
         doneDS = DatasetDict({
             "train": train_ds,
-            "validation": validate_ds,
+            "valid": validate_ds,
             "test": test_ds
         })
 
@@ -423,23 +461,34 @@ def build_dataset():
         })
 
 def convert_excel_to_csv(rpath, wpath):
-    ds = read_excel(rpath, dtype=str)
-    ds.to_csv(wpath)
+    ds = read_excel(rpath, dtype=str, index_col=None)
+    ds.to_csv(wpath, index=False)
 
-def call_dataset():
-    ds = New_PharmaIntent_Dataset(
-        "PharmaIntent_v2", 
-        config={
+def call_dataset(config=None):
+
+    if not config:
+        print("Applying default config for calling PharmaIntent_v2...")
+        config = {
             "use_exist": True,
             "languages": ["Cantonese", "English"],
             "merge_language": False,
-        })
+        }
+
+    ds = New_PharmaIntent_Dataset("borisPMC/PharmaIntent_v2", config)
     
-    print(ds["Cantonese"]["train"][0])
+    print(ds.datasets["Cantonese"]["train"][0])
+    return ds
 
 def main():
-    convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "temp\ds.csv")
+    # convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "temp\ds.csv")
     build_dataset()
+    ace_count = 0
+    ds = call_dataset()
+    for data in ds.datasets["Cantonese"]["train"]:
+        ace_count += New_PharmaIntent_Dataset.check_NER(data["NER_Tag"]).count("ACE_Inhibitor")
+
+    # 80 ACE for light Canton Train set
+    print(ace_count)
 
 if __name__ == "__main__":
     main()   

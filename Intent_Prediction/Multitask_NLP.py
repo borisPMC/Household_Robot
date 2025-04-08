@@ -16,6 +16,7 @@ from torch import nn
 from torch.utils.data import Dataset
 from datasets import DatasetDict
 from sklearn.model_selection import train_test_split
+from Datasets import New_PharmaIntent_Dataset, call_dataset
 
 """
 CLASS LABEL LIST
@@ -199,20 +200,11 @@ Preprocessing functions for the dataset.
 
 def hybrid_split(string: str) -> List[str]:
 
-    """
-    Important function to split a string into tokens using a hybrid regex.
-    Args:
-        string (str): Input string.
-
-    Returns:
-        List[str]: List of tokens (Each token represent a ENGLISH word or a CHINESE character).
-    """
-
     regex = r"[\u4e00-\ufaff]|[0-9]+|[a-zA-Z]+\'*[a-z]*"
     matches = re.findall(regex, string, re.UNICODE)
     return matches
 
-def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset):
+def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max_length=128):
 
     def compute_metrics(pred: EvalPrediction):
         """
@@ -246,19 +238,41 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset
         # Flatten predictions and labels for token-level comparison
         ner_preds_flat = ner_preds.flatten()
         ner_labels_flat = ner_labels.flatten()
-        ner_accuracy = evaluator.compute(predictions=ner_preds_flat, references=ner_labels_flat, average="weighted")
+
+        ner_preds_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_preds_flat)))
+        ner_label_detected_med = New_PharmaIntent_Dataset.check_NER("".join(map(str, ner_labels_flat)))
+        ner_accuracy = evaluator.compute(predictions=ner_preds_detected_med, references=ner_label_detected_med, average="weighted")
 
         return {
             "intent_accuracy": intent_accuracy,
             "ner_accuracy": ner_accuracy
         }
     
+    def preprocess(example, tokenizer, max_length):
 
-    new_ds = DatasetDict({
-        "train": dataset.get_split("train"),
-        "valid": dataset.get_split("valid"),
-        "test": dataset.get_split("test"),
-    })
+        text = example["Tokenized_Speech"]
+        intent_label = INTENT_LABEL.index(example["Intent"])
+        ner_labels = [int(tag) for tag in example["NER_Tag"]]
+
+        # Tokenize the text
+        encoding = tokenizer(
+            text,
+            padding="max_length",
+            truncation=True,
+            max_length=max_length,
+            return_tensors="pt",
+        )
+
+        # Prepare the item
+        item = {
+            "input_ids": encoding["input_ids"].squeeze(0),
+            "attention_mask": encoding["attention_mask"].squeeze(0),
+            "intent_label": torch.tensor(intent_label, dtype=torch.long),
+            "ner_labels": torch.tensor(ner_labels, dtype=torch.long),
+        }
+        return item
+
+    processed_ds = dataset.map(preprocess, fn_kwargs={"tokenizer": tokenizer, "max_length": max_length})
 
     training_args = TrainingArguments(
         output_dir="Intent_Prediction/results",
@@ -278,8 +292,8 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=new_ds["train"],
-        eval_dataset=new_ds["valid"],
+        train_dataset=processed_ds["train"],
+        eval_dataset=processed_ds["valid"],
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
     )
@@ -289,14 +303,11 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: MultitaskDataset
 
 def main():
     
-    fpath = "Intent_Prediction/multitask_audio/multitask_ds.xlsx"
     model_name = "bert-base-uncased"
     tokenizer = BertTokenizer.from_pretrained(model_name)
 
-    datasets = {
-        "Cantonese": MultitaskDataset(fpath, tokenizer, max_length=128, config={"language": "Cantonese", "train_ratio": 0.8}),
-        "English": MultitaskDataset(fpath, tokenizer, max_length=128, config={"language": "English", "train_ratio": 0.8}),
-    }
+    ds = call_dataset()
+
     evaluator = evaluate.load("f1")
 
     model = Multitask_BERT(
@@ -305,9 +316,9 @@ def main():
         num_ner_labels=len(NER_LABEL),   # Replace with the actual number of NER labels
     )
 
-    for _, ds in datasets.items():
+    for lang in ds.datasets.keys():
         # Train the model on each dataset
-        train_multitask_model(model, tokenizer, evaluator, ds)
+        train_multitask_model(model, tokenizer, evaluator, ds.datasets[lang])
 
 if __name__ == "__main__":
     main()
