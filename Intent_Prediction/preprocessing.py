@@ -22,6 +22,7 @@ def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
         "high blood pressure": "122",
         "hypertension": "1",
         "ace inhibitor": "12",
+        "ace inhibitors": "12",
         "糖尿病": "344",
         "甲福明": "344",
         "diabetes": "3",
@@ -43,6 +44,8 @@ def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
         "阿米替林": "7888",
         "amitriptyline": "7",
         "antidepressant": "7",
+        "high cholesterol": "5",
+        "coronary artery disease": "566",
     }
 
     # Process each row in the dataframe
@@ -115,4 +118,4 @@ tokenized_df = convert_sentence_to_tokens(df)
 
 # updated_df = convert_sentence_to_tokens(fpath)
 # tokenized_df.to_excel(out_fpath, index=False)
-tokenized_df.to_csv(out_csv, index=False)
+tokenized_df.to_excel(out_fpath, index=False)

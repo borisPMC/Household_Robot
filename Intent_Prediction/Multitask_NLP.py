@@ -67,19 +67,17 @@ class Multitask_BERT(nn.Module):
         # Pass inputs through BERT
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
 
-        sequence_output = outputs.last_hidden_state  # For NER
+        sequence_output = outputs.last_hidden_state  # For NER, token level
         ner_logits = self.ner_classifier(sequence_output)
         ner_probs = self.ner_softmax(ner_logits)
 
-        pooled_output = outputs.pooler_output       # For intent classification
+        pooled_output = outputs.pooler_output       # For intent classification, sequence level
         pooled_output = self.dropout(pooled_output)
         intent_logits = self.intent_classifier(pooled_output)
-        intent_probs = self.intent_softmax(intent_logits)
+        intent_probs = self.intent_softmax(intent_logits) # total prob = 1 for each token
 
         # Prepare output dictionary
         output = {
-            "intent_logits": intent_logits,
-            "ner_logits": ner_logits,
             "intent_probs": intent_probs,
             "ner_probs": ner_probs
         }
@@ -263,26 +261,28 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max
 
     def compute_metrics(pred: EvalPrediction):
         """
-        Compute metrics for multitask learning.
+        Compute metrics for multitask learning. *Evaluation on Token-level, not speech level*
 
         Args:
             pred: A tuple containing predictions and labels:
-                - logits: A tuple of (intent_logits, ner_logits).
+                - probs: A tuple of (intent_probs, ner_probs).
                 - labels: A tuple of (intent_labels, ner_labels).
 
         Returns:
             dict: A dictionary containing accuracy metrics for intent and NER.
         """
         # Unpack predictions and labels per batch (16)
-        logits, labels = pred.predictions, pred.label_ids 
+        probs, labels, inputs = pred.predictions, pred.label_ids, pred.inputs
+
+        print(inputs)
         
         # logits:   (79*4, 79*128*9, 5, 5)
         # labels:   (79, 79*128)
 
-        if isinstance(logits, tuple) and len(logits) == 4:
-            intent_probs, ner_probs = logits[2], logits[3]
+        if isinstance(probs, tuple) and len(probs) == 4:
+            intent_probs, ner_probs = probs[0], probs[1]
         else:
-            raise ValueError(f"Unexpected logics structure: {len(logits[1][0][0])}")
+            raise ValueError(f"Unexpected logics structure: {len(probs[1][0][0])}")
         
         intent_labels, ner_labels = labels[0], labels[1]
         intent_preds = np.argmax(intent_probs, axis=1)
@@ -344,13 +344,13 @@ def train_multitask_model(model, tokenizer, evaluator, dataset: DatasetDict, max
         output_dir="Intent_Prediction/results",
         eval_strategy="epoch",
         save_strategy="epoch",
+        logging_strategy="epoch",
         learning_rate=5e-5,
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=3,
+        num_train_epochs=10,
         weight_decay=0.01,
         logging_dir="./logs",
-        logging_steps=10,
         push_to_hub=True,
         hub_model_id="multitask_BERT_MedicGrabber",
     )
