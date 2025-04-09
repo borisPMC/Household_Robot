@@ -44,7 +44,7 @@ def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
         "阿米替林": "7888",
         "amitriptyline": "7",
         "antidepressant": "7",
-        "high cholesterol": "5",
+        "high cholesterol": "56",
         "coronary artery disease": "566",
     }
 
@@ -107,9 +107,9 @@ def hybrid_split(string: str) -> List[str]:
 
 
 # Example usage
-fpath = "Intent_Prediction/multitask_audio/multitask_ds.xlsx"
-out_fpath = "Intent_Prediction/multitask_audio/multitask_ds_modified.xlsx"
-out_csv = "Intent_Prediction/multitask_audio/multitask_ds_modified.csv"
+fpath = "Intent_Prediction/audio/data/multitask_ds.xlsx"
+out_fpath = "Intent_Prediction/audio/data/multitask_ds_modified.xlsx"
+out_csv = "temp/ds.csv"
 df = pd.read_excel(fpath)
 lang_df = detect_language(df)
 tokenized_df = convert_sentence_to_tokens(df)
@@ -118,4 +118,4 @@ tokenized_df = convert_sentence_to_tokens(df)
 
 # updated_df = convert_sentence_to_tokens(fpath)
 # tokenized_df.to_excel(out_fpath, index=False)
-tokenized_df.to_excel(out_fpath, index=False)
+tokenized_df.to_csv(out_csv, index=False)

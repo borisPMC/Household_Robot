@@ -225,6 +225,7 @@ class New_PharmaIntent_Dataset:
             vocab_filename (str): Name of the vocabulary file (default: "vocab.json").
         """
 
+        vocab = {}
         
 
         # Combine all sentences from train, validation, and test datasets
@@ -234,16 +235,6 @@ class New_PharmaIntent_Dataset:
             self.valid_ds["Speech"] +
             self.test_ds["Speech"]
         )
-
-        # Count unique characters
-        print("Counting unique characters...")
-        counter = Counter("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijiklmnopqrstuvwxyz".join(all_sentences))
-        
-        unique_chars = sorted(counter.keys())
-
-        # Create vocabulary dictionary
-        print("Creating vocabulary dictionary...")
-        vocab = {char: idx for idx, char in enumerate(unique_chars)}
 
 
         # add special tokens
@@ -326,14 +317,18 @@ class New_PharmaIntent_Dataset:
         ner_labels = []
         speech = example["Speech"]
 
+        # Preprocess NER_Tag
         if example["NER_Tag"][0] == "'":
             ner_tag = example["NER_Tag"][1:]
         else:
             ner_tag = example["NER_Tag"]
 
+        # Preprocess Speech
         tokens = hybrid_split(speech)
         tokenized_speech = tokens
 
+        # Preprocess Intent
+        num_intent = New_PharmaIntent_Dataset.INTENT_LABEL.index(example["Intent"])
         
         # Ensure NER_Tag length matches the number of tokens
         if len(ner_tag) != len(tokens):
@@ -343,6 +338,7 @@ class New_PharmaIntent_Dataset:
         
         example["Tokenized_Speech"] = tokenized_speech
         example["NER_Labels"] = ner_labels
+        example["Intent_Label"] = num_intent
 
         return example
 
