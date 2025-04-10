@@ -1,0 +1,60 @@
+import time
+import serial
+import urx
+from inspire_hand import setpos, setangle, setspeed, setpower, get_actangle, get_actforce
+
+# Initialize the robot
+rob = urx.Robot("192.168.12.21")
+rob.set_tcp((0, 0, 0.1, 0, 0, 0))
+rob.set_payload(2, (0, 0, 0.1))
+time.sleep(5)  # Wait for the robot to process setup commands
+
+def control_arm(x, y, z):
+    # Example of how to implement this function
+    # Moves the robot to the specified coordinates
+    rob.movel((x, y, z, 0, 0, 0), 0.1, 0.1)
+
+def c16():
+    setangle(999, 999, 999, 999, 999, 999)
+    time.sleep(1)
+    setangle(50, 50, 50, 50, 999, 999)
+    time.sleep(1.5)
+    setangle(50, 50, 50, 50, 0, 999)
+
+def c1():
+    setangle(999, 999, 999, 999, 999, 999)
+    time.sleep(2)
+    setangle(999, 999, 999, 999, 999, 400)
+    time.sleep(2)
+    setangle(0, 0, 0, 0, 0, 400)
+
+# ... (other hand control functions as defined before)
+
+def take_action(c, x=None, y=None, z=None):
+    if c == '16':
+        c16()
+        control_arm(x, y, z)
+    elif c == '1':
+        c1()
+        control_arm(x, y, z)
+
+    # Add more cases as needed
+    # control_arm() can be called at the end to make any adjustments
+
+try:
+    # Here, you could implement a loop that listens for gestures
+    while True:
+        # For demonstration, assume you poll or read current gesture
+        gesture_code = '1'  # Replace this with actual input mechanism
+        x, y, z = 0.5, 0.5, 0.5  # Replace with the desired coordinates
+
+        take_action(gesture_code, x, y, z)
+        
+        time.sleep(1)  # Just to slow down the loop
+
+except Exception as e:
+    print("An error occurred:", e)
+
+finally:
+    rob.close()
+    print("Robot arm closed")
