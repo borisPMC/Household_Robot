@@ -256,15 +256,25 @@ class New_PharmaIntent_Dataset:
 
     # Use for validation / deployment
     @staticmethod
-    def check_NER(NER_Tag: str) -> list[str]:
+    def check_NER(NER_Tag: Union[str, list[str]], fill_na=True) -> list[str]:
         
-        tag_list = list(NER_Tag)
+        if type(NER_Tag) == str:
+            tag_list = list(NER_Tag)
+        else:
+            tag_list = NER_Tag
+        
         detect_med = set()
 
         for token in tag_list:
-            detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:])
+            if token != "0":
+                detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
 
-        return list(detect_med)
+        listed_med = list(detect_med)
+
+        if fill_na:
+            listed_med = listed_med + ["Empty"] * (4 - len(listed_med))
+
+        return listed_med
     
     """
     The preprocessing here can be applied to ALL models. Reason: Avoid uploading List data to maintain consistancy

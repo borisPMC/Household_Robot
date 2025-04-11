@@ -42,8 +42,9 @@ class Multitask_BERT(nn.Module):
         self.dropout = nn.Dropout(self.bert.config.hidden_dropout_prob)
 
         self.intent_classifier = nn.Linear(self.bert.config.hidden_size, num_intent_labels)
-        self.ner_classifier = nn.Linear(self.bert.config.hidden_size, num_ner_labels)
-        
+        self.ner_classifier_1 = nn.Linear(self.bert.config.hidden_size, num_ner_labels)
+        self.ner_classifier_2 = nn.Linear(self.bert.config.hidden_size, num_ner_labels)
+
         self.intent_softmax = nn.Softmax(dim=1)
         self.ner_softmax = nn.Softmax(dim=1)
 
@@ -65,7 +66,12 @@ class Multitask_BERT(nn.Module):
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
 
         sequence_output = outputs.last_hidden_state  # For NER, token level
-        ner_logits = self.ner_classifier(sequence_output)
+        ner_logits_1 = self.ner_classifier_1(sequence_output)
+        ner_logits_1 = self.ner_softmax(ner_logits_1)
+        ner_logits_2 = self.ner_classifier_2(sequence_output)
+        ner_logits_2 = self.ner_softmax(ner_logits_2)
+
+        ner_logits = ner_logits_1 + ner_logits_2
         ner_probs = self.ner_softmax(ner_logits)
 
         pooled_output = outputs.pooler_output       # For intent classification, sequence level
@@ -78,7 +84,7 @@ class Multitask_BERT(nn.Module):
             loss_fct_cls = nn.CrossEntropyLoss()
             loss_fct_tok = nn.CrossEntropyLoss(ignore_index=-100)
             loss_intent = loss_fct_cls(intent_logits, intent_labels)
-            loss_token = loss_fct_tok(ner_logits.view(-1, ner_logits.shape[-1]), ner_labels.view(-1))
+            loss_token = loss_fct_tok(ner_logits_2.view(-1, ner_logits_2.shape[-1]), ner_labels.view(-1))
             loss = loss_intent + loss_token
 
         # Prepare output dictionary (Use softmax -> probs instead)
@@ -251,10 +257,6 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
         Returns:
             dict: A dictionary containing accuracy metrics for intent and NER.
         """
-        # raise Exception("Inputs: {inputs}")
-        
-        # logits:   (79*4, 79*128*9, 5, 5)
-        # labels:   (79, 79*128)
 
         intent_preds = pred.predictions[0]
         ner_preds = pred.predictions[1]
@@ -263,10 +265,6 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
         ner_labels = pred.label_ids[1]
 
         # raise Exception (f"{intent_preds} | {ner_preds} | {intent_labels} | {ner_labels}")
-        
-        # intent_labels, ner_labels = labels[0], labels[1]
-        # intent_preds = np.argmax(intent_probs, axis=1)
-        # ner_pred = np.argmax(ner_probs, axis=2)  # Get predicted NER labels
 
         # ----- Intent Classification -----
         intent_preds = np.argmax(intent_preds, axis=1)
@@ -278,6 +276,9 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
         # Convert token predictions and labels to string for seqeval
         true_token_labels = []
         pred_token_labels = []
+
+        true_med_request = []
+        pred_med_request = []
 
         # raise Exception(ner_preds, ner_labels)
 
@@ -291,10 +292,15 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
                 pred_seq_str.append(str(p))
             true_token_labels.append(true_seq)
             pred_token_labels.append(pred_seq_str)
+            # Convert the medical request
+            true_med_request.append(New_PharmaIntent_Dataset.check_NER(true_seq))
+            pred_med_request.append(New_PharmaIntent_Dataset.check_NER(pred_seq_str))
 
         # raise Exception(pred_token_labels, true_token_labels)
 
-        ner_seq_scores = evaluators["seq_f1_metric"].compute(predictions=pred_token_labels, references=true_token_labels)
+        # raise Exception(f"{true_med_request}, {pred_med_request}")
+
+        ner_seq_scores = evaluators["seq_f1_metric"].compute(predictions=pred_med_request, references=true_med_request)
 
         flatten_true_token_labels = [item for sub in true_token_labels for item in sub]
         flatten_pred_token_labels = [item for sub in pred_token_labels for item in sub]
