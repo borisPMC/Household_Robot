@@ -6,7 +6,7 @@ from ultralytics import YOLO
 import paddle
 from paddleocr import PaddleOCR
 import threading
-from queue import Queue
+import urx
 from transformers import pipeline, Pipeline
 
 # Custom modules (The 5 modules)
@@ -17,6 +17,10 @@ from Intent_Prediction.ip_module import listen_audio_thread
 from Object_Detection.od_module import detect_medicine
 from Hand_Control.hc_module import control_hand
 from Arm_Control.ac_module import control_arm
+
+# IP Address to Robot Arm
+
+ARM_ADRESS = "192.168.12.21"
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
@@ -32,11 +36,20 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
     print(coord_list)
 
     # Simulate Grabbing, comment if implemeneted
-    time.sleep(10)
+    # time.sleep(10)
 
     for item in coord_list:
-        control_hand(item, class_label)
-        control_arm()
+
+        # TODO: pass item & img to depth function
+
+        # TODO: Grab the medicine
+        
+        # Moving medicine to specific location from fixed starting point
+        control_arm(model_dict["robot_arm"], class_label)
+
+        # TODO: Release the medicine
+
+
     print("Grabbing done. Return to listening...")
     return
 
@@ -50,12 +63,12 @@ def main():
         "detect_med_model": YOLO("./Object_Detection/siou150.pt"),
         "ocr_model": PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
         "pose_model": PoseEstimator_ViTPose(),
+        "robot_arm": urx.URRobot(ARM_ADRESS, useRTInterface=True)
     }
 
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision
 
     # Shared variables and queues
-
     manager = Manager()
 
     # Change to a shared dict to enhance data management
@@ -66,16 +79,11 @@ def main():
         "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
-    # user_flag = Value('b', False)   # Shared boolean flag for Scene Understanding
-    # cmd_flag = Value('b', False)    # Shared boolean flag for Intent Prediction
-    # label_queue = Queue()  # Queue to store labels from the audio process
-    # keypoint_queue = Queue() # 20250402 Added: In case needed
 
-    # stop_receiving_commands = Value('b', False)  # If the robot is grabbing, set to True then the two Threads stop listening until set False
-
-    # Create threads
-    # user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], user_flag, cmd_flag, keypoint_queue), daemon=True)
-    # audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], user_flag, cmd_flag, label_queue), daemon=True)
+    # Configure Robot Arm
+    model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))
+    model_dict["robot_arm"].set_payload(2, (0, 0, 0.1))
+    model_dict["robot_arm"].set_freedrive(True)
 
     # Create threads
     user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict), daemon=True)
