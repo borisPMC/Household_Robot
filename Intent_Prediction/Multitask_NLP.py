@@ -9,13 +9,10 @@ import re
 from typing import Any, Dict, List
 import evaluate
 import numpy as np
-import pandas as pd
 from transformers import BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, EvalPrediction
 import torch
 from torch import nn
-from torch.utils.data import Dataset
 from datasets import DatasetDict
-from sklearn.model_selection import train_test_split
 from Datasets import New_PharmaIntent_Dataset, call_dataset
 
 """
@@ -95,108 +92,6 @@ class Multitask_BERT(nn.Module):
         }
 
         return output
-
-class MultitaskDataset(Dataset):
-    def __init__(self, file_path: str, tokenizer, max_length: int, config: dict):
-        """
-        Dataset for multitask learning with intent classification and NER.
-
-        Args:
-            file_path (str): Path to the dataset file (e.g., multitask_ds.xlsx).
-            tokenizer (BertTokenizer): Pretrained BERT tokenizer.
-            max_length (int): Maximum sequence length for tokenization.
-            config (dict): Configuration dictionary with keys:
-                - "language": Language to filter the dataset (e.g., "English", "Cantonese").
-                - "train_ratio": Ratio for training data split (e.g., 0.8).
-        """
-        self.tokenizer = tokenizer
-        self.max_length = max_length
-
-        # Load and preprocess the dataset
-        self.data = pd.read_excel(
-            file_path, 
-            dtype=str,
-            usecols=["Speech", "Intent", "NER_Tag", "Major_Language", "Audio_Path"],
-            skiprows=[lambda x: x["Major_Language"] != config["language"]])
-        
-        # Split the dataset into train, validation, and test sets
-        train_ratio = config.get("train_ratio", 0.8)
-        train_data, test_valid_data = train_test_split(self.data, test_size=1 - train_ratio, random_state=42, shuffle=True)
-        valid_data, test_data = train_test_split(test_valid_data, test_size=0.5, random_state=42, shuffle=True)
-
-        self.train_data = train_data.reset_index(drop=True)
-        self.valid_data = valid_data.reset_index(drop=True)
-        self.test_data = test_data.reset_index(drop=True)
-
-    def _prepare_data(self, df: pd.DataFrame) -> pd.DataFrame:
-
-        tokenized_speech = []
-        ner_labels = []
-
-        for _, row in df.iterrows():
-            speech = row["Speech"]
-            ner_tag = row["NER_Tag"]
-
-            # Tokenize the speech
-            tokens = hybrid_split(speech)
-            tokenized_speech.append(tokens)
-
-            # Ensure NER_Tag length matches the number of tokens
-            if len(ner_tag) != len(tokens):
-                raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
-
-            ner_labels.append([int(tag) for tag in ner_tag])
-
-        df["Tokenized_Speech"] = tokenized_speech
-        df["NER_Labels"] = ner_labels
-        return df
-
-    def get_split(self, split: str) -> Dataset:
-
-        if split == "train":
-            return self._prepare_data(self.train_data)
-        elif split == "valid":
-            return self._prepare_data(self.valid_data)
-        elif split == "test":
-            return self._prepare_data(self.test_data)
-        else:
-            raise ValueError("Invalid split name. Choose from 'train', 'valid', or 'test'.")
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        """
-        Retrieves a single data point for training.
-
-        Args:
-            idx (int): Index of the data point.
-
-        Returns:
-            dict: A dictionary containing input IDs, attention mask, intent label, and NER labels.
-        """
-        row = self.data.iloc[idx]
-        text = row["Speech"]
-        intent_labels = INTENT_LABEL.index(row["Intent"])
-        ner_labels = [int(tag) for tag in row["NER_Tag"]]
-
-        # Tokenize the text
-        encoding = self.tokenizer(
-            text,
-            padding="max_length",
-            truncation=True,
-            max_length=self.max_length,
-            return_tensors="pt",
-        )
-
-        # Prepare the item
-        item = {
-            "input_ids": encoding["input_ids"].squeeze(0),
-            "attention_mask": encoding["attention_mask"].squeeze(0),
-            "intent_labels": torch.tensor(intent_labels, dtype=torch.long),
-            "ner_labels": torch.tensor(ner_labels, dtype=torch.long),
-        }
-        return item
 
 @dataclass
 class DataCollatorForMultiTaskBert:

@@ -97,22 +97,22 @@ class PharmaIntent_Dataset:
 
         print("Vocabulary file created successfully!")
 
-    # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
-    @staticmethod
-    def preprocess_audio(example):
-        max_length = 5 * 16000  # 5 seconds at 16kHz
-        audio_array = example["Audio"]["array"]
+    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
+    # @staticmethod
+    # def preprocess_audio(example):
+    #     max_length = 5 * 16000  # 5 seconds at 16kHz
+    #     audio_array = example["Audio"]["array"]
         
-        # Truncate if longer than 5 seconds
-        if len(audio_array) > max_length:
-            audio_array = audio_array[:max_length]
-        # Pad with zeros if shorter than 5 seconds
-        elif len(audio_array) < max_length:
-            padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
-            audio_array = np.concatenate([audio_array, padding])
+    #     # Truncate if longer than 5 seconds
+    #     if len(audio_array) > max_length:
+    #         audio_array = audio_array[:max_length]
+    #     # Pad with zeros if shorter than 5 seconds
+    #     elif len(audio_array) < max_length:
+    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
+    #         audio_array = np.concatenate([audio_array, padding])
         
-        example["Audio"]["array"] = audio_array
-        return example
+    #     example["Audio"]["array"] = audio_array
+    #     return example
 
     @staticmethod
     def  build_new_dataset(repo_id, csv_path):
@@ -165,8 +165,6 @@ class PharmaIntent_Dataset:
                 config_name=l,
                 private=True
             )
-
-SEED = 42
 
 class New_PharmaIntent_Dataset:
 
@@ -275,50 +273,26 @@ class New_PharmaIntent_Dataset:
             listed_med = listed_med + ["Empty"] * (4 - len(listed_med))
 
         return listed_med
-    
-    """
-    The preprocessing here can be applied to ALL models. Reason: Avoid uploading List data to maintain consistancy
-    """
 
-    # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
-    @staticmethod
-    def _preprocess_data(example):
+    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
+    # @staticmethod
+    # def _preprocess_data(example):
 
-        # Process audio
-        max_length = 5 * 16000  # 5 seconds at 16kHz
-        audio_array = example["Audio"]["array"]
+    #     # Process audio
+    #     max_length = 5 * 16000  # 5 seconds at 16kHz
+    #     audio_array = example["Audio"]["array"]
         
-        # Truncate if longer than 5 seconds
-        if len(audio_array) > max_length:
-            audio_array = audio_array[:max_length]
-        # Pad with zeros if shorter than 5 seconds
-        elif len(audio_array) < max_length:
-            padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
-            audio_array = np.concatenate([audio_array, padding])
+    #     # Truncate if longer than 5 seconds
+    #     if len(audio_array) > max_length:
+    #         audio_array = audio_array[:max_length]
+    #     # Pad with zeros if shorter than 5 seconds
+    #     elif len(audio_array) < max_length:
+    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
+    #         audio_array = np.concatenate([audio_array, padding])
         
-        example["Audio"]["array"] = audio_array
+    #     example["Audio"]["array"] = audio_array
 
-        # # Process speech
-        # tokenized_speech = []
-        # ner_labels = []
-
-        # speech = example["Speech"]
-        # ner_tag = example["NER_Tag"]
-
-        # # Tokenize the speech
-        # tokens = hybrid_split(speech)
-        # tokenized_speech.append(tokens)
-
-        # # Ensure NER_Tag length matches the number of tokens
-        # if (len(ner_tag)-1) != len(tokens):
-        #     raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
-
-        # ner_labels.append([int(tag) for tag in ner_tag])
-
-        # example["Tokenized_Speech"] = tokenized_speech
-        # example["NER_Labels"] = ner_labels
-
-        return example
+    #     return example
 
     @staticmethod
     def postdownload_process(example):
@@ -360,7 +334,7 @@ class New_PharmaIntent_Dataset:
         ds = ds.cast_column("Audio_Path", Audio(sampling_rate=16000))
         ds = ds.rename_column("Audio_Path", "Audio")
 
-        ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
+        # ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
 
         total_amt = len(ds)
 
