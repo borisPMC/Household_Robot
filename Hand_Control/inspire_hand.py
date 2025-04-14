@@ -1143,7 +1143,7 @@ def setdefaultpower(power1,power2,power3,power4,power5,power6):
     print('发送的数据：')
     for i in range(1,datanum+6):
         print(hex(putdata[i-1]))
-        
+
     getdata= ser.read(9)
     print('返回的数据：')
     for i in range(1,10):
@@ -1152,7 +1152,7 @@ def setdefaultpower(power1,power2,power3,power4,power5,power6):
 #串口设置
 
 ser=serial.Serial('COM4',115200)
-print(ser.isOpen())
+#print(ser.isOpen())
 
 '''
 setangle(999,999,999,999,999,999)

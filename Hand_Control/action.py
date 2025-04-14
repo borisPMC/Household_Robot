@@ -106,15 +106,23 @@ def c14():
     setangle(9, 0, 0, 200, 9, 100)
     setangle(9, 0, 0, 9, 9, 100)
     #setangle(999, 999, 999, 999, 999, 999)
+def release():
+    setangle(999, 999, 999, 999, 999, 999)
+def pregrab():
+    setangle(999, 999, 999, 999, 999, 300)
+
 
 c1()
 #c7()
 #没有c6(
 #c9()
-c14()
+#c14()
 
+#release()
+#pregrab()
 
 def take_action(c,x,y,z):
+    print("执行手势{c}")
     if c =='16':
         c16()
     elif c == '1':
@@ -133,16 +141,15 @@ def take_action(c,x,y,z):
         c13()
     elif c == '14':
         c14()
-
-    control_arm()
-
-
-
+    else:
+        c1()
+    #control_arm()
 
 
 
 
-inspire_hand.ser.close()
+
+#ser.close()
 
 
 

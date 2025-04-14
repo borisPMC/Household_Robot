@@ -13,6 +13,10 @@ url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 file_path = "3.png"
 
+def end():
+    cap.release()
+    cv2.destroyAllWindows()
+
 def cv2_base64(image):
     base64_str = cv2.imencode('.jpg', image)[1]
     base64_str = base64.b64encode(base64_str)[2:-1]
@@ -76,36 +80,35 @@ def qvq(img):
     return answer,'{:.2f}'.format(process_time)
 
 
-
-
-cap = cv2.VideoCapture(2)
-showtext = "press n to predict"
-while(1):
-    # get a frame
-    ret, frame = cap.read()
-    img = frame.copy()
-
-
-
-    # show a frame
-    cv2.putText(frame, showtext, (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (100, 200, 200), 2)
-
-    cv2.imshow("capture", frame)
-
-    keyvalue = cv2.waitKey(1)
-
-    if keyvalue == 27:
-        break
-    elif keyvalue == ord('n'):
-        cv2.imwrite("tmp.jpg", img)
-        answer, process_time = qvq(img)
-        if answer != "":
-            print("changed")
-            showtext = "gesture:" + str(answer) + " time:" + str(process_time)
-            cv2.putText(frame, showtext, (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (100, 200, 200), 2)
+if __name__ == "__main__":
+    print("访问相机")
+    cap = cv2.VideoCapture(0)
+    print("访问成功")
+    showtext = "press n to predict"
+    while(1):
+        # get a frame
+        ret, frame = cap.read()
+        img = frame.copy()
 
 
 
+        # show a frame
+        cv2.putText(frame, showtext, (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (100, 200, 200), 2)
 
-cap.release()
-cv2.destroyAllWindows()
+        cv2.imshow("capture", frame)
+
+        keyvalue = cv2.waitKey(1)
+
+        if keyvalue == 27:
+            break
+        elif keyvalue == ord('n'):
+            cv2.imwrite("tmp.jpg", img)
+            answer, process_time = qvq(img)
+            if answer != "":
+                print("changed")
+                action.take_action(int(answer),0,0,0)
+                showtext = "gesture:" + str(answer) + " time:" + str(process_time)
+                cv2.putText(frame, showtext, (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (100, 200, 200), 2)
+    end()
+
+
