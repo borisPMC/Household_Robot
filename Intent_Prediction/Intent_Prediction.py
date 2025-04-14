@@ -125,12 +125,12 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
     asr_pipe.generation_config.forced_decoder_ids = None
-    nlp_pipe = pipeline("feature-extraction", model=nlp_repo)
+    nlp_pipe = pipeline(model=nlp_repo, config)
 
     transcript = asr_pipe(audio_list[0])
     output = nlp_pipe(transcript["text"])
 
-    raise Exception(f"{transcript} | {len(output[0][0])}")
+    raise Exception(f"{transcript} | {len(output)}")
 
     for audio in tqdm(audio_list):
         transcript = asr_pipe(audio)
