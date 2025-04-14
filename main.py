@@ -21,8 +21,6 @@ from Arm_Control.ac_module import control_arm
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
-
-# u are advise to make a virtual environment (with VS Code), and run the cmd in sys.txt
 login("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")
 
 # This function is specifically to control the timing flags.

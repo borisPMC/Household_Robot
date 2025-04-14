@@ -194,8 +194,9 @@ class New_PharmaIntent_Dataset:
                 processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
                 self.datasets[lang] = processed_lang_ds
 
+        # Merge the datasets and set split with the merged one
         if (config["merge_language"]):
-            self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+            self._group_train_test()
 
         print("Dataset loaded successfully! \n")
     
@@ -206,13 +207,24 @@ class New_PharmaIntent_Dataset:
         self.intent = "Intent"
         self.ner_tag = "NER_Tag"
 
+    def set_splits_by_lang(self, lang):
+        self.train_ds = self.datasets[lang]["train"]
+        self.valid_ds = self.datasets[lang]["valid"]
+        self.test_ds = self.datasets[lang]["test"]
+
+        print(f"{lang} dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
+
     def _group_train_test(self):
         
-        train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
-        test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
-        valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
 
-        return train_ds, test_ds, valid_ds
+        print(f"Merged dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
     
     def create_vocab_file(self, output_dir: str, vocab_filename: str = "vocab.json"):
         """
@@ -252,7 +264,7 @@ class New_PharmaIntent_Dataset:
 
         print("Vocabulary file created successfully!")
 
-    # Use for validation / deployment
+    # Use for validation / deployment, return 4-item list (padded)
     @staticmethod
     def check_NER(NER_Tag: Union[str, list[str]], fill_na=True) -> list[str]:
         
@@ -264,7 +276,7 @@ class New_PharmaIntent_Dataset:
         detect_med = set()
 
         for token in tag_list:
-            if token != "0":
+            if token != "0" and New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:] != "":
                 detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
 
         listed_med = list(detect_med)

@@ -7,7 +7,7 @@ This script is for storing self-defined model classes, NOT FOR CALLING DUE TO CU
 """
 # SET GLOBAL, DONT CHANGE
 TRAIN_BATCH_SIZE = 16
-VAL_BATCH_SIZE = 4   # 8:2 Training-validation ratio -> 16 train 4 valid
+VAL_BATCH_SIZE = 4
 MAX_STEPS = 300
 EVAL_STEPS = 30
 
@@ -33,6 +33,8 @@ from datasets import Dataset, IterableDataset, Audio
 from Datasets import PharmaIntent_Dataset
 import evaluate
 
+from Intent_Prediction import Datasets
+
 # List of testing Whisper models
 
 # Source: https://huggingface.co/openai/whisper-tiny
@@ -51,7 +53,7 @@ import evaluate
 
 class Whisper_Model:
 
-    model_id: str
+    repo_id: str
     model: WhisperForConditionalGeneration
     # feature_extractor: WhisperFeatureExtractor
     # tokenizer: WhisperTokenizer
@@ -99,15 +101,13 @@ class Whisper_Model:
 
             return batch
 
-    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset):
-        self.model_id = repo_id
-        self.dataset = dataset
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool):
+        self.repo_id = repo_id
 
         # Use existing model or load pre-trained Whisper model
         call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
         self._import_model_set(call_id)
-        self._prepare_datasets()
         self._prepare_training()
 
     def _import_model_set(self, call_id):
@@ -117,14 +117,11 @@ class Whisper_Model:
         self.model = WhisperForConditionalGeneration.from_pretrained(call_id)
         self.processor = WhisperProcessor.from_pretrained(call_id, task="transcribe")
         self.model.generation_config.forced_decoder_ids = None
-        # self.feature_extractor = WhisperFeatureExtractor.from_pretrained(pretrain_model)
-        # self.feature_extractor.chunk_length = 5  # 5 seconds
-        # self.tokenizer = WhisperTokenizer.from_pretrained(pretrain_model)
 
-    def _prepare_datasets(self):
+    def _prepare_datasets(self, ds: Datasets.New_PharmaIntent_Dataset):
         # Cast audio column to 16kHz sampling rate
-        self.dataset.train_ds = self.dataset.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
-        self.dataset.valid_ds = self.dataset.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        train_ds = ds.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        valid_ds = ds.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
 
         def preprocess_function(example):
             audio = example["Audio"]
@@ -141,21 +138,20 @@ class Whisper_Model:
             return example
 
         # Apply preprocessing
-        self.processed_train_ds = self.dataset.train_ds.map(preprocess_function)
-        self.processed_test_ds = self.dataset.valid_ds.map(preprocess_function)
+        processed_train_ds = train_ds.map(preprocess_function)
+        processed_valid_ds = valid_ds.map(preprocess_function)
+
+        return processed_train_ds, processed_valid_ds
 
     def _prepare_training(self):
         self.evaluator = evaluate.load("wer")
 
         self.data_collator = self.DataCollatorSpeechSeq2SeqWithPadding(
             processor=self.processor,
-            # feature_extractor=self.feature_extractor,
-            # tokenizer=self.tokenizer,
-            # decoder_start_token_id=self.model.config.decoder_start_token_id,
         )
 
-        training_args = Seq2SeqTrainingArguments(
-            output_dir=f"./{self.model_id}",
+        self.training_args = Seq2SeqTrainingArguments(
+            output_dir=f"./temp/{self.repo_id}",
             per_device_train_batch_size=TRAIN_BATCH_SIZE,
             per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
@@ -170,21 +166,10 @@ class Whisper_Model:
             logging_strategy="epoch",
             metric_for_best_model="wer_ortho",
             greater_is_better=False,
-            push_to_hub=True,
-            hub_private_repo=True,
             remove_unused_columns=False,
-            hub_model_id=self.model_id.split("/")[1]
         )
 
-        self.trainer = Seq2SeqTrainer(
-            model=self.model,
-            args=training_args,
-            train_dataset=self.processed_train_ds,
-            eval_dataset=self.processed_test_ds,
-            data_collator=self.data_collator,
-            compute_metrics=self.compute_metrics,
-            processing_class=self.processor,
-        )
+        return
 
     def compute_metrics(self, pred):
         pred_ids = pred.predictions
@@ -219,15 +204,38 @@ class Whisper_Model:
 
         return {"wer_ortho": wer_ortho}
 
-    def train(self):
-        if not self.processed_train_ds or not self.processed_test_ds:
-            print("Missing Dataset(s)!")
-            return
-        self.trainer.train()
-        
-        # Wrap feature extractor and tokenizer into a prcoessor and push to hub
-        processor = self.processor
-        processor.save_pretrained(self.model_id, push_to_hub=True)
+    def train(self, ds: Datasets.New_PharmaIntent_Dataset):
+
+        for l in ds.datasets.keys():
+
+            ds.set_splits_by_lang(l)
+
+            train_ds, valid_ds = self._prepare_datasets(ds)
+
+            trainer = Seq2SeqTrainer(
+                model=self.model,
+                args=self.training_args,
+                train_dataset=train_ds,
+                eval_dataset=valid_ds,
+                data_collator=self.data_collator,
+                compute_metrics=self.compute_metrics,
+                processing_class=self.processor,
+            )
+
+            if not train_ds or not valid_ds:
+                print("Missing Dataset(s)!")
+                return
+            
+            trainer.train()
+            
+            model_id = self.repo_id.split("/")[1]
+            trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
+
+            # Push model only after the last language is trained
+            if l == list(ds.datasets.keys())[-1]:  # Check if it's the last language
+                print(f"Pushing final model to hub...")
+                trainer.model.push_to_hub(f"{self.repo_id}", commit_message="Final epoch complete")
+                self.processor.push_to_hub(f"{self.repo_id}")
 
 class BERT_Model:
     def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):

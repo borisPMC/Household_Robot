@@ -5,11 +5,12 @@ This model uses BERT (or alternatives) as the base model and adds two separate h
 
 """
 from dataclasses import dataclass
+import json
 import re
 from typing import Any, Dict, List
 import evaluate
 import numpy as np
-from transformers import BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, EvalPrediction
+from transformers import BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, EvalPrediction, AutoConfig, AutoModel, Pipeline
 import torch
 from torch import nn
 from datasets import DatasetDict
@@ -127,6 +128,49 @@ class DataCollatorForMultiTaskBert:
         batch["ner_labels"] = torch.tensor(padded_ner_labels, dtype=torch.long)
 
         return batch
+    
+class MultitaskBertPipeline(Pipeline):
+    def __init__(self, model, tokenizer):
+        super().__init__(model=model, tokenizer=tokenizer)
+
+    def _parse_and_tokenize(self, inputs):
+        # Tokenize the input text
+        tokens = self.tokenizer(inputs, return_tensors="pt", padding=True, truncation=True)
+        return tokens
+
+    def __call__(self, inputs):
+        tokens = self._parse_and_tokenize(inputs)
+        with torch.no_grad():
+            outputs = self.model(**tokens)
+        
+        # Extract and format outputs
+        intent_probs = outputs["intent_probs"].tolist()
+        ner_probs = outputs["ner_probs"].tolist()
+        return {"Intent": intent_probs, "NER_Tags": ner_probs}
+    
+    def _sanitize_parameters(self, **kwargs):
+        # Validate and extract task-specific parameters if needed
+        return {}, {}, {}
+
+    def preprocess(self, inputs, **kwargs):
+        # Tokenize the input text
+        return self.tokenizer(inputs, return_tensors="pt", padding=True, truncation=True)
+
+    def _forward(self, model_inputs, **kwargs):
+        # Perform forward pass through the model
+        with torch.no_grad():
+            outputs = self.model(**model_inputs)
+        return outputs
+
+    def postprocess(self, model_outputs, **kwargs):
+        # Extract and structure the outputs
+        intent_probs = model_outputs["intent_probs"].tolist()
+        ner_probs = model_outputs["ner_probs"].tolist()
+        return {
+            "Intent": intent_probs,
+            "NER_Tags": ner_probs
+        }
+
 """
 Preprocessing functions for the dataset.
 """
@@ -138,7 +182,6 @@ def hybrid_split(string: str) -> List[str]:
     return matches
 
 def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, max_length=128):
-
 
     def compute_metrics(pred: EvalPrediction):
         """
@@ -237,7 +280,7 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
 
 
     training_args = TrainingArguments(
-        output_dir="Intent_Prediction/results",
+        output_dir="temp/multitask_BERT_MedicGrabber",
         eval_strategy="epoch",
         save_strategy="epoch",
         logging_strategy="epoch",
@@ -247,8 +290,8 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
         num_train_epochs=10,
         weight_decay=0.01,
         logging_dir="./logs",
-        push_to_hub=True,
-        hub_model_id="multitask_BERT_MedicGrabber",
+        # push_to_hub=True,
+        # hub_model_id="multitask_BERT_MedicGrabber",
     )
 
     trainer = Trainer(
@@ -263,29 +306,65 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
 
     trainer.train()
 
+# Define the function to generate the config.json for the Multitask_BERT class
+def generate_multitask_bert_config(pretrain_config, model_name, num_intent_labels, num_ner_labels):
+
+    # Populate the custom configuration details
+    multitask_config = {
+        "model_type": "bert",
+        "base_model_name": model_name,
+        "hidden_size": pretrain_config.hidden_size,
+        "num_attention_heads": pretrain_config.num_attention_heads,
+        "num_hidden_layers": pretrain_config.num_hidden_layers,
+        "intermediate_size": pretrain_config.intermediate_size,
+        "vocab_size": pretrain_config.vocab_size,
+        "max_position_embeddings": pretrain_config.max_position_embeddings,
+        "type_vocab_size": pretrain_config.type_vocab_size,
+        "hidden_act": pretrain_config.hidden_act,
+        "hidden_dropout_prob": pretrain_config.hidden_dropout_prob,
+        "attention_probs_dropout_prob": pretrain_config.attention_probs_dropout_prob,
+        "initializer_range": pretrain_config.initializer_range,
+        "num_intent_labels": num_intent_labels,
+        "num_ner_labels": num_ner_labels
+    }
+
+    # Write the configuration to a JSON file
+    with open("temp/multitask_BERT_MedicGrabber/config.json", "w") as json_file:
+        json.dump(multitask_config, json_file, indent=4)
+
+    print("config.json generated successfully!")
 
 def main():
     
     model_name = "bert-base-uncased"
     tokenizer = BertTokenizer.from_pretrained(model_name)
+    # config = BertConfig.from_pretrained(model_name)
 
-    ds = call_dataset()
+    # ds = call_dataset()
 
-    evaluators = {
-        "f1_metric": evaluate.load("f1"),
-        "seq_f1_metric": evaluate.load("seqeval")
-    }
+    # evaluators = {
+    #     "f1_metric": evaluate.load("f1"),
+    #     "seq_f1_metric": evaluate.load("seqeval")
+    # }
 
-    model = Multitask_BERT(
-        model_name=model_name,
-        num_intent_labels=len(INTENT_LABEL),  # Replace with the actual number of intent labels
-        num_ner_labels=len(NER_LABEL),   # Replace with the actual number of NER labels
-    )
+    # model = Multitask_BERT(
+    #     model_name=model_name,
+    #     num_intent_labels=len(INTENT_LABEL),
+    #     num_ner_labels=len(NER_LABEL),
+    # )
 
-    for lang in ds.datasets.keys():
-        # Train the model on each dataset
-        lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
-        train_multitask_model(model, tokenizer, evaluators, lang_ds)
+    # for lang in ds.datasets.keys():
+    #     # Train the model on each dataset
+    #     lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
+    #     train_multitask_model(model, tokenizer, evaluators, lang_ds)
+
+    # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(New_PharmaIntent_Dataset.INTENT_LABEL), len(New_PharmaIntent_Dataset.NER_LABEL))
+    
+    # Upload final model
+    hf_model = AutoModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
+
+    hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
+    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
 if __name__ == "__main__":
     main()
