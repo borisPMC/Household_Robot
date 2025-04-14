@@ -12,7 +12,7 @@ import numpy as np
 from pandas import read_csv
 import torch
 from tqdm import tqdm
-from transformers import pipeline, Pipeline
+from transformers import pipeline, Pipeline, BertConfig
 import Models
 import Datasets
 import sounddevice as sd
@@ -125,12 +125,16 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
     asr_pipe.generation_config.forced_decoder_ids = None
-    nlp_pipe = pipeline(model=nlp_repo, config)
+    # tkn_pipe = pipeline("token-classification", model=nlp_repo)
+    # intent_pipe = pipeline("text-classification", model=nlp_repo)
+    nlp_pipe = pipeline("token-classification", model=nlp_repo)
 
     transcript = asr_pipe(audio_list[0])
     output = nlp_pipe(transcript["text"])
 
-    raise Exception(f"{transcript} | {len(output)}")
+    #TODO
+
+    raise Exception(f"{transcript} | {output}")
 
     for audio in tqdm(audio_list):
         transcript = asr_pipe(audio)
@@ -212,8 +216,8 @@ def main():
             "merge_language": True,
         })
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/multitask_BERT_MedicGrabber")
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/multitask_BERT_MedicGrabber")
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT")
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT")
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 

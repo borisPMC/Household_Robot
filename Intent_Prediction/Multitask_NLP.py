@@ -3,6 +3,9 @@
 Multitask model for two tasks: intent classification and named entity recognition.
 This model uses BERT (or alternatives) as the base model and adds two separate heads for each task.
 
+!!! LEGACY CODE !!!
+
+
 """
 from dataclasses import dataclass
 import json
@@ -317,87 +320,39 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
 
 
 def main():
-    
-    model_name = "bert-base-uncased"
+
+    model_name  = "bert-base-uncased" # "bert-base-uncased" # "bert-base-multilingual-cased"
+
     tokenizer = BertTokenizer.from_pretrained(model_name)
-    max_length = 128
-
-    multitask_model = Multitask_BERT_v2.create(
-        model_name=model_name,
-        model_type_dict={
-            "intent": BertForSequenceClassification,
-            "ner": BertForTokenClassification,
-        },
-        model_config_dict={
-            "intent": BertConfig.from_pretrained(model_name, num_labels=len(INTENT_LABEL)),
-            "ner": BertConfig.from_pretrained(model_name, num_labels=len(NER_LABEL)),
-        }
-    )
-
-    def convert_to_intent_features(batch):
-        speech = batch["Speech"]
-        intent_labels = batch["Intent_Label"]
-        features = tokenizer.batch_encode_plus(
-            speech, max_length=max_length, pad_to_max_length=True
-        )
-        features["labels"] = intent_labels
-        return features
-    def convert_to_ner_features(batch):
-        speech = batch["Speech"]
-        ner_labels = batch["NER_Labels"]
-        features = tokenizer.batch_encode_plus(
-            speech, max_length=max_length, pad_to_max_length=True
-        )
-        features["labels"] = ner_labels
-        return features
-    convert_func_dict = {
-        "intent": convert_to_intent_features,
-        "ner": convert_to_ner_features,
-    }
-    columns_dict = {
-        "intent": ['input_ids', 'attention_mask', 'labels'],
-        "ner": ['input_ids', 'attention_mask', 'labels'],
-    }
+    config = BertConfig.from_pretrained(model_name)
 
     ds = call_dataset()
-    ds.set_splits_by_lang("Cantonese")
 
-    dataset_dict = {
-        "intent": ds,
+    evaluators = {
+        "f1_metric": evaluate.load("f1"),
+        "seq_f1_metric": evaluate.load("seqeval")
     }
 
+    model = Multitask_BERT(
+        model_name=model_name,
+        num_intent_labels=len(INTENT_LABEL),
+        num_ner_labels=len(NER_LABEL),
+    )
 
-
-    # tokenizer = BertTokenizer.from_pretrained(model_name)
-    # config = BertConfig.from_pretrained(model_name)
-
-    # ds = call_dataset()
-
-    # evaluators = {
-    #     "f1_metric": evaluate.load("f1"),
-    #     "seq_f1_metric": evaluate.load("seqeval")
-    # }
-
-    # model = Multitask_BERT(
-    #     model_name=model_name,
-    #     num_intent_labels=len(INTENT_LABEL),
-    #     num_ner_labels=len(NER_LABEL),
-    # )
-
-    # for lang in ds.datasets.keys():
-    #     # Train the model on each dataset
-    #     lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
-    #     train_multitask_model(model, tokenizer, evaluators, lang_ds)
+    for lang in ds.datasets.keys():
+        # Train the model on each dataset
+        lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
+        train_multitask_model(model, tokenizer, evaluators, lang_ds)
     
-    # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
+    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
     # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(New_PharmaIntent_Dataset.INTENT_LABEL), len(New_PharmaIntent_Dataset.NER_LABEL))
     
     # Upload final model
-    # hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
+    hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
 
-    # hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
-    # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
+    hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
+    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
 if __name__ == "__main__":
     main()
