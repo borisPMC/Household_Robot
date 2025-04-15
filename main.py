@@ -12,7 +12,7 @@ from transformers import pipeline, Pipeline
 # Custom modules (The 5 modules)
 # from folder.file import function
 from Scene_Understanding.scene_understanding import PoseEstimator_ViTPose
-from Intent_Prediction.Models import TableSearcher
+# from Intent_Prediction.Models import TableSearcher
 from Scene_Understanding.su_module import find_user_thread
 from Intent_Prediction.ip_module import listen_audio_thread
 from Object_Detection.od_module import detect_medicine
@@ -29,8 +29,6 @@ ARM_ADRESS = "192.168.12.21"
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
-
-# u are advise to make a virtual environment (with VS Code), and run the cmd in sys.txt
 login("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")
 
 # This function is specifically to control the timing flags.
@@ -63,15 +61,18 @@ def main():
     # Initialize ALL Models (or related model classes) to prevent repeated loading
     model_dict = {
         # ASR_Pipe: Manually removed "forced_decoder_ids": [ [ 1, 50259 ], [ 2, 50359 ], [ 3, 50363 ] ], to prevent exception.
-        "asr_pipe": pipeline("automatic-speech-recognition", model="borisPMC/whisper_small_grab_medicine_intent", processor="borisPMC/whisper_small_grab_medicine_intent"),
-        "nlp_pipe": pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased"),
+        "asr_pipe": pipeline("automatic-speech-recognition", model="borisPMC/MedicGrabber_WhisperSmall"),
+        "med_list_pipe": pipeline("token-classification", "borisPMC/MedicGrabber_multitask_BERT_ner"),
+        "intent_pipe": pipeline("text-classification", "borisPMC/MedicGrabber_multitask_BERT_intent"),
+        # "nlp_pipe": pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased"),
         "detect_med_model": YOLO("./Object_Detection/siou150.pt"),
         "ocr_model": PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
         "pose_model": PoseEstimator_ViTPose(),
+        # "manual_nlp": TableSearcher(),
         "robot_arm": urx.URRobot(ARM_ADRESS, useRTInterface=True)
     }
 
-    model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
+    model_dict["asr_pipe"].generation_config.forced_decoder_ids = None # Manually removed "forced_decoder_ids": [ [ 1, 50259 ], [ 2, 50359 ], [ 3, 50363 ] ], to prevent exception.
 
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision
 
@@ -95,8 +96,8 @@ def main():
     model_dict["robot_arm"].set_freedrive(True)
 
     # Create threads
-    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict), daemon=True)
-    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], shared_dict), daemon=True)
+    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict, listen_event), daemon=True)
+    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict, shared_dict, listen_event), daemon=True)
 
     # Start threads
     user_thread.start()

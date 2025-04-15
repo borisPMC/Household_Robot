@@ -6,12 +6,14 @@ Main function ONLY FOR INTENT PREDICTION
 
 # from cv2 import compare
 from time import sleep
+import evaluate
 from huggingface_hub import login
 import numpy as np
 from pandas import read_csv
 import torch
 from tqdm import tqdm
-from transformers import pipeline, Pipeline
+from transformers import pipeline, Pipeline, BertConfig
+from multitask_BERT_for_hf import Multitask_BERT_v2
 import Models
 import Datasets
 import sounddevice as sd
@@ -27,26 +29,23 @@ login("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")
 def build_dataset():
     Datasets.PharmaIntent_Dataset.build_new_dataset("borisPMC/PharmaIntent", "medicine_intent.csv")
 
-def train_asr(output_repo: str, pretrain_model: str) -> None:
+def train_asr(ds: Datasets.New_PharmaIntent_Dataset, output_repo: str, pretrain_model: str) -> None:
+
+    use_exist = False
+
+    whisper = Models.Whisper_Model(
+        repo_id=output_repo,
+        pretrain_model=pretrain_model,
+        use_exist=use_exist
+        )
     
-    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=True)
+    whisper.train(ds)
 
-    for l in ["English", "Cantonese", "Eng_Can" ,"Can_Eng"]:
+    print(f"Pushing final model to hub...")
+    whisper.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
+    whisper.processor.push_to_hub(f"{whisper.repo_id}")
 
-        ds.train_ds = ds.datasets[l]["train"]
-        ds.valid_ds = ds.datasets[l]["validation"]
-        ds.test_ds = ds.datasets[l]["test"]
-
-        print("Train:", len(ds.train_ds), "Valid:", len(ds.valid_ds), "Test:", len(ds.test_ds))
-
-        use_exist = os.path.exists(output_repo)
-        whisper = Models.Wav2Vec2_Model(
-            repo_id=output_repo,
-            pretrain_model=pretrain_model,
-            use_exist=use_exist, 
-            dataset=ds)
-        
-        whisper.train()
+    return
 
     # Uncomment this if you want to train on the entire dataset
     # whisper = Models.Whisper_Model(
@@ -77,31 +76,21 @@ def train_nlp(output_repo: str, pretrain_model: str) -> None:
         
         nlp.train()
 
-# def predict_asr(audiopath):
+def evaluate_unseen(prediction: dict, label: dict) -> float:
 
-#     pipe = pipeline("automatic-speech-recognition", model="openai/whisper-small")
-#     result = pipe(audiopath)
-#     return result
+    evaluators = {
+        "f1_metric": evaluate.load("f1"),
+        "seq_f1_metric": evaluate.load("seqeval")
+    }
 
-# def predict_nlp(transcript):
+    intent_f1 = evaluators["f1_metric"].compute(predictions=prediction["intent"], references=label["intent"], average="macro")["f1"]
+    med_seq_f1 = evaluators["seq_f1_metric"].compute(predictions=prediction["ner"], references=label["ner"])["overall_f1"]
 
-#     pipe = pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased")
-#     result = pipe(transcript)
-#     return result
+    print(
+        f"Intent F1: {intent_f1:.4f} | Medicine List F1: {med_seq_f1:.4f}"
+    )
 
-def evaluate(prediction: list[str], label: list[str]) -> float:
-
-    print("Predicted:", prediction)
-    print("Label:", label)
-
-    if len(prediction) != len(label):
-        raise ValueError("Prediction and label length mismatch")
-    
-    correct = 0
-    for i in range(len(prediction)):
-        correct += (prediction[i] == label[i])
-
-    return correct / len(prediction)
+    return
 
 # Simulates deployment on the robot
 def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, duration=5, sample_rate=16000) -> str:
@@ -119,31 +108,36 @@ def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, duration=5, sample_rate
 
     return class_label["label"]
 
-def test_ds(asr_repo: str, nlp_repo: str) -> None:
+def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str) -> None:
 
-    ds = Datasets.PharmaIntent_Dataset(True, group_by_lang=False)
-
-    prediction = []
-    confidence = []
-
-    # df = read_csv("medicine_intent.csv", nrows=n)
-    # label_list = df["Label"].tolist()
-    # audiopath_list = df["Audio_path"].tolist()
-
-    label_list = ds.test_ds["Label"]
     audio_list = ds.test_ds["Audio"]
+    intent_list = [str(Datasets.New_PharmaIntent_Dataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
+    ner_list = [Datasets.New_PharmaIntent_Dataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
+
+    true_labels = {
+        "intent": intent_list,
+        "ner":  ner_list,
+    }
+
+    ner_repo = nlp_repo + "_ner"
+    intent_repo = nlp_repo + "_intent"
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
     asr_pipe.generation_config.forced_decoder_ids = None
-    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
+    ner_pipe = pipeline("token-classification", model=ner_repo)
+    intent_pipe = pipeline("text-classification", model=intent_repo)
 
-    for audio in tqdm(audio_list):
-        transcript = asr_pipe(audio)
-        class_label = nlp_pipe(transcript)
-        prediction.append(class_label["label"])
-        confidence.append(class_label["score"])
+    transcripts = [i["text"] for i in asr_pipe(audio_list)]
+    output = {
+        "transcript": transcripts,
+        "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
+        "ner": [Datasets.New_PharmaIntent_Dataset.post_process_med(i) for i in ner_pipe(transcripts)],
+    }
 
-    print(evaluate(prediction, label_list))
+    # raise Exception(f"{output}")
+
+    evaluate_unseen(output, true_labels)
+    return
 
 def test_manual_nlp(asr_repo: str) -> None:
 
@@ -179,24 +173,36 @@ def test_manual_nlp(asr_repo: str) -> None:
         prediction.append(class_label)
         confidence.append(1.0)
 
-    print(evaluate(prediction, label_list))
+    print(evaluate_unseen(prediction, label_list))
 
 def main():
     
     # build_dataset()
 
-    # train_asr("borisPMC/whisper_tiny_grab_medicine_intent", "openai/whisper-tiny")
-    # train_asr("borisPMC/whisper_small_grab_medicine_intent", "openai/whisper-small")
+    ds = Datasets.call_dataset({
+            "use_exist": True,
+            "languages": ["Cantonese", "English"],
+            "merge_language": True,
+        })
+
+    train_asr(ds, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
+    train_asr(ds, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
     # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
     # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
     # train_nlp("borisPMC/bert_baseM_grab_medicine_intent", "bert-base-multilingual-uncased")
 
-    test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
-
-    # test_ds("openai/whisper-tiny", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("borisPMC/whisper_small_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
+    # test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
+    
+    # ds = Datasets.call_dataset({
+    #         "use_exist": True,
+    #         "languages": ["Cantonese", "English"],
+    #         "merge_language": True,
+    #     })
+    
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 

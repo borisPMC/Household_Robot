@@ -7,12 +7,12 @@ This script is for storing self-defined model classes, NOT FOR CALLING DUE TO CU
 """
 # SET GLOBAL, DONT CHANGE
 TRAIN_BATCH_SIZE = 16
-VAL_BATCH_SIZE = 4   # 8:2 Training-validation ratio -> 16 train 4 valid
+VAL_BATCH_SIZE = 4
 MAX_STEPS = 300
 EVAL_STEPS = 30
 
 LLM_EPOCH = 3
-ASR_EPOCH = 3
+ASR_EPOCH = 10
 
 SEED = 42
 
@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 import torch
 from transformers import (
-    WhisperForConditionalGeneration, WhisperTokenizer, WhisperFeatureExtractor, WhisperProcessor,
+    WhisperForConditionalGeneration, WhisperProcessor, WhisperConfig,
     BertForSequenceClassification, BertTokenizer, BertConfig,
     Wav2Vec2FeatureExtractor, Wav2Vec2Processor, Wav2Vec2CTCTokenizer, Wav2Vec2ForCTC, 
     GPT2ForSequenceClassification, GPT2Tokenizer, GPT2Config,
@@ -33,13 +33,7 @@ from datasets import Dataset, IterableDataset, Audio
 from Datasets import PharmaIntent_Dataset
 import evaluate
 
-# To split text into Chinese characters, numbers, and English words
-def hybrid_split(text: str) -> List[str]:
-    regex = r"[\u4e00-\ufaff]|[0-9]+|[a-zA-Z]+\'*[a-z]*"
-    matches = re.findall(regex, str, re.UNICODE)
-    return matches
-
-print(hybrid_split("Testing English text我爱Python123"))
+from Intent_Prediction import Datasets
 
 # List of testing Whisper models
 
@@ -59,161 +53,185 @@ print(hybrid_split("Testing English text我爱Python123"))
 
 class Whisper_Model:
 
-    model_id: str
+    repo_id: str
     model: WhisperForConditionalGeneration
-    feature_extractor: WhisperFeatureExtractor
-    tokenizer: WhisperTokenizer
+    # feature_extractor: WhisperFeatureExtractor
+    # tokenizer: WhisperTokenizer
 
     @dataclass
     class DataCollatorSpeechSeq2SeqWithPadding:
-        feature_extractor: Union[Any, WhisperFeatureExtractor]
-        tokenizer: Union[Any, WhisperTokenizer]
-        decoder_start_token_id: int
+        # feature_extractor: Union[Any, WhisperFeatureExtractor]
+        # tokenizer: Union[Any, WhisperTokenizer]
+        # decoder_start_token_id: int
 
-        def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
+        def __init__(self, processor: WhisperProcessor, audio_pad_id=0, text_pad_id=50257, audio_max_length=480000, text_max_length=128):
+            self.processor = processor
+            self.audio_pad_id = audio_pad_id
+            self.text_pad_id = text_pad_id
+            self.audio_max_length = audio_max_length
+            self.text_max_length = text_max_length
+            pass
+
+        def __call__(
+            self, features: List[Dict[str, Union[List[int], torch.Tensor]]]
+        ) -> Dict[str, torch.Tensor]:
             # split inputs and labels since they have to be of different lengths and need different padding methods
             # first treat the audio inputs by simply returning torch tensors
-            input_features = [{"input_features": feature["input_features"]} for feature in features]
-            batch = self.feature_extractor.pad(input_features, return_tensors="pt")
+            input_features = [
+                {"input_features": feature["input_features"][0]} for feature in features
+            ]
+            batch = self.processor.feature_extractor.pad(input_features, return_tensors="pt")
 
             # get the tokenized label sequences
             label_features = [{"input_ids": feature["labels"]} for feature in features]
             # pad the labels to max length
-            labels_batch = self.tokenizer.pad(label_features, return_tensors="pt")
+            labels_batch = self.processor.tokenizer.pad(label_features, return_tensors="pt")
 
             # replace padding with -100 to ignore loss correctly
-            labels = labels_batch["input_ids"].masked_fill(labels_batch.attention_mask.ne(1), -100)
+            labels = labels_batch["input_ids"].masked_fill(
+                labels_batch.attention_mask.ne(1), -100
+            )
 
             # if bos token is appended in previous tokenization step,
             # cut bos token here as it's append later anyways
-            if (labels[:, 0] == self.decoder_start_token_id).all().item():
+            if (labels[:, 0] == self.processor.tokenizer.bos_token_id).all().cpu().item():
                 labels = labels[:, 1:]
 
             batch["labels"] = labels
 
             return batch
 
-    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):
-        self.model_id = repo_id
-        self.dataset = dataset
+    def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool):
+        self.repo_id = repo_id
 
         # Use existing model or load pre-trained Whisper model
         call_id = repo_id if use_exist & (repo_id != None) else pretrain_model
 
-        self._import_model_set(call_id, pretrain_model)
-        self._prepare_datasets()
+        self._import_model_set(call_id)
         self._prepare_training()
 
-    def _import_model_set(self, repo_id, pretrain_model):
+    def _import_model_set(self, call_id):
 
-        print("Importing model:", repo_id)
+        print("Importing model:", call_id)
 
-        self.model = WhisperForConditionalGeneration.from_pretrained(repo_id)
-        self.feature_extractor = WhisperFeatureExtractor.from_pretrained(pretrain_model)
-        self.feature_extractor.chunk_length = 5  # 5 seconds
-        self.tokenizer = WhisperTokenizer.from_pretrained(pretrain_model)
+        self.model = WhisperForConditionalGeneration.from_pretrained(call_id)
+        self.processor = WhisperProcessor.from_pretrained(call_id, task="transcribe")
+        self.model.generation_config.forced_decoder_ids = None
 
-    def _prepare_datasets(self):
+    def _prepare_datasets(self, ds: Datasets.New_PharmaIntent_Dataset):
         # Cast audio column to 16kHz sampling rate
-        self.dataset.train_ds = self.dataset.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
-        self.dataset.valid_ds = self.dataset.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        train_ds = ds.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
+        valid_ds = ds.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
 
-        def preprocess_function(batch):
-            audio = batch["Audio"]
-            label = batch["Speech"]
+        def preprocess_function(example):
+            audio = example["Audio"]
 
-            # Ensure audio is truncated/padded to 5 seconds (5 * 16000 samples)
-            max_length = 5 * 16000  # 5 seconds at 16kHz
-            audio_array = [a["array"][:max_length] if len(a["array"]) > max_length else np.pad(
-                a["array"], (0, max_length - len(a["array"])), mode="constant") for a in audio]
+            example = self.processor(
+                audio=audio["array"],
+                sampling_rate=audio["sampling_rate"],
+                text=example["Speech"],
+            )
 
-            # Extract input features from the processed audio
-            input_features = self.feature_extractor(
-                audio_array,
-                sampling_rate=16000,
-                return_tensors="pt"
-            ).input_features
+            # compute input length of audio sample in seconds
+            example["input_length"] = len(audio["array"]) / audio["sampling_rate"]
 
-            # Tokenize labels and pad them to the same length
-            labels = self.tokenizer(
-                label,
-                padding="max_length",
-                truncation=True,
-                max_length=225,  # Adjust max length as needed
-                return_tensors="pt"
-            ).input_ids
-
-            # Convert to list for compatibility with datasets
-            batch["input_features"] = input_features.tolist()
-            batch["labels"] = labels.tolist()
-            return batch
+            return example
 
         # Apply preprocessing
-        self.train_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
-        self.test_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
+        processed_train_ds = train_ds.map(preprocess_function)
+        processed_valid_ds = valid_ds.map(preprocess_function)
+
+        return processed_train_ds, processed_valid_ds
 
     def _prepare_training(self):
-        self.cer = evaluate.load("cer")
+        self.evaluator = evaluate.load("wer")
 
         self.data_collator = self.DataCollatorSpeechSeq2SeqWithPadding(
-            feature_extractor=self.feature_extractor,
-            tokenizer=self.tokenizer,
-            decoder_start_token_id=self.model.config.decoder_start_token_id,
+            processor=self.processor,
         )
 
-        training_args = Seq2SeqTrainingArguments(
-            output_dir=f"./{self.model_id}",
+        self.training_args = Seq2SeqTrainingArguments(
+            output_dir=f"./temp/{self.repo_id}",
             per_device_train_batch_size=TRAIN_BATCH_SIZE,
             per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
             gradient_checkpointing=True,
-            fp16=True,
             predict_with_generate=True,
-            generation_max_length=225,
             seed=SEED,
             num_train_epochs=ASR_EPOCH,
+            fp16=True,
+            fp16_full_eval=True,
             eval_strategy="epoch",
             save_strategy="epoch",
             logging_strategy="epoch",
-            dataloader_drop_last=True,
-            metric_for_best_model="CER",
+            metric_for_best_model="wer_ortho",
             greater_is_better=False,
-            push_to_hub=True,
-            hub_private_repo=True,
+            remove_unused_columns=False,
         )
 
-        self.trainer = Seq2SeqTrainer(
-            model=self.model,
-            args=training_args,
-            train_dataset=self.train_dataset,
-            eval_dataset=self.test_dataset,
-            data_collator=self.data_collator,
-            compute_metrics=self.compute_metrics,
-            tokenizer=self.tokenizer,
-        )
+        return
 
     def compute_metrics(self, pred):
-        labels_ids = pred.label_ids
         pred_ids = pred.predictions
+        label_ids = pred.label_ids
 
-        # Decode predictions and labels
-        pred_str = self.tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
-        labels_ids[labels_ids == -100] = self.tokenizer.pad_token_id
-        label_str = self.tokenizer.batch_decode(labels_ids, skip_special_tokens=True)
+        # replace -100 with the pad_token_id
+        label_ids[label_ids == -100] = self.processor.tokenizer.pad_token_id
 
-        # Compute CER
-        cer = self.cer.compute(predictions=pred_str, references=label_str)
-        return {"CER": cer}
+        # we do not want to group tokens when computing the metrics
+        pred_str = self.processor.batch_decode(pred_ids, skip_special_tokens=True)
+        label_str = self.processor.batch_decode(label_ids, skip_special_tokens=True)
 
-    def train(self):
-        if not self.train_dataset or not self.test_dataset:
+        # compute orthographic wer
+        wer_ortho = 100 * self.evaluator.compute(predictions=pred_str, references=label_str)
+
+        # # # compute normalised WER
+        # pred_str_norm = [self.processor(pred) for pred in pred_str]
+        # label_str_norm = [self.processor(label) for label in label_str]
+        # # filtering step to only evaluate the samples that correspond to non-zero references:
+        # pred_str_norm = [
+        #     pred_str_norm[i] for i in range(len(pred_str_norm)) if len(label_str_norm[i]) > 0
+        # ]
+        # label_str_norm = [
+        #     label_str_norm[i]
+        #     for i in range(len(label_str_norm))
+        #     if len(label_str_norm[i]) > 0
+        # ]
+
+        # wer = 100 * self.evaluator.compute(predictions=pred_str_norm, references=label_str_norm)
+
+        return {"wer_ortho": wer_ortho}
+
+    def train(self, ds: Datasets.New_PharmaIntent_Dataset):
+
+        ds.group_lang()
+
+        train_ds, valid_ds = self._prepare_datasets(ds)
+
+        # for l in ds.datasets.keys():
+
+        #     ds.set_splits_by_lang(l)
+
+        #     train_ds, valid_ds = self._prepare_datasets(ds)
+
+        trainer = Seq2SeqTrainer(
+            model=self.model,
+            args=self.training_args,
+            train_dataset=train_ds,
+            eval_dataset=valid_ds,
+            data_collator=self.data_collator,
+            compute_metrics=self.compute_metrics,
+            processing_class=self.processor,
+        )
+
+        if not train_ds or not valid_ds:
             print("Missing Dataset(s)!")
             return
-        self.trainer.train()
         
-        # Wrap feature extractor and tokenizer into a prcoessor and push to hub
-        processor = WhisperProcessor(feature_extractor=self.feature_extractor, tokenizer=self.tokenizer)
-        processor.save_pretrained(self.model_id, push_to_hub=True)
+        trainer.train()
+        
+        # model_id = self.repo_id.split("/")[1]
+        # trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
 
 class BERT_Model:
     def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):

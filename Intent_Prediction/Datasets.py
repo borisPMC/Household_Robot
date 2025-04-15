@@ -97,22 +97,22 @@ class PharmaIntent_Dataset:
 
         print("Vocabulary file created successfully!")
 
-    # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
-    @staticmethod
-    def preprocess_audio(example):
-        max_length = 5 * 16000  # 5 seconds at 16kHz
-        audio_array = example["Audio"]["array"]
+    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
+    # @staticmethod
+    # def preprocess_audio(example):
+    #     max_length = 5 * 16000  # 5 seconds at 16kHz
+    #     audio_array = example["Audio"]["array"]
         
-        # Truncate if longer than 5 seconds
-        if len(audio_array) > max_length:
-            audio_array = audio_array[:max_length]
-        # Pad with zeros if shorter than 5 seconds
-        elif len(audio_array) < max_length:
-            padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
-            audio_array = np.concatenate([audio_array, padding])
+    #     # Truncate if longer than 5 seconds
+    #     if len(audio_array) > max_length:
+    #         audio_array = audio_array[:max_length]
+    #     # Pad with zeros if shorter than 5 seconds
+    #     elif len(audio_array) < max_length:
+    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
+    #         audio_array = np.concatenate([audio_array, padding])
         
-        example["Audio"]["array"] = audio_array
-        return example
+    #     example["Audio"]["array"] = audio_array
+    #     return example
 
     @staticmethod
     def  build_new_dataset(repo_id, csv_path):
@@ -166,8 +166,6 @@ class PharmaIntent_Dataset:
                 private=True
             )
 
-SEED = 42
-
 class New_PharmaIntent_Dataset:
 
     INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
@@ -183,8 +181,7 @@ class New_PharmaIntent_Dataset:
         self.repo_id = repo_id
 
         self._set_metadata()
-        if config["use_exist"]:
-            self._call_dataset_workflow(config)
+        self._call_dataset_workflow(config) if config["use_exist"] else None
 
     def _call_dataset_workflow(self, config:dict):
 
@@ -192,12 +189,13 @@ class New_PharmaIntent_Dataset:
         self.datasets = {}
         
         for lang in config["languages"]:
-                lang_ds = load_dataset(self.repo_id, name=lang)
-                processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
-                self.datasets[lang] = processed_lang_ds
+            lang_ds = load_dataset(self.repo_id, name=lang)
+            processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
+            self.datasets[lang] = processed_lang_ds
 
+        # Merge the datasets and set split with the merged one
         if (config["merge_language"]):
-            self.train_ds, self.test_ds, self.valid_ds = self._group_train_test()
+            self.group_lang()
 
         print("Dataset loaded successfully! \n")
     
@@ -208,13 +206,23 @@ class New_PharmaIntent_Dataset:
         self.intent = "Intent"
         self.ner_tag = "NER_Tag"
 
-    def _group_train_test(self):
-        
-        train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
-        test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
-        valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+    def set_splits_by_lang(self, lang):
+        self.train_ds = self.datasets[lang]["train"]
+        self.valid_ds = self.datasets[lang]["valid"]
+        self.test_ds = self.datasets[lang]["test"]
 
-        return train_ds, test_ds, valid_ds
+        print(f"{lang} dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
+
+    def group_lang(self):
+        self.train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+
+        print(f"Merged dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
     
     def create_vocab_file(self, output_dir: str, vocab_filename: str = "vocab.json"):
         """
@@ -254,7 +262,7 @@ class New_PharmaIntent_Dataset:
 
         print("Vocabulary file created successfully!")
 
-    # Use for validation / deployment
+    # Use for validation / deployment, return 4-item list (padded)
     @staticmethod
     def check_NER(NER_Tag: Union[str, list[str]], fill_na=True) -> list[str]:
         
@@ -266,7 +274,7 @@ class New_PharmaIntent_Dataset:
         detect_med = set()
 
         for token in tag_list:
-            if token != "0":
+            if token != "0" and New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:] != "":
                 detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
 
         listed_med = list(detect_med)
@@ -275,50 +283,36 @@ class New_PharmaIntent_Dataset:
             listed_med = listed_med + ["Empty"] * (4 - len(listed_med))
 
         return listed_med
-    
-    """
-    The preprocessing here can be applied to ALL models. Reason: Avoid uploading List data to maintain consistancy
-    """
 
-    # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
     @staticmethod
-    def _preprocess_data(example):
+    def post_process_med(output: list[dict]) -> list[4]:
+        """
+        Processing output list generated by NER Pipeline. Return a list of medicine lists
+        """
+        ner_tag = []
+        for tkn in output:
+            ner_tag.append(tkn["entity"][-1])
+        detect_med = New_PharmaIntent_Dataset.check_NER(ner_tag)
+        return detect_med
+    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
+    # @staticmethod
+    # def _preprocess_data(example):
 
-        # Process audio
-        max_length = 5 * 16000  # 5 seconds at 16kHz
-        audio_array = example["Audio"]["array"]
+    #     # Process audio
+    #     max_length = 5 * 16000  # 5 seconds at 16kHz
+    #     audio_array = example["Audio"]["array"]
         
-        # Truncate if longer than 5 seconds
-        if len(audio_array) > max_length:
-            audio_array = audio_array[:max_length]
-        # Pad with zeros if shorter than 5 seconds
-        elif len(audio_array) < max_length:
-            padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
-            audio_array = np.concatenate([audio_array, padding])
+    #     # Truncate if longer than 5 seconds
+    #     if len(audio_array) > max_length:
+    #         audio_array = audio_array[:max_length]
+    #     # Pad with zeros if shorter than 5 seconds
+    #     elif len(audio_array) < max_length:
+    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
+    #         audio_array = np.concatenate([audio_array, padding])
         
-        example["Audio"]["array"] = audio_array
+    #     example["Audio"]["array"] = audio_array
 
-        # # Process speech
-        # tokenized_speech = []
-        # ner_labels = []
-
-        # speech = example["Speech"]
-        # ner_tag = example["NER_Tag"]
-
-        # # Tokenize the speech
-        # tokens = hybrid_split(speech)
-        # tokenized_speech.append(tokens)
-
-        # # Ensure NER_Tag length matches the number of tokens
-        # if (len(ner_tag)-1) != len(tokens):
-        #     raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
-
-        # ner_labels.append([int(tag) for tag in ner_tag])
-
-        # example["Tokenized_Speech"] = tokenized_speech
-        # example["NER_Labels"] = ner_labels
-
-        return example
+    #     return example
 
     @staticmethod
     def postdownload_process(example):
@@ -360,7 +354,7 @@ class New_PharmaIntent_Dataset:
         ds = ds.cast_column("Audio_Path", Audio(sampling_rate=16000))
         ds = ds.rename_column("Audio_Path", "Audio")
 
-        ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
+        # ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
 
         total_amt = len(ds)
 
@@ -486,8 +480,8 @@ def call_dataset(config=None):
         }
 
     ds = New_PharmaIntent_Dataset("borisPMC/PharmaIntent_v2", config)
-    
-    print(ds.datasets["Cantonese"]["train"][0])
+
+    print("Dataset loaded successfully! \n")
     return ds
 
 def main():

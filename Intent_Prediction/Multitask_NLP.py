@@ -3,19 +3,23 @@
 Multitask model for two tasks: intent classification and named entity recognition.
 This model uses BERT (or alternatives) as the base model and adds two separate heads for each task.
 
+!!! LEGACY CODE !!!
+
+
 """
 from dataclasses import dataclass
+import json
 import re
 from typing import Any, Dict, List
 import evaluate
 import numpy as np
-import pandas as pd
-from transformers import BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, EvalPrediction
+from transformers import (
+    BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, 
+    EvalPrediction, AutoConfig, AutoModel, Pipeline, PreTrainedModel,
+    PretrainedConfig, BertForSequenceClassification, BertForTokenClassification)
 import torch
 from torch import nn
-from torch.utils.data import Dataset
 from datasets import DatasetDict
-from sklearn.model_selection import train_test_split
 from Datasets import New_PharmaIntent_Dataset, call_dataset
 
 """
@@ -96,107 +100,50 @@ class Multitask_BERT(nn.Module):
 
         return output
 
-class MultitaskDataset(Dataset):
-    def __init__(self, file_path: str, tokenizer, max_length: int, config: dict):
+class Multitask_BERT_v2(PreTrainedModel):
+    def __init__(self, encoder, taskmodels_dict):
+            
+        super().__init__(PretrainedConfig())
+        self.encoder = encoder
+        self.taskmodels_dict = nn.ModuleDict(taskmodels_dict)
+
+    @classmethod
+    def create(cls, model_name, model_type_dict, model_config_dict):
         """
-        Dataset for multitask learning with intent classification and NER.
+        This creates a MultitaskModel using the model class and config objects
+        from single-task models. 
 
-        Args:
-            file_path (str): Path to the dataset file (e.g., multitask_ds.xlsx).
-            tokenizer (BertTokenizer): Pretrained BERT tokenizer.
-            max_length (int): Maximum sequence length for tokenization.
-            config (dict): Configuration dictionary with keys:
-                - "language": Language to filter the dataset (e.g., "English", "Cantonese").
-                - "train_ratio": Ratio for training data split (e.g., 0.8).
+        We do this by creating each single-task model, and having them share
+        the same encoder transformer.
         """
-        self.tokenizer = tokenizer
-        self.max_length = max_length
+        shared_encoder = None
+        taskmodels_dict = {}
+        for task_name, model_type in model_type_dict.items():
+            model = model_type.from_pretrained(
+                model_name, 
+                config=model_config_dict[task_name],
+            )
+            if shared_encoder is None:
+                shared_encoder = getattr(model, cls.get_encoder_attr_name(model))
+            else:
+                setattr(model, cls.get_encoder_attr_name(model), shared_encoder)
+            taskmodels_dict[task_name] = model
+        return cls(encoder=shared_encoder, taskmodels_dict=taskmodels_dict)
 
-        # Load and preprocess the dataset
-        self.data = pd.read_excel(
-            file_path, 
-            dtype=str,
-            usecols=["Speech", "Intent", "NER_Tag", "Major_Language", "Audio_Path"],
-            skiprows=[lambda x: x["Major_Language"] != config["language"]])
-        
-        # Split the dataset into train, validation, and test sets
-        train_ratio = config.get("train_ratio", 0.8)
-        train_data, test_valid_data = train_test_split(self.data, test_size=1 - train_ratio, random_state=42, shuffle=True)
-        valid_data, test_data = train_test_split(test_valid_data, test_size=0.5, random_state=42, shuffle=True)
-
-        self.train_data = train_data.reset_index(drop=True)
-        self.valid_data = valid_data.reset_index(drop=True)
-        self.test_data = test_data.reset_index(drop=True)
-
-    def _prepare_data(self, df: pd.DataFrame) -> pd.DataFrame:
-
-        tokenized_speech = []
-        ner_labels = []
-
-        for _, row in df.iterrows():
-            speech = row["Speech"]
-            ner_tag = row["NER_Tag"]
-
-            # Tokenize the speech
-            tokens = hybrid_split(speech)
-            tokenized_speech.append(tokens)
-
-            # Ensure NER_Tag length matches the number of tokens
-            if len(ner_tag) != len(tokens):
-                raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
-
-            ner_labels.append([int(tag) for tag in ner_tag])
-
-        df["Tokenized_Speech"] = tokenized_speech
-        df["NER_Labels"] = ner_labels
-        return df
-
-    def get_split(self, split: str) -> Dataset:
-
-        if split == "train":
-            return self._prepare_data(self.train_data)
-        elif split == "valid":
-            return self._prepare_data(self.valid_data)
-        elif split == "test":
-            return self._prepare_data(self.test_data)
+    @classmethod
+    def get_encoder_attr_name(cls, model):
+        """
+        The encoder transformer is named differently in each model "architecture".
+        This method lets us get the name of the encoder attribute
+        """
+        model_class_name = model.__class__.__name__
+        if model_class_name.startswith("Bert"):
+            return "bert"
         else:
-            raise ValueError("Invalid split name. Choose from 'train', 'valid', or 'test'.")
+            raise KeyError(f"Add support for new model {model_class_name}")
 
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        """
-        Retrieves a single data point for training.
-
-        Args:
-            idx (int): Index of the data point.
-
-        Returns:
-            dict: A dictionary containing input IDs, attention mask, intent label, and NER labels.
-        """
-        row = self.data.iloc[idx]
-        text = row["Speech"]
-        intent_labels = INTENT_LABEL.index(row["Intent"])
-        ner_labels = [int(tag) for tag in row["NER_Tag"]]
-
-        # Tokenize the text
-        encoding = self.tokenizer(
-            text,
-            padding="max_length",
-            truncation=True,
-            max_length=self.max_length,
-            return_tensors="pt",
-        )
-
-        # Prepare the item
-        item = {
-            "input_ids": encoding["input_ids"].squeeze(0),
-            "attention_mask": encoding["attention_mask"].squeeze(0),
-            "intent_labels": torch.tensor(intent_labels, dtype=torch.long),
-            "ner_labels": torch.tensor(ner_labels, dtype=torch.long),
-        }
-        return item
+    def forward(self, task_name, **kwargs):
+        return self.taskmodels_dict[task_name](**kwargs)
 
 @dataclass
 class DataCollatorForMultiTaskBert:
@@ -232,6 +179,9 @@ class DataCollatorForMultiTaskBert:
         batch["ner_labels"] = torch.tensor(padded_ner_labels, dtype=torch.long)
 
         return batch
+    
+
+
 """
 Preprocessing functions for the dataset.
 """
@@ -243,7 +193,6 @@ def hybrid_split(string: str) -> List[str]:
     return matches
 
 def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, max_length=128):
-
 
     def compute_metrics(pred: EvalPrediction):
         """
@@ -342,13 +291,13 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
 
 
     training_args = TrainingArguments(
-        output_dir="Intent_Prediction/results",
+        output_dir="temp/multitask_BERT_MedicGrabber",
         eval_strategy="epoch",
         save_strategy="epoch",
         logging_strategy="epoch",
         learning_rate=5e-5,
         per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
+        per_device_eval_batch_size=4,
         num_train_epochs=10,
         weight_decay=0.01,
         logging_dir="./logs",
@@ -369,10 +318,13 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
     trainer.train()
 
 
+
 def main():
-    
-    model_name = "bert-base-uncased"
+
+    model_name  = "bert-base-uncased" # "bert-base-uncased" # "bert-base-multilingual-cased"
+
     tokenizer = BertTokenizer.from_pretrained(model_name)
+    config = BertConfig.from_pretrained(model_name)
 
     ds = call_dataset()
 
@@ -383,14 +335,24 @@ def main():
 
     model = Multitask_BERT(
         model_name=model_name,
-        num_intent_labels=len(INTENT_LABEL),  # Replace with the actual number of intent labels
-        num_ner_labels=len(NER_LABEL),   # Replace with the actual number of NER labels
+        num_intent_labels=len(INTENT_LABEL),
+        num_ner_labels=len(NER_LABEL),
     )
 
     for lang in ds.datasets.keys():
         # Train the model on each dataset
         lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
         train_multitask_model(model, tokenizer, evaluators, lang_ds)
+    
+    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
+
+    # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(New_PharmaIntent_Dataset.INTENT_LABEL), len(New_PharmaIntent_Dataset.NER_LABEL))
+    
+    # Upload final model
+    hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
+
+    hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
+    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
 if __name__ == "__main__":
     main()
