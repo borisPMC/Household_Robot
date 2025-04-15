@@ -30,6 +30,7 @@ INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable
 NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
 
 class Multitask_BERT_v2(PreTrainedModel):
+    
     def __init__(self, encoder, taskmodels_dict):
             
         super().__init__(BertConfig())
@@ -298,29 +299,19 @@ def prepare_datasets(lang_ds: New_PharmaIntent_Dataset, tokenizer: BertTokenizer
             speech, max_length=max_length, padding="max_length"
         )
         labels = []
-        try:
-            for i, label in enumerate(ner_labels):
-                word_ids = outputs.word_ids(batch_index=i)  # Map tokens to their respective word.
-                previous_word_idx = None
-                label_ids = []
-                for word_idx in word_ids:  # Set the special tokens to -100.
-                    if word_idx is None:
-                        label_ids.append(-100)
-                    elif word_idx != previous_word_idx and word_idx < len(label):  # Only label the first token of a given word.
-                        label_ids.append(label[word_idx])
-                    else:
-                        label_ids.append(-100)
-                    previous_word_idx = word_idx
-                labels.append(label_ids)
-        except Exception as e:
-            print(f"Error: {e}")
-            print(f"Speech: {speech}")
-            print(f"NER Labels: {ner_labels}")
-            print(f"word_idx: {word_idx}")
-            print(f"label: {label}")
-            print(f"label_ids: {label_ids}")
-            print(f"labels: {labels}")
-            raise
+        for i, label in enumerate(ner_labels):
+            word_ids = outputs.word_ids(batch_index=i)  # Map tokens to their respective word.
+            previous_word_idx = None
+            label_ids = []
+            for word_idx in word_ids:  # Set the special tokens to -100.
+                if word_idx is None:
+                    label_ids.append(-100)
+                elif word_idx != previous_word_idx and word_idx < len(label):  # Only label the first token of a given word.
+                    label_ids.append(label[word_idx])
+                else:
+                    label_ids.append(-100)
+                previous_word_idx = word_idx
+            labels.append(label_ids)
 
         features = {
             "input_ids": outputs["input_ids"],
@@ -384,20 +375,12 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
 
         # Classify the predictions and labels into intent and ner, and align them for evaluation
         for pred, label in zip(preds, labels):
-            try:
-                if len(pred) == 4:
-                    intent_dict["preds"].append(pred.argmax(axis=0))
-                    intent_dict["labels"].append(label)
-                else:
-                    ner_dict["preds"].append(pred.argmax(axis=1))
-                    ner_dict["labels"].append(label)
-                # else:
-                #     raise Exception(f"{pred} | {label}")
-            except Exception as e:
-                print(f"Error: {e}")
-                print(f"Preds: {preds}, Labels: {labels}")
-                print(f"Intent Dict: {intent_dict}, NER Dict: {ner_dict}")
-                print(f"Pred: {pred}, Label: {label}")
+            if len(pred) == 4:
+                intent_dict["preds"].append(pred.argmax(axis=0))
+                intent_dict["labels"].append(label)
+            else:
+                ner_dict["preds"].append(pred.argmax(axis=1))
+                ner_dict["labels"].append(label)
         
         if len(intent_dict["preds"]) > 0:
             # Intent classification
@@ -450,7 +433,7 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
             overwrite_output_dir=True,
             learning_rate=1e-5,
             do_train=True,
-            num_train_epochs=3,
+            num_train_epochs=10,
             # Adjust batch size if this doesn't fit on the Colab GPU
             per_device_train_batch_size=16,
             per_device_eval_batch_size=4,
@@ -500,11 +483,28 @@ def main():
         train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
         train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
 
-    multitask_model.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT", 
-        commit_message="Uploading Multitask BERT model",
-        safe_serialization=False)
-    tokenizer.push_to_hub("borisPMC/MedicGrabber_multitask_BERT")
+    # Get single task models from joint-trained model and upload to huggingface
+    # Note to myself: DO NOT Upload the Joint model as HF package, does not support
+
+    intent_model = multitask_model.taskmodels_dict["intent"]
+    ner_model = multitask_model.taskmodels_dict["ner"]
+
+    # Push the Intent-specific model
+    intent_model.push_to_hub(
+        "borisPMC/MedicGrabber_multitask_BERT_intent",
+        commit_message="Uploading intent-specific model",
+    )
+    tokenizer.push_to_hub(
+        "borisPMC/MedicGrabber_multitask_BERT_intent",
+    )
+    # Push the NER-specific model
+    ner_model.push_to_hub(
+        "borisPMC/MedicGrabber_multitask_BERT_ner",
+        commit_message="Uploading NER-specific model",
+    )
+    tokenizer.push_to_hub(
+        "borisPMC/MedicGrabber_multitask_BERT_ner",
+    )
 
     print("Uploaded, exiting...")
     

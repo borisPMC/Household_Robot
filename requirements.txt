@@ -1,4 +1,4 @@
--- extra-index-url https://download.pytorch.org/whl/cu124
+--extra-index-url https://download.pytorch.org/whl/cu124
 
 accelerate==1.5.2
 aiohappyeyeballs==2.6.1

@@ -13,6 +13,7 @@ from pandas import read_csv
 import torch
 from tqdm import tqdm
 from transformers import pipeline, Pipeline, BertConfig
+from multitask_BERT_for_hf import Multitask_BERT_v2
 import Models
 import Datasets
 import sounddevice as sd
@@ -70,24 +71,21 @@ def train_nlp(output_repo: str, pretrain_model: str) -> None:
         
         nlp.train()
 
-def evaluate_unseen(prediction: list[str], label: list[str]) -> float:
+def evaluate_unseen(prediction: dict, label: dict) -> float:
 
     evaluators = {
         "f1_metric": evaluate.load("f1"),
         "seq_f1_metric": evaluate.load("seqeval")
     }
 
-    print("Predicted:", prediction)
-    print("Label:", label)
+    intent_f1 = evaluators["f1_metric"].compute(predictions=prediction["intent"], references=label["intent"], average="macro")["f1"]
+    med_seq_f1 = evaluators["seq_f1_metric"].compute(predictions=prediction["ner"], references=label["ner"])["overall_f1"]
 
-    if len(prediction) != len(label):
-        raise ValueError("Prediction and label length mismatch")
-    
-    correct = 0
-    for i in range(len(prediction)):
-        correct += (prediction[i] == label[i])
+    print(
+        f"Intent F1: {intent_f1:.4f} | Medicine List F1: {med_seq_f1:.4f}"
+    )
 
-    return correct / len(prediction)
+    return
 
 # Simulates deployment on the robot
 def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, duration=5, sample_rate=16000) -> str:
@@ -107,15 +105,8 @@ def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, duration=5, sample_rate
 
 def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str) -> None:
 
-    prediction = []
-    confidence = []
-
-    # df = read_csv("medicine_intent.csv", nrows=n)
-    # label_list = df["Label"].tolist()
-    # audiopath_list = df["Audio_path"].tolist()
-
     audio_list = ds.test_ds["Audio"]
-    intent_list = ds.test_ds["Intent"]
+    intent_list = [str(Datasets.New_PharmaIntent_Dataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
     ner_list = [Datasets.New_PharmaIntent_Dataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
 
     true_labels = {
@@ -123,40 +114,33 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
         "ner":  ner_list,
     }
 
-    asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
-    asr_pipe.generation_config.forced_decoder_ids = None
-    # tkn_pipe = pipeline("token-classification", model=nlp_repo)
-    # intent_pipe = pipeline("text-classification", model=nlp_repo)
-    nlp_pipe = pipeline("token-classification", model=nlp_repo)
-
-    transcript = asr_pipe(audio_list[0])
-    output = nlp_pipe(transcript["text"])
-
-    #TODO
-
-    raise Exception(f"{transcript} | {output}")
-
-    for audio in tqdm(audio_list):
-        transcript = asr_pipe(audio)
-        class_label = nlp_pipe(transcript)
-        prediction.append(class_label["label"])
-        confidence.append(class_label["score"])
-
-    print(evaluate_unseen(prediction, label_list))
-
-    raise Exception(f"{audio_list} | {intent_list} | {ner_list}")
+    ner_repo = nlp_repo + "_ner"
+    intent_repo = nlp_repo + "_intent"
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
     asr_pipe.generation_config.forced_decoder_ids = None
-    nlp_pipe = pipeline("text-classification", model=nlp_repo, tokenizer="bert-base-multilingual-uncased")
+    ner_pipe = pipeline("token-classification", model=ner_repo)
+    intent_pipe = pipeline("text-classification", model=intent_repo)
 
-    for audio in tqdm(audio_list):
-        transcript = asr_pipe(audio)
-        class_label = nlp_pipe(transcript)
-        prediction.append(class_label["label"])
-        confidence.append(class_label["score"])
+    # Extract output results and post-processing them
+    def post_process_med(output: list[dict]) -> list[4]:
+        ner_tag = []
+        for tkn in output:
+            ner_tag.append(tkn["entity"][-1])
+        detect_med = Datasets.New_PharmaIntent_Dataset.check_NER(ner_tag)
+        return detect_med
 
-    print(evaluate_unseen(prediction, label_list))
+    transcripts = [i["text"] for i in asr_pipe(audio_list)]
+    output = {
+        "transcript": transcripts,
+        "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
+        "ner": [post_process_med(i) for i in ner_pipe(transcripts)],
+    }
+
+    # raise Exception(f"{output}")
+
+    evaluate_unseen(output, true_labels)
+    return
 
 def test_manual_nlp(asr_repo: str) -> None:
 
@@ -216,8 +200,8 @@ def main():
             "merge_language": True,
         })
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT")
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT")
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
