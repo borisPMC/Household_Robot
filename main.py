@@ -16,7 +16,11 @@ from Scene_Understanding.su_module import find_user_thread
 from Intent_Prediction.ip_module import listen_audio_thread
 from Object_Detection.od_module import detect_medicine
 from Hand_Control.hc_module import control_hand
-from Arm_Control.ac_module import control_arm
+from Hand_Control.ac_module import control_arm
+
+# IP Address to Robot Arm
+
+ARM_ADRESS = "192.168.12.21"
 
 # IP Address to Robot Arm
 
