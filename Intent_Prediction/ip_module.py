@@ -31,13 +31,13 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
-        print("Transcript:", transcript)
+        # print("Transcript:", transcript)
 
         if len(transcript) > 0 :
 
             intent = intent_pipe(transcript)[0]["label"][-1]
             med_list = New_PharmaIntent_Dataset.post_process_med(med_pipe(transcript))
-            print(intent, med_list)
+            # print(intent, med_list)
 
             clean_meds = []
             for med in med_list:
@@ -46,32 +46,28 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
 
             # The second printing line should be audio
             if  intent == "1" and len(clean_meds) > 0:
-                print("Command Heard: Retrieve Medicine")
-                print("Retrieving medicine. Please wait while I get it for you.")
+                # print("Command Heard: Retrieve Medicine")
+                print("\nRetrieving medicine. Please wait while I get it for you.")
                 shared_dict["cmd_flag"] = True
-                shared_dict["queued_commands"].append(clean_meds)
+                shared_dict["queued_commands"] = shared_dict["queued_commands"] + clean_meds
             
             elif intent == "2" and len(clean_meds) > 0:
-                print("Command Heard: Search Medicine")
-                print("Seems like you are looking for a medicine. Please wait while I search for it.")
+                # print("Command Heard: Search Medicine")
+                print("\nSeems like you are looking for a medicine. Please wait while I search for it.")
                 shared_dict["cmd_flag"] = True
-                shared_dict["queued_commands"].append(clean_meds)
+                shared_dict["queued_commands"] = shared_dict["queued_commands"] + clean_meds
 
             elif intent == "3":
-                print("Command Heard: Enquire Suitable Medicine")
-                print("My apologies, I am not able to diagnosis medical issues. Please consult to professional to get the best advice.")
+                # print("Command Heard: Enquire Suitable Medicine")
+                print("\nMy apologies, I am not able to diagnosis medical issues. Please consult to professional to get the best advice.")
             
             elif intent in ["1", "2"] and len(clean_meds) == 0:
-                print("Command Heard: Retrieve/Search Medicine")
-                print("Sorry, I only retrieve designated medicines. Please try again.")
+                # print("Command Heard: Retrieve/Search Medicine")
+                print("\nSorry, I only retrieve designated medicines. Please try again.")
 
             elif intent in ["0", "3"] and len(clean_meds) > 0:
-                print("Command Heard: Other Intents")
-                print("Heard that you mentioned about chronic disease medicines. If you search for them, please let me know.")
-
-            elif intent == "0":
-                print("Command Heard: Other Intents")
-                print("Sorry, I don't understand that command. Please try again.")
+                # print("Command Heard: Other Intents")
+                print("\nHeard that you mentioned about chronic disease medicines. If you search for them, please let me know.")
 
         else:
             print("No speech detected.")

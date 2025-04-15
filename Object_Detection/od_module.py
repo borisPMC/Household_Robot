@@ -179,7 +179,7 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
             # 检查目标文本
             text_found = False
             detected_text = ocr_result[0][0][1][0]
-            if tgt_label.lower() == detected_text.lower():
+            if tgt_label.lower().replace("_", " ") == detected_text.lower():
                 text_found = True
 
             # 只记录包含目标文本的ROI

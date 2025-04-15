@@ -61,7 +61,7 @@ def main():
     # Initialize ALL Models (or related model classes) to prevent repeated loading
     model_dict = {
         # ASR_Pipe: Manually removed "forced_decoder_ids": [ [ 1, 50259 ], [ 2, 50359 ], [ 3, 50363 ] ], to prevent exception.
-        "asr_pipe": pipeline("automatic-speech-recognition", model="borisPMC/MedicGrabber_WhisperSmall"),
+        "asr_pipe": pipeline("automatic-speech-recognition", model="borisPMC/MedicGrabber_WhisperTiny"),
         "med_list_pipe": pipeline("token-classification", "borisPMC/MedicGrabber_multitask_BERT_ner"),
         "intent_pipe": pipeline("text-classification", "borisPMC/MedicGrabber_multitask_BERT_intent"),
         # "nlp_pipe": pipeline("text-classification", model="borisPMC/bert_grab_medicine_intent", tokenizer="bert-base-multilingual-uncased"),
@@ -89,6 +89,9 @@ def main():
         "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
+
+    listen_event = threading.Event()  # Event to control the listening thread
+    listen_event.set()  # Set the event to allow the thread to run
 
     # Configure Robot Arm
     model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))

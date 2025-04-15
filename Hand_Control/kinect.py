@@ -48,7 +48,7 @@ def getdis(s):
     return int(z)
 
 def dismap():
-
+    pass
 
 
 def use_kinect():   #返回彩图和深度图
