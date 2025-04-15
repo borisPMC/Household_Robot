@@ -35,7 +35,7 @@ def control_arm(robot: urx.URRobot, medicine: str):
     print("Arm start moving")
 
     match medicine:
-        case "ACE Inhibitor":
+        case "ACE_Inhibitor":
             grab_0(robot)
         case "Metformin":
             grab_1(robot)
@@ -52,7 +52,7 @@ def control_arm(robot: urx.URRobot, medicine: str):
         if not robot.is_program_running():
             break
     
-    robot.cleanup()
+    # robot.cleanup()
     print("Arm stop moving, continue master program")
     return
 
