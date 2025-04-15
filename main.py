@@ -23,10 +23,6 @@ from Hand_Control.ac_module import control_arm
 
 ARM_ADRESS = "192.168.12.21"
 
-# IP Address to Robot Arm
-
-ARM_ADRESS = "192.168.12.21"
-
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
 login("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")
@@ -140,6 +136,7 @@ def main():
                 print("\nReturn to listening mode\n")
     
     except KeyboardInterrupt:
+        model_dict["robot_arm"].cleanup()
         print("Stopping threads...")
 
 if __name__ == "__main__":

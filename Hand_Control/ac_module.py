@@ -1,21 +1,21 @@
 from time import sleep
 import urx
 import sys
-import action
+from Hand_Control import hand_action
 # Basic Unit: meter
 DISPLACEMENT = 0.05    # Displacement
 VELOCITY = 0.2    # Velocity
 ACCELERATION = 0.1     # Acceleration
 
 
-def grab_0(robot, start_coord =(-0.23,0.48,0.07,-0.25,-2.35,-2.3)):
+def grab_0(robot, start_coord =(0.17,0.5,0.06,-0.4,-2.35,-2.3)):
     #c1(),release(),pregrab()
-    action.c1()
+    hand_action.c1()
     robot.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
-    robot.movel((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
-    robot.movel((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    robot.movel((0,0,0,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    action.release()
+    robot.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    robot.movel((-0.3,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    robot.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    hand_action.release()
 
 def grab_1(robot, start_coord = (0,0,0,0,0,0)):
 
@@ -52,7 +52,7 @@ def control_arm(robot: urx.URRobot, medicine: str):
         if not robot.is_program_running():
             break
     
-    # robot.cleanup()
+    robot.cleanup()
     print("Arm stop moving, continue master program")
     return
 
@@ -80,14 +80,14 @@ def main(medicine):
         if not robot.is_program_running():
             break
     
-    robot.cleanup()
+    #robot.cleanup()
 
     print("Arm stop moving, exiting the program")
 
     return
 
 if __name__ == "__main__":
-
+    
     # Medicine name for testing arm
     med = "ACE Inhibitor"
 
