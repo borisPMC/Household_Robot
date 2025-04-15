@@ -6,8 +6,8 @@ from ultralytics import YOLO
 import paddle
 from paddleocr import PaddleOCR
 import threading
-from queue import Queue
-from transformers import pipeline
+import urx
+from transformers import pipeline, Pipeline
 
 # Custom modules (The 5 modules)
 # from folder.file import function
@@ -17,7 +17,15 @@ from Scene_Understanding.su_module import find_user_thread
 from Intent_Prediction.ip_module import listen_audio_thread
 from Object_Detection.od_module import detect_medicine
 from Hand_Control.hc_module import control_hand
-from Arm_Control.ac_module import control_arm
+from Hand_Control.ac_module import control_arm
+
+# IP Address to Robot Arm
+
+ARM_ADRESS = "192.168.12.21"
+
+# IP Address to Robot Arm
+
+ARM_ADRESS = "192.168.12.21"
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
@@ -33,13 +41,22 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
     print(coord_list)
 
     # Simulate Grabbing, comment if implemeneted
-    time.sleep(10)
+    # time.sleep(10)
 
     for item in coord_list:
-        control_hand(item, class_label)
-        control_arm()
-    print("Grabbing {} done.".format(class_label))
-    return 
+
+        # TODO: pass item & img to depth function
+
+        # TODO: Grab the medicine
+        
+        # Moving medicine to specific location from fixed starting point
+        control_arm(model_dict["robot_arm"], class_label)
+
+        # TODO: Release the medicine
+
+
+    print("Grabbing done. Return to listening...")
+    return
 
 def main():
 
@@ -51,7 +68,7 @@ def main():
         "detect_med_model": YOLO("./Object_Detection/siou150.pt"),
         "ocr_model": PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
         "pose_model": PoseEstimator_ViTPose(),
-        "manual_nlp": TableSearcher(),
+        "robot_arm": urx.URRobot(ARM_ADRESS, useRTInterface=True)
     }
 
     model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
@@ -72,13 +89,14 @@ def main():
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
 
-    # If it is set (True), the threads will listen. Else, clear (false) until set again. 
-    listen_event = threading.Event()
-    listen_event.set()
+    # Configure Robot Arm
+    model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))
+    model_dict["robot_arm"].set_payload(2, (0, 0, 0.1))
+    model_dict["robot_arm"].set_freedrive(True)
 
     # Create threads
-    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict, listen_event), daemon=True)
-    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["manual_nlp"], shared_dict, listen_event), daemon=True)
+    user_thread = threading.Thread(target=find_user_thread, args=(model_dict["pose_model"], shared_dict), daemon=True)
+    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict["asr_pipe"], model_dict["nlp_pipe"], shared_dict), daemon=True)
 
     # Start threads
     user_thread.start()

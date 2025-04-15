@@ -18,5 +18,7 @@ hand_release ( coordination = (-1,-1,-1) ) 放手，如果没有输入坐标则�
 需要改进，增加函数返回值等请加载这里：  <br>
 
 
-      
+Message to Boris:
+
+After installation of urx, please comment out urx/robot.py Line 204-205
 
