@@ -185,8 +185,6 @@ class Whisper_Model:
         # compute orthographic wer
         wer_ortho = 100 * self.evaluator.compute(predictions=pred_str, references=label_str)
 
-        print(pred_str, label_str )
-
         # # # compute normalised WER
         # pred_str_norm = [self.processor(pred) for pred in pred_str]
         # label_str_norm = [self.processor(label) for label in label_str]
@@ -206,36 +204,34 @@ class Whisper_Model:
 
     def train(self, ds: Datasets.New_PharmaIntent_Dataset):
 
-        for l in ds.datasets.keys():
+        ds.group_lang()
 
-            ds.set_splits_by_lang(l)
+        train_ds, valid_ds = self._prepare_datasets(ds)
 
-            train_ds, valid_ds = self._prepare_datasets(ds)
+        # for l in ds.datasets.keys():
 
-            trainer = Seq2SeqTrainer(
-                model=self.model,
-                args=self.training_args,
-                train_dataset=train_ds,
-                eval_dataset=valid_ds,
-                data_collator=self.data_collator,
-                compute_metrics=self.compute_metrics,
-                processing_class=self.processor,
-            )
+        #     ds.set_splits_by_lang(l)
 
-            if not train_ds or not valid_ds:
-                print("Missing Dataset(s)!")
-                return
-            
-            trainer.train()
-            
-            model_id = self.repo_id.split("/")[1]
-            trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
+        #     train_ds, valid_ds = self._prepare_datasets(ds)
 
-            # Push model only after the last language is trained
-            if l == list(ds.datasets.keys())[-1]:  # Check if it's the last language
-                print(f"Pushing final model to hub...")
-                trainer.model.push_to_hub(f"{self.repo_id}", commit_message="Final epoch complete")
-                self.processor.push_to_hub(f"{self.repo_id}")
+        trainer = Seq2SeqTrainer(
+            model=self.model,
+            args=self.training_args,
+            train_dataset=train_ds,
+            eval_dataset=valid_ds,
+            data_collator=self.data_collator,
+            compute_metrics=self.compute_metrics,
+            processing_class=self.processor,
+        )
+
+        if not train_ds or not valid_ds:
+            print("Missing Dataset(s)!")
+            return
+        
+        trainer.train()
+        
+        # model_id = self.repo_id.split("/")[1]
+        # trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
 
 class BERT_Model:
     def __init__(self, repo_id: str, pretrain_model: str, use_exist: bool, dataset: PharmaIntent_Dataset):

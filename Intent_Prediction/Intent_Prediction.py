@@ -40,6 +40,11 @@ def train_asr(ds: Datasets.New_PharmaIntent_Dataset, output_repo: str, pretrain_
         )
     
     whisper.train(ds)
+
+    print(f"Pushing final model to hub...")
+    whisper.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
+    whisper.processor.push_to_hub(f"{whisper.repo_id}")
+
     return
 
     # Uncomment this if you want to train on the entire dataset
@@ -122,19 +127,11 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
     ner_pipe = pipeline("token-classification", model=ner_repo)
     intent_pipe = pipeline("text-classification", model=intent_repo)
 
-    # Extract output results and post-processing them
-    def post_process_med(output: list[dict]) -> list[4]:
-        ner_tag = []
-        for tkn in output:
-            ner_tag.append(tkn["entity"][-1])
-        detect_med = Datasets.New_PharmaIntent_Dataset.check_NER(ner_tag)
-        return detect_med
-
     transcripts = [i["text"] for i in asr_pipe(audio_list)]
     output = {
         "transcript": transcripts,
         "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
-        "ner": [post_process_med(i) for i in ner_pipe(transcripts)],
+        "ner": [Datasets.New_PharmaIntent_Dataset.post_process_med(i) for i in ner_pipe(transcripts)],
     }
 
     # raise Exception(f"{output}")
@@ -182,10 +179,14 @@ def main():
     
     # build_dataset()
 
-    # ds = Datasets.call_dataset()
+    ds = Datasets.call_dataset({
+            "use_exist": True,
+            "languages": ["Cantonese", "English"],
+            "merge_language": True,
+        })
 
-    # train_asr(ds, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
-    # train_asr(ds, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
+    train_asr(ds, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
+    train_asr(ds, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
     # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
@@ -194,14 +195,14 @@ def main():
 
     # test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
     
-    ds = Datasets.call_dataset({
-            "use_exist": True,
-            "languages": ["Cantonese", "English"],
-            "merge_language": True,
-        })
+    # ds = Datasets.call_dataset({
+    #         "use_exist": True,
+    #         "languages": ["Cantonese", "English"],
+    #         "merge_language": True,
+    #     })
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 

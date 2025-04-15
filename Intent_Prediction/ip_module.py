@@ -1,16 +1,16 @@
-import re
 import time
-from queue import Queue
 import numpy as np
-from transformers import Pipeline
 import sounddevice as sd
-from Intent_Prediction.Models import TableSearcher
+from Intent_Prediction.Datasets import New_PharmaIntent_Dataset
 
-
-
+# INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
 # Main function for the Master program
 # Expected to be run forever
-def listen_audio_thread(asr_pipe: Pipeline, classifier: TableSearcher, shared_dict: dict, listen_event) -> None:
+def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> None:
+    
+    asr_pipe = model_dict["asr_pipe"]
+    intent_pipe = model_dict["intent_pipe"]
+    med_pipe = model_dict["med_list_pipe"]
 
     while True:
 
@@ -31,22 +31,47 @@ def listen_audio_thread(asr_pipe: Pipeline, classifier: TableSearcher, shared_di
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
+        print("Transcript:", transcript)
+
         if len(transcript) > 0 :
 
-            # lang = classifier.(transcript)
-            # response_type = process_script(shared_dict, transcript)
+            intent = intent_pipe(transcript)[0]["label"][-1]
+            med_list = New_PharmaIntent_Dataset.post_process_med(med_pipe(transcript))
+            print(intent, med_list)
 
-            # Change states in classifier once predicted a script
-            classifier.predict(transcript)
-            response = classifier.generate_response()
-            print(response)
+            clean_meds = []
+            for med in med_list:
+                if med != "Empty":
+                    clean_meds.append(med)
 
-            if len(classifier.pop_medicine_list()) > 0:
-                shared_dict["queued_commands"] = shared_dict["queued_commands"] + classifier.pop_medicine_list()
+            # The second printing line should be audio
+            if  intent == "1" and len(clean_meds) > 0:
+                print("Command Heard: Retrieve Medicine")
+                print("Retrieving medicine. Please wait while I get it for you.")
+                shared_dict["cmd_flag"] = True
+                shared_dict["queued_commands"].append(clean_meds)
+            
+            elif intent == "2" and len(clean_meds) > 0:
+                print("Command Heard: Search Medicine")
+                print("Seems like you are looking for a medicine. Please wait while I search for it.")
+                shared_dict["cmd_flag"] = True
+                shared_dict["queued_commands"].append(clean_meds)
 
-            shared_dict["cmd_flag"] = len(shared_dict["queued_commands"]) > 0
+            elif intent == "3":
+                print("Command Heard: Enquire Suitable Medicine")
+                print("My apologies, I am not able to diagnosis medical issues. Please consult to professional to get the best advice.")
+            
+            elif intent in ["1", "2"] and len(clean_meds) == 0:
+                print("Command Heard: Retrieve/Search Medicine")
+                print("Sorry, I only retrieve designated medicines. Please try again.")
 
-            print(shared_dict["queued_commands"])
+            elif intent in ["0", "3"] and len(clean_meds) > 0:
+                print("Command Heard: Other Intents")
+                print("Heard that you mentioned about chronic disease medicines. If you search for them, please let me know.")
+
+            elif intent == "0":
+                print("Command Heard: Other Intents")
+                print("Sorry, I don't understand that command. Please try again.")
 
         else:
             print("No speech detected.")
