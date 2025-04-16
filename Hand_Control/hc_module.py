@@ -63,12 +63,14 @@ class Hand:
         """
         求校验和
         """
+        print(data)
         result = 0
         for i in range(2,leng):
             result += data[i]
+        print(result)
         result = result&0xff
         #print(result)
-        return result
+        return [result]
     
     def _interface(self, writein, receive_len):
         """
@@ -81,7 +83,7 @@ class Hand:
         self.ser.write(putdata)
         print('发送的数据：')
         for byte in putdata:
-            print(hex(putdata[i-1]))
+            print(hex(byte))
         
         getdata= self.ser.read(receive_len)
         print('返回的数据：')
@@ -92,7 +94,7 @@ class Hand:
     
     def _pack_data(self, header, data):
 
-        datanum = (len(header) + len(data)).to_bytes(1)
+        datanum = (len(header) + len(data))
 
         const = [0xEB, 0x90, self.hand_id, datanum]
         data_pkg = const + header + data
@@ -681,8 +683,6 @@ if __name__ == "__main__":
     # Given a command, do something
 
     hand = Hand()
-    given_command = "1"  # Example command
+    hand.c9()
 
-    # Example usage
-    control_hand(hand, given_command)
     

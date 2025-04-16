@@ -1,12 +1,12 @@
 import time
-from Hand_Control.inspire_hand import setpos,setangle,setspeed,setpower,get_actangle,get_actforce
+from inspire_hand import setpos,setangle,setspeed,setpower,get_actangle,get_actforce
 import serial
 
 
 def control_arm(x,y,z):
     pass
 
-#ser=serial.Serial('COM4',115200)
+# ser=serial.Serial('COM4',115200)
 #Lateral Pinch (Code: 16): Ideal for gripping thin, flat objects like keys or cards, where the thumb presses against the side of the index finger.
 'pinch'
 def c16():
@@ -112,7 +112,7 @@ def pregrab():
     setangle(999, 999, 999, 999, 999, 300)
 
 
-#c1()
+c1()
 #c7()
 #没有c6(
 #c9()

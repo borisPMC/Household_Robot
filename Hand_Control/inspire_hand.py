@@ -1151,7 +1151,7 @@ def setdefaultpower(power1,power2,power3,power4,power5,power6):
 
 #串口设置
 
-ser=serial.Serial()
+ser=serial.Serial("COM4",115200)
 #print(ser.isOpen())
 
 '''
