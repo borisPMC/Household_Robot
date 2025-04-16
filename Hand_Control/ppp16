@@ -1,0 +1,20 @@
+
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,-0.4,-2.35,-2.3)):
+    #c1(),release(),pregrab()
+    #hand.c1()
+    arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movel((-0.3,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movel((0,0,-0.2,-0.1,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.15,0.4,0.065,4.7,0,-0.2)):
+    #c1(),release(),pregrip()
+    hand.pregrip()
+    hand.c1()
+    arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movel((-0.3,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    hand.release()
+    hand.pregrip()
+
