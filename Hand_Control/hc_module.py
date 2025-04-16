@@ -11,6 +11,10 @@ BAUDRATE = 115200
 
 class Hand:
 
+    """
+    Custom class to control the Hand. All functions are originally defined in hand_action.py and inspire_hand.py.
+    """
+
     def __init__(self, hand_id=HAND_ID, port=PORT, baudrate=BAUDRATE):
         self.hand_id = hand_id
         self.ser=serial.Serial(port, baudrate)
@@ -23,7 +27,6 @@ class Hand:
         Must add this magic method to prevent the port not closing and obstract the next initialization.
         """
         self.ser.close()
-        
 
     def __delattr__(self):
         self.ser.close()
@@ -98,7 +101,7 @@ class Hand:
         return summed_pkg
 
     """
-    Direct command to the hand.
+    Direct command to the hand. For information, refer to handReadme.txt
     """
 
     def setpos(self, pos1, pos2, pos3, pos4, pos5, pos6):
@@ -525,6 +528,13 @@ class Hand:
         _ = self._interface(packed_data, 18)
         return
     
+    def close(self):
+        """
+        Close the serial port. Should be called whenever the program ends.
+        """
+        self.ser.close()
+        return
+    
     """
     Operation-level functions. Can be used in Main Functions.
     """
@@ -645,23 +655,23 @@ def control_hand(hand: Hand, c):
 
     match c:
         case "1":
-            Hand.c1()
+            hand.c1()
         case "4":
-            Hand.c4()
+            hand.c4()
         case "5":
-            Hand.c5()
+            hand.c5()
         case "6":
-            Hand.c6()
+            hand.c6()
         case "7":
-            Hand.c7()
+            hand.c7()
         case "9":
-            Hand.c9()
+            hand.c9()
         case "13":
-            Hand.c13()
+            hand.c13()
         case "14":
-            Hand.c14()
+            hand.c14()
         case _:
-            Hand.release()
+            hand.release()
     
     return
 

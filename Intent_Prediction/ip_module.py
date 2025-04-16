@@ -1,11 +1,277 @@
+import re
 import time
 import numpy as np
 import sounddevice as sd
-from Intent_Prediction.Datasets import New_PharmaIntent_Dataset
+import os
+from typing import Union
+from datasets import load_dataset, Dataset, interleave_datasets, Audio, DatasetDict
+import json
 
-# INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
-# Main function for the Master program
-# Expected to be run forever
+import torch
+import transformers
+
+class New_PharmaIntent_Dataset:
+
+    INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+    # O: irelevant B: beginning I: inside
+    NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
+
+    datasets: dict[DatasetDict]
+    train_ds: Dataset
+    test_ds: Dataset
+    valid_ds: Dataset
+
+    def __init__(self, repo_id: str, config: dict):
+        self.repo_id = repo_id
+
+        self._set_metadata()
+        self._call_dataset_workflow(config) if config["use_exist"] else None
+
+    def _call_dataset_workflow(self, config:dict):
+
+        # Call each language dataset, then merge them and split into train and test
+        self.datasets = {}
+        
+        for lang in config["languages"]:
+            lang_ds = load_dataset(self.repo_id, name=lang)
+            processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
+            self.datasets[lang] = processed_lang_ds
+
+        # Merge the datasets and set split with the merged one
+        if (config["merge_language"]):
+            self.group_lang()
+
+        print("Dataset loaded successfully! \n")
+    
+
+    def _set_metadata(self):
+        self.audio_col = "Audio_Path"
+        self.speech_col = "Speech"
+        self.intent = "Intent"
+        self.ner_tag = "NER_Tag"
+
+    def set_splits_by_lang(self, lang):
+        self.train_ds = self.datasets[lang]["train"]
+        self.valid_ds = self.datasets[lang]["valid"]
+        self.test_ds = self.datasets[lang]["test"]
+
+        print(f"{lang} dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
+
+    def group_lang(self):
+        self.train_ds = interleave_datasets([ds["train"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.test_ds = interleave_datasets([ds["test"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+        self.valid_ds = interleave_datasets([ds["valid"] for ds in self.datasets.values()], stopping_strategy="all_exhausted")
+
+        print(f"Merged dataset loaded!")
+        print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
+        return
+    
+    def create_vocab_file(self, output_dir: str, vocab_filename: str = "vocab.json"):
+        """
+        Creates a vocabulary file from the sentences in the dataset.
+
+        Args:
+            output_dir (str): Directory to save the vocabulary file.
+            vocab_filename (str): Name of the vocabulary file (default: "vocab.json").
+        """
+
+        vocab = {}
+        
+
+        # Combine all sentences from train, validation, and test datasets
+        print("Extracting sentences from the dataset...")
+        all_sentences = (
+            self.train_ds["Speech"] +
+            self.valid_ds["Speech"] +
+            self.test_ds["Speech"]
+        )
+
+
+        # add special tokens
+        vocab["[UNK]"] = len(vocab)
+        vocab["[PAD]"] = len(vocab)
+        vocab["|"] = vocab[" "]
+        del vocab[" "]
+
+        # Ensure output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Save vocabulary to file
+        vocab_path = os.path.join(output_dir, vocab_filename)
+        print(f"Saving vocabulary to {vocab_path}...")
+        with open(vocab_path, "w", encoding="utf-8") as vocab_file:
+            json.dump(vocab, vocab_file, ensure_ascii=False, indent=4)
+
+        print("Vocabulary file created successfully!")
+
+    # Use for validation / deployment, return 4-item list (padded)
+    @staticmethod
+    def check_NER(NER_Tag: Union[str, list[str]], fill_na=True) -> list[str]:
+        
+        if type(NER_Tag) == str:
+            tag_list = list(NER_Tag)
+        else:
+            tag_list = NER_Tag
+        
+        detect_med = set()
+
+        for token in tag_list:
+            if token != "0" and New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:] != "":
+                detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
+
+        listed_med = list(detect_med)
+
+        if fill_na:
+            listed_med = listed_med + ["Empty"] * (4 - len(listed_med))
+
+        return listed_med
+
+    @staticmethod
+    def post_process_med(output: list[dict]) -> list[4]:
+        """
+        Processing output list generated by NER Pipeline. Return a list of medicine lists
+        """
+        ner_tag = []
+        for tkn in output:
+            ner_tag.append(tkn["entity"][-1])
+        detect_med = New_PharmaIntent_Dataset.check_NER(ner_tag)
+        return detect_med
+
+    @staticmethod
+    def postdownload_process(example):
+
+        tokenized_speech = []
+        ner_labels = []
+        speech = example["Speech"]
+
+        # Preprocess NER_Tag
+        if example["NER_Tag"][0] == "'":
+            ner_tag = example["NER_Tag"][1:]
+        else:
+            ner_tag = example["NER_Tag"]
+
+        # Preprocess Speech
+        tokens = hybrid_split(speech)
+        tokenized_speech = tokens
+
+        # Preprocess Intent
+        num_intent = New_PharmaIntent_Dataset.INTENT_LABEL.index(example["Intent"])
+        
+        # Ensure NER_Tag length matches the number of tokens
+        if len(ner_tag) != len(tokens):
+            raise ValueError(f"Mismatch between tokens and NER_Tag: {speech}")
+
+        ner_labels = [int(tag) for tag in ner_tag]
+        
+        example["Tokenized_Speech"] = tokenized_speech
+        example["NER_Labels"] = ner_labels
+        example["Intent_Label"] = num_intent
+
+        return example
+
+    @staticmethod
+    def  build_new_dataset(repo_id, config):
+        ds = load_dataset("csv", data_files=config["data_file"], split="train")
+
+        # Load Audio into dataset
+        ds = ds.cast_column("Audio_Path", Audio(sampling_rate=16000))
+        ds = ds.rename_column("Audio_Path", "Audio")
+
+        # ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
+
+        total_amt = len(ds)
+
+        train_amt = int(total_amt * config["train_ratio"] - (total_amt * config["train_ratio"] % 16))
+        test_amt = int(total_amt - train_amt)
+
+        splited_ds = ds.train_test_split(test_size=test_amt, shuffle=True)
+        feed_ds = splited_ds["train"].train_test_split(test_size=1-config["train_ratio"], shuffle=True)
+
+        train_ds = feed_ds["train"]
+        validate_ds = feed_ds["test"]
+        test_ds = splited_ds["test"]
+
+        doneDS = DatasetDict({
+            "train": train_ds,
+            "valid": validate_ds,
+            "test": test_ds
+        })
+
+        for l in ["English", "Cantonese"]:
+
+            pushing_ds = doneDS.filter(lambda example: example["Language"] == l)
+            pushing_ds = pushing_ds.remove_columns("Language")
+
+            print("Pushing config: " + l + "\n")
+            print(pushing_ds)
+
+            pushing_ds.push_to_hub(
+                repo_id=repo_id,
+                config_name=l,
+                private=True
+            )
+
+def hybrid_split(string: str):
+    """
+    Split a string into tokens using a hybrid regex.
+
+    Args:
+        string (str): Input string.
+
+    Returns:
+        List[str]: List of tokens.
+    """
+    regex = r"[\u4e00-\ufaff]|[0-9]+|[a-zA-Z]+\'*[a-z]*"
+    matches = re.findall(regex, string, re.UNICODE)
+    return matches
+
+def load_asr_pipeline(repo) -> transformers.Pipeline:
+    """
+    Load the ASR pipeline from Hugging Face Hub.
+
+    Returns:
+        Pipeline: Loaded ASR pipeline.
+    """
+    if os.path.exists(f"./temp/{repo}"):
+        asr_pipe = transformers.pipeline("automatic-speech-recognition", model=f"./temp/{repo}")
+    else:
+        print("Downloading ASR Model...")
+        asr_pipe = transformers.pipeline("automatic-speech-recognition", model=repo)
+        asr_pipe.save_pretrained(f"./temp/{repo}")
+    return asr_pipe
+
+def load_med_list_pipeline(repo) -> transformers.Pipeline:
+    """
+    Load the medicine list pipeline from Hugging Face Hub.
+
+    Returns:
+        Pipeline: Loaded medicine list pipeline.
+    """
+    if os.path.exists(f"./temp/{repo}"):
+        med_list_pipe = transformers.pipeline("token-classification", model=f"./temp/{repo}")
+    else:
+        print("Downloading NER Model...")
+        med_list_pipe = transformers.pipeline("token-classification", model=repo)
+        med_list_pipe.save_pretrained(f"./temp/{repo}")
+    return med_list_pipe
+
+def load_intent_pipeline(repo="MedicGrabber_multitask_BERT_intent") -> transformers.Pipeline:
+    """
+    Load the intent pipeline from Hugging Face Hub.
+
+    Returns:
+        Pipeline: Loaded intent pipeline.
+    """
+    if os.path.exists(f"./temp/{repo}"):
+        intent_pipe = transformers.pipeline("text-classification", model=f"./temp/{repo}")
+    else:
+        print("Downloading Intent Model...")
+        intent_pipe = transformers.pipeline("text-classification", model=repo)
+        intent_pipe.save_pretrained(f"./temp/{repo}")
+    return intent_pipe
+
 def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> None:
     
     asr_pipe = model_dict["asr_pipe"]
@@ -16,11 +282,11 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
 
         listen_event.wait()
 
-        # Idle when grabbing medicine
-        if (shared_dict["user_flag"] and shared_dict["cmd_flag"]) or shared_dict["play_sound_flag"]:
-            # print("IP Thread: Idle")
-            time.sleep(shared_dict["THREAD_PROCESS_TIMER"])
-            continue
+        # # Idle when grabbing medicine
+        # if (shared_dict["user_flag"] and shared_dict["cmd_flag"]) or shared_dict["play_sound_flag"]:
+        #     # print("IP Thread: Idle")
+        #     time.sleep(shared_dict["THREAD_PROCESS_TIMER"])
+        #     continue
 
         audio_array = None
         transcript = None

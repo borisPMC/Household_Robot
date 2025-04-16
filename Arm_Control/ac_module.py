@@ -1,7 +1,6 @@
 from time import sleep
 import urx
 import sys
-from Hand_Control import hand_action
 from Hand_Control.hc_module import Hand
 
 # Basic Unit: meter
@@ -10,7 +9,7 @@ VELOCITY = 0.2    # Velocity
 ACCELERATION = 0.1     # Acceleration
 
 
-def grab_0(hand: Hand, arm: urx.URRobot, start_coord =(0.17,0.5,0.06,-0.4,-2.35,-2.3)):
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.5,0.06,-0.4,-2.35,-2.3)):
     #c1(),release(),pregrab()
     hand.c1()
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
@@ -19,20 +18,20 @@ def grab_0(hand: Hand, arm: urx.URRobot, start_coord =(0.17,0.5,0.06,-0.4,-2.35,
     arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     hand.release()
 
-def grab_1(hand: Hand, arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
+def grab_1(arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
 
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
-def grab_2(hand: Hand, arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
+def grab_2(arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
 
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
-def grab_3(hand: Hand, arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
+def grab_3(arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
 
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
-# Main function for the Master program
-def control_arm(hand: Hand, arm: urx.URRobot, medicine: str):
+# Main function for the Master program. It is intent to control both the arm and the hand.
+def grab_medicine(hand: Hand, arm: urx.URRobot, medicine: str):
 
     print("Arm start moving")
 
@@ -58,8 +57,15 @@ def control_arm(hand: Hand, arm: urx.URRobot, medicine: str):
     print("Arm stop moving, continue master program")
     return
 
-def main(medicine):
+def main():
 
+    """
+    Avoid adding hand-related lines in grab_0-4 functions to maintain modularity.
+    """
+
+    # These three are given from external modules, don't need to care if configuring the arm motions only.
+    # I include the Hand here. Please see grab_0 to know how to use it.
+    medicine = "ACE Inhibitor" 
     hand = Hand()
     arm = urx.URRobot("192.168.12.21", useRTInterface=True)
 
@@ -90,8 +96,5 @@ def main(medicine):
     return
 
 if __name__ == "__main__":
-    
-    # Medicine name for testing arm
-    med = "ACE Inhibitor"
 
-    main(med)
+    main()

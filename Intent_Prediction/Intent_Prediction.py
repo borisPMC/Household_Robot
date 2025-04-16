@@ -201,8 +201,8 @@ def main():
     #         "merge_language": True,
     #     })
     
-    # test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
-    # test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
