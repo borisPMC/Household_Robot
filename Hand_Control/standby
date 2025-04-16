@@ -31,3 +31,35 @@ def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.15,0.4,0.065,4.7,0,-0.2)
     sleep(0.5)
     arm.movel((0,0,0.1,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     # arm.movel(0.23,0.4,0.2,4.7,0,-0.2)
+
+
+# Basic Unit: meter
+DISPLACEMENT = 0.05    # Displacement
+VELOCITY = 0.2    # Velocity
+ACCELERATION = 0.1     # Acceleration
+
+STAND_BY_POSITION = (0,0.4,0.2,4.7,0,-0.2)
+
+def stand_by(hand: Hand, arm: urx.URRobot):
+
+    # Move to the standby position
+    arm.movel(STAND_BY_POSITION, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+
+    return
+
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,4.7,0,-0.2)):
+    #c1(),release(),pregrip()
+    arm.movel((0.17,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    arm.movel((0,0.02,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    #hand.pregrip()
+    #hand.c1()
+    arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movel((-0.31,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    #hand.release()
+    #hand.pregrip()
+    sleep(0.5)
+    arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    # arm.movel(0.23,0.4,0.2,4.7,0,-0.2)
+
