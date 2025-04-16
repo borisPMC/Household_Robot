@@ -15,6 +15,16 @@ class Hand:
         self.hand_id = hand_id
         self.ser=serial.Serial(port, baudrate)
 
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        """
+        Must add this magic method to prevent the port not closing and obstract the next initialization.
+        """
+        self.ser.close()
+        
+
     def __delattr__(self):
         self.ser.close()
 
