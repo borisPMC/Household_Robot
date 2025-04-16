@@ -8,7 +8,7 @@ from transformers import AutoProcessor, RTDetrForObjectDetection, VitPoseForPose
 class PoseEstimator_ViTPose:
     def __init__(self, device=None):
         self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
-        # self.load_models()
+        self.load_models()
         self.person_image_processor = AutoProcessor.from_pretrained("PekingU/rtdetr_r50vd_coco_o365")
         self.person_model = RTDetrForObjectDetection.from_pretrained("PekingU/rtdetr_r50vd_coco_o365", device_map=self.device)
         self.pose_image_processor = AutoProcessor.from_pretrained("usyd-community/vitpose-base-simple")
@@ -28,8 +28,22 @@ class PoseEstimator_ViTPose:
             self.person_model = RTDetrForObjectDetection.from_pretrained(f"./temp/{person_repo}", device_map=self.device)
         
         else:
+            print("Downloading Person Model...")
             self.person_image_processor = AutoProcessor.from_pretrained(person_repo)
             self.person_model = RTDetrForObjectDetection.from_pretrained(person_repo).to(self.device)
+            self.person_model.save_pretrained(f"./temp/{person_repo}")
+            self.person_image_processor.save_pretrained(f"./temp/{person_repo}")
+
+        if os.path.exists(f"./temp/{pose_repo}"):
+            self.pose_image_processor = AutoProcessor.from_pretrained(f"./temp/{pose_repo}")
+            self.pose_model = VitPoseForPoseEstimation.from_pretrained(f"./temp/{pose_repo}", device_map=self.device)
+        
+        else:
+            print("Downloading Pose Model...")
+            self.pose_image_processor = AutoProcessor.from_pretrained(pose_repo)
+            self.pose_model = VitPoseForPoseEstimation.from_pretrained(pose_repo).to(self.device)
+            self.pose_model.save_pretrained(f"./temp/{pose_repo}")
+            self.pose_image_processor.save_pretrained(f"./temp/{pose_repo}")
 
         self.pose_model = VitPoseForPoseEstimation.from_pretrained("usyd-community/vitpose-base-simple").to(self.device)
         self.person_model = RTDetrForObjectDetection.from_pretrained("PekingU/rtdetr_r50vd_coco_o365").to(self.device)

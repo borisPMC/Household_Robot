@@ -46,6 +46,8 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
 def main():
 
     # Define & Initialize ALL Models and Hardwares (or related model classes) to prevent repeated loading
+    # Loading on first time is slower and require Network connection. Afterwards, no Network should be need to maintain fluent arm/hand operation
+
     model_dict = {
         "asr_pipe":             load_asr_pipeline("borisPMC/MedicGrabber_WhisperSmall"),
         "med_list_pipe":        load_med_list_pipeline("borisPMC/MedicGrabber_multitask_BERT_ner"),
