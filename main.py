@@ -11,18 +11,18 @@ from Scene_Understanding.su_module import find_user_thread, PoseEstimator_ViTPos
 from Intent_Prediction.ip_module import listen_audio_thread, load_asr_pipeline, load_intent_pipeline, load_med_list_pipeline
 from Object_Detection.od_module import detect_medicine
 from Hand_Control.hc_module import Hand, control_hand
-from Arm_Control.ac_module import grab_medicine
+from Arm_Control.ac_module import grab_medicine, reset_to_standby
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
 
-login("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")
+# login("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")
 
 # This function is specifically to control the timing flags.
 def grabbing_process(class_label: str, model_dict: dict) -> None:
 
     # time.sleep(10)  # Simulate the 10-second duration for grabbing a medicine
-    coord_list = detect_medicine(model_dict["detect_med_model"], model_dict["ocr_model"], class_label, 3) # a list of dict: [{xmin, ymin, xmax, ymax}]
+    coord_list = detect_medicine(model_dict, class_label, 3) # a list of dict: [{xmin, ymin, xmax, ymax}]
     print(coord_list)
 
     # Simulate Grabbing, comment if implemeneted
@@ -31,13 +31,12 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
     for item in coord_list:
 
         # TODO: pass item & img to depth function
-
-        # TODO: Grab the medicine
+        # (x, y, z) = detect_depth(item["coordinates"], model_dict["medicine_camera_index"], class_label)
         
         # Moving medicine to specific location from fixed starting point
-        grab_medicine(model_dict["robot_arm"], class_label)
+        grab_medicine(model_dict["robot_hand"], model_dict["robot_arm"], class_label)
 
-        # TODO: Release the medicine
+        reset_to_standby(model_dict["robot_arm"])
 
 
     print("Grabbing done. Return to listening...")
@@ -56,10 +55,10 @@ def main():
         "ocr_model":            PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
         "pose_model":           PoseEstimator_ViTPose(),
         "robot_arm":            urx.URRobot("192.168.12.21", useRTInterface=True),
-        "robot_hand":           Hand('COM4', 2, 115200),
+        "robot_hand":           Hand(2, 'COM4', 115200),
         # Assign the right camera before running
         "user_camera_index":    0,
-        "medicine_camera_index":0,
+        "medicine_camera_index":1,
     }
 
     model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
@@ -68,6 +67,8 @@ def main():
     model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))
     model_dict["robot_arm"].set_payload(2, (0, 0, 0.1))
     model_dict["robot_arm"].set_freedrive(True)
+
+    reset_to_standby(model_dict["robot_arm"])
 
 
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision

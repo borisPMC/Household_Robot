@@ -144,7 +144,7 @@ def live_capture(pose_estimator: PoseEstimator_ViTPose, device=0, img_temp_fpath
 def find_user_thread(model_dict, shared_dict, listen_event) -> None:
 
     pose_model = model_dict["pose_model"]
-    device = shared_dict["user_camera_index"]
+    device = model_dict["user_camera_index"]
     print(f"SU Thread: Using Camera {device}. Start finding user...")
 
     while True:

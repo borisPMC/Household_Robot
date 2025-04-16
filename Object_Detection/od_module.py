@@ -79,12 +79,12 @@ def write_yaml_config(fpath: str, content: str) -> None:
     finally:
         return
 
-def auto_capture_photo(fpath, quality=0.8):
+def auto_capture_photo(fpath, cam_index=0, quality=0.8):
 
     cv2.destroyAllWindows()
 
     # Open the default camera
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(cam_index)
 
     if not cam.isOpened():
         print("Error: Could not access the camera.")
@@ -208,7 +208,11 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
 
 
 # Main function for the master program
-def detect_medicine(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: str, max_attempts=MAX_ATTEMPTS) -> list[dict]:
+def detect_medicine(model_dict, target_label: str, max_attempts=MAX_ATTEMPTS) -> list[dict]:
+
+    detect_med_model = model_dict["detect_med_model"]
+    ocr_model = model_dict["ocr_model"]
+    camera_index = model_dict["medicine_camera_index"]
 
     print("Detecting medicine:", target_label, "\n")
 
