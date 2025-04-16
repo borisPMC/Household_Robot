@@ -58,3 +58,20 @@ except Exception as e:
 finally:
     rob.close()
     print("Robot arm closed")
+
+
+
+
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(1.5,-1.5,-2.6,-2.3,-1.5,0)):
+    #c1(),release(),pregrip()
+    arm.movej(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    #hand.pregrip()
+    #hand.c1()
+    arm.movej((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movejl((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movejl((0,0,0,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    #hand.release()
+    #hand.pregrip()
+    sleep(0.5)
+    arm.movej((0,0,0,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    # arm.movel(0.23,0.4,0.2,4.7,0,-0.2)
