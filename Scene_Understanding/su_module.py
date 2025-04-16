@@ -8,7 +8,7 @@ from transformers import AutoProcessor, RTDetrForObjectDetection, VitPoseForPose
 class PoseEstimator_ViTPose:
     def __init__(self, device=None):
         self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
-        self.load_models()
+        # self.load_models()
         self.person_image_processor = AutoProcessor.from_pretrained("PekingU/rtdetr_r50vd_coco_o365")
         self.person_model = RTDetrForObjectDetection.from_pretrained("PekingU/rtdetr_r50vd_coco_o365", device_map=self.device)
         self.pose_image_processor = AutoProcessor.from_pretrained("usyd-community/vitpose-base-simple")
