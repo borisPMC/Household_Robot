@@ -7,6 +7,7 @@ This model uses BERT (or alternatives) as the base model and adds two separate h
 
 
 """
+import asyncio
 from dataclasses import dataclass
 import json
 import re
@@ -26,7 +27,20 @@ from Datasets import New_PharmaIntent_Dataset, call_dataset
 CLASS LABEL LIST
 """
 
-INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+# INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+INTENT_LABEL = [
+    "call_contact",
+    "retrieve_med",
+    "enquire_location",
+    "enquire_suitable_med",
+    "enquire_time",
+    "enquire_weather",
+    "general_chat",
+    "enquire_info",
+    "retrieve_other",
+    "set_furniture",
+    "set_software",
+]
 
 # O: irelevant B: beginning I: inside
 NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
@@ -42,6 +56,7 @@ class Multitask_BERT(nn.Module):
             num_ner_labels (int): Number of NER labels.
         """
         super(Multitask_BERT, self).__init__()
+        # self.config = BertConfig.from_pretrained(model_name)
         self.bert = BertModel.from_pretrained(model_name)
         self.dropout = nn.Dropout(self.bert.config.hidden_dropout_prob)
 
@@ -192,7 +207,7 @@ def hybrid_split(string: str) -> List[str]:
     matches = re.findall(regex, string, re.UNICODE)
     return matches
 
-def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, max_length=128):
+def set_trainer(model, tokenizer, evaluators, train_ds, eval_ds, max_length=128) -> Trainer:
 
     def compute_metrics(pred: EvalPrediction):
         """
@@ -261,8 +276,55 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
             "ner_tok_f1": ner_tok_scores["f1"],
             "ner_seq_f1": ner_seq_scores["overall_f1"],
         }
-    
-    def preprocess(example, tokenizer, max_length):
+
+    training_args = TrainingArguments(
+        output_dir="temp/multitask_BERT_MedicGrabber",
+        eval_strategy="epoch",
+        save_strategy="epoch",
+        logging_strategy="epoch",
+        learning_rate=5e-5,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=4,
+        num_train_epochs=5,
+        weight_decay=0.01,
+        logging_dir="./logs",
+        push_to_hub=True,
+        hub_model_id="borisPMC/multitask_BERT_MedicGrabber",
+    )
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_ds,
+        eval_dataset=eval_ds,
+        data_collator=DataCollatorForMultiTaskBert(tokenizer),
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics,
+    )
+
+    return trainer
+
+### LEGACY CODE ###
+async def main():
+
+    model_name  = "bert-base-uncased" # "bert-base-uncased" # "bert-base-multilingual-cased"
+
+    tokenizer = BertTokenizer.from_pretrained(model_name)
+
+    ds = call_dataset()
+
+    evaluators = {
+        "f1_metric": evaluate.load("f1"),
+        "seq_f1_metric": evaluate.load("seqeval")
+    }
+
+    model = Multitask_BERT(
+        model_name=model_name,
+        num_intent_labels=len(INTENT_LABEL),
+        num_ner_labels=len(NER_LABEL),
+    )
+
+    def preprocess(example, tokenizer, max_length=128):
 
         text = example["Speech"]
 
@@ -287,72 +349,31 @@ def train_multitask_model(model, tokenizer, evaluators, dataset: DatasetDict, ma
 
         return item
 
-    processed_ds = dataset.map(preprocess, fn_kwargs={"tokenizer": tokenizer, "max_length": max_length})
-
-
-    training_args = TrainingArguments(
-        output_dir="temp/multitask_BERT_MedicGrabber",
-        eval_strategy="epoch",
-        save_strategy="epoch",
-        logging_strategy="epoch",
-        learning_rate=5e-5,
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=4,
-        num_train_epochs=10,
-        weight_decay=0.01,
-        logging_dir="./logs",
-        push_to_hub=True,
-        hub_model_id="multitask_BERT_MedicGrabber",
-    )
-
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        data_collator=DataCollatorForMultiTaskBert(tokenizer),
-        train_dataset=processed_ds["train"],
-        eval_dataset=processed_ds["valid"],
-        tokenizer=tokenizer,
-        compute_metrics=compute_metrics,
-    )
-
-    trainer.train()
-
-
-
-def main():
-
-    model_name  = "bert-base-uncased" # "bert-base-uncased" # "bert-base-multilingual-cased"
-
-    tokenizer = BertTokenizer.from_pretrained(model_name)
-    config = BertConfig.from_pretrained(model_name)
-
-    ds = call_dataset()
-
-    evaluators = {
-        "f1_metric": evaluate.load("f1"),
-        "seq_f1_metric": evaluate.load("seqeval")
-    }
-
-    model = Multitask_BERT(
-        model_name=model_name,
-        num_intent_labels=len(INTENT_LABEL),
-        num_ner_labels=len(NER_LABEL),
-    )
+    trainer = None
 
     for lang in ds.datasets.keys():
         # Train the model on each dataset
-        lang_ds = ds.datasets[lang].map(New_PharmaIntent_Dataset.postdownload_process)
-        train_multitask_model(model, tokenizer, evaluators, lang_ds)
+        ds.set_splits_by_lang(lang)
+        feed_train = ds.train_ds.map(preprocess, fn_kwargs={"tokenizer": tokenizer})
+        feed_valid = ds.valid_ds.map(preprocess, fn_kwargs={"tokenizer": tokenizer})
+        if trainer == None:
+            trainer = set_trainer(model, tokenizer, evaluators, feed_train, feed_valid)
+            trainer.train(resume_from_checkpoint=False)
+        else:
+            trainer.train_dataset = feed_train
+            trainer.eval_dataset = feed_valid
+            trainer.train(resume_from_checkpoint=True)
     
-    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
+    trainer.push_to_hub()
+    # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber_2")
 
     # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(New_PharmaIntent_Dataset.INTENT_LABEL), len(New_PharmaIntent_Dataset.NER_LABEL))
     
     # Upload final model
-    hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
+    # hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
 
-    hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
-    tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
+    # hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
+    # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

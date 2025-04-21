@@ -10,9 +10,20 @@ import json
 import torch
 import transformers
 
+SEED = 42
+
 class New_PharmaIntent_Dataset:
 
-    INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+    # INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+    INTENT_LABEL = [
+        "enquire_info",
+        "retrieve",
+        "enquire_location",
+        "enquire_suitable_med",
+        "general_chat",
+        "set_furniture",
+        "set_software"
+    ]
     # O: irelevant B: beginning I: inside
     NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
 
@@ -138,6 +149,25 @@ class New_PharmaIntent_Dataset:
             ner_tag.append(tkn["entity"][-1])
         detect_med = New_PharmaIntent_Dataset.check_NER(ner_tag)
         return detect_med
+    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
+    # @staticmethod
+    # def _preprocess_data(example):
+
+    #     # Process audio
+    #     max_length = 5 * 16000  # 5 seconds at 16kHz
+    #     audio_array = example["Audio"]["array"]
+        
+    #     # Truncate if longer than 5 seconds
+    #     if len(audio_array) > max_length:
+    #         audio_array = audio_array[:max_length]
+    #     # Pad with zeros if shorter than 5 seconds
+    #     elif len(audio_array) < max_length:
+    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
+    #         audio_array = np.concatenate([audio_array, padding])
+        
+    #     example["Audio"]["array"] = audio_array
+
+    #     return example
 
     @staticmethod
     def postdownload_process(example):
@@ -186,8 +216,8 @@ class New_PharmaIntent_Dataset:
         train_amt = int(total_amt * config["train_ratio"] - (total_amt * config["train_ratio"] % 16))
         test_amt = int(total_amt - train_amt)
 
-        splited_ds = ds.train_test_split(test_size=test_amt, shuffle=True)
-        feed_ds = splited_ds["train"].train_test_split(test_size=1-config["train_ratio"], shuffle=True)
+        splited_ds = ds.train_test_split(test_size=test_amt, shuffle=True, seed=SEED)
+        feed_ds = splited_ds["train"].train_test_split(test_size=1-config["train_ratio"], shuffle=True, seed=SEED)
 
         train_ds = feed_ds["train"]
         validate_ds = feed_ds["test"]
@@ -198,6 +228,14 @@ class New_PharmaIntent_Dataset:
             "valid": validate_ds,
             "test": test_ds
         })
+
+        # English: 118 train, 27 valid, 34 test -> 179
+        # Cantonese: 114 train, 30 valid, 40 test -> 184
+        # Eng_Can: 40 train, 6 valid, 14 test -> 60
+        # Can_Eng: 35 train, 14 valid, 11 test -> 60
+
+        # Can_Eng: Cantonese as main, English as secondary
+        # Eng_Can: English as main, Cantonese as secondary
 
         for l in ["English", "Cantonese"]:
 
@@ -320,8 +358,8 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
             elif intent == "2" and len(clean_meds) > 0:
                 # print("Command Heard: Search Medicine")
                 print("\nSeems like you are looking for a medicine. Please wait while I search for it.")
-                shared_dict["cmd_flag"] = True
-                shared_dict["queued_commands"] = shared_dict["queued_commands"] + clean_meds
+                # shared_dict["cmd_flag"] = True
+                # shared_dict["queued_commands"] = shared_dict["queued_commands"] + clean_meds
 
             elif intent == "3":
                 # print("Command Heard: Enquire Suitable Medicine")

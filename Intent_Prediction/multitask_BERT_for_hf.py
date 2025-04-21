@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 import inspect
 import json
@@ -24,7 +25,15 @@ from typing import List, Union, Dict
 CLASS LABEL LIST
 """
 
-INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+INTENT_LABEL = [
+    "enquire_info",
+    "retrieve",
+    "enquire_location",
+    "enquire_suitable_med",
+    "general_chat",
+    "set_furniture",
+    "set_software"
+]
 
 # O: irelevant B: beginning I: inside
 NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
@@ -361,7 +370,7 @@ def prepare_datasets(lang_ds: New_PharmaIntent_Dataset, tokenizer: BertTokenizer
 
     return train_dataset, eval_dataset
 
-def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
+def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds) -> MultitaskTrainer:
 
     train_dataset, eval_dataset = train_ds, valid_ds
     
@@ -375,12 +384,14 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
 
         # Classify the predictions and labels into intent and ner, and align them for evaluation
         for pred, label in zip(preds, labels):
-            if len(pred) == 4:
+            if len(pred) == len(INTENT_LABEL):
                 intent_dict["preds"].append(pred.argmax(axis=0))
                 intent_dict["labels"].append(label)
-            else:
+            elif len(pred) == 128:
                 ner_dict["preds"].append(pred.argmax(axis=1))
                 ner_dict["labels"].append(label)
+            else:
+                raise Exception(f"Pred length: {len(pred)}")
         
         if len(intent_dict["preds"]) > 0:
             # Intent classification
@@ -433,7 +444,7 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
             overwrite_output_dir=True,
             learning_rate=1e-5,
             do_train=True,
-            num_train_epochs=10,
+            num_train_epochs=30,
             # Adjust batch size if this doesn't fit on the Colab GPU
             per_device_train_batch_size=16,
             per_device_eval_batch_size=4,
@@ -441,6 +452,7 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
             save_strategy="epoch",
             # By default, Trainer disallow saving weights contained shared tensors, therefore setting this to False
             save_safetensors=False,
+            eval_on_start=True,
         ),
         data_collator=GrabberBertDataCollator(),
         train_dataset=train_dataset,
@@ -449,43 +461,11 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds):
     )
 
     trainer.train()
+    upload_model(trainer.model, tokenizer)
+    return trainer
 
-def main():
+def upload_model(multitask_model, tokenizer):
     
-    model_name = "bert-base-uncased"
-    tokenizer = BertTokenizerFast.from_pretrained(model_name)
-    max_length = 128
-
-    multitask_model = Multitask_BERT_v2.create(
-        model_name=model_name,
-        model_type_dict={
-            "intent": BertForSequenceClassification,
-            "ner": BertForTokenClassification,
-        },
-        model_config_dict={
-            "intent": BertConfig.from_pretrained(model_name, num_labels=len(INTENT_LABEL)),
-            "ner": BertConfig.from_pretrained(model_name, num_labels=len(NER_LABEL)),
-        }
-    )
-
-    evaluators = {
-        "f1_metric": evaluate.load("f1"),
-        "seqeval": evaluate.load("seqeval"),
-    }
-
-    ds = call_dataset()
-
-    # Prepare datasets for Cantonese
-    for lang in ds.datasets.keys():
-    # for lang in ["English"]:
-        # Train the model on each dataset
-        ds.set_splits_by_lang(lang)
-        train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
-        train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
-
-    # Get single task models from joint-trained model and upload to huggingface
-    # Note to myself: DO NOT Upload the Joint model as HF package, does not support
-
     intent_model = multitask_model.taskmodels_dict["intent"]
     ner_model = multitask_model.taskmodels_dict["ner"]
 
@@ -507,6 +487,81 @@ def main():
     )
 
     print("Uploaded, exiting...")
+
+def main():
+    
+    model_name = "google-bert/bert-base-multilingual-uncased"
+    tokenizer = BertTokenizerFast.from_pretrained(model_name)
+    max_length = 128
+
+    multitask_model = Multitask_BERT_v2.create(
+        model_name=model_name,
+        model_type_dict={
+            "intent": BertForSequenceClassification,
+            "ner": BertForTokenClassification,
+        },
+        model_config_dict={
+            "intent": BertConfig.from_pretrained(model_name, num_labels=len(INTENT_LABEL)),
+            "ner": BertConfig.from_pretrained(model_name, num_labels=len(NER_LABEL)),
+        }
+    )
+
+    evaluators = {
+        "f1_metric": evaluate.load("f1"),
+        "seqeval": evaluate.load("seqeval"),
+    }
+
+    ds_config = {
+        "use_exist": True,
+        "languages": ["Cantonese", "English"],
+        "merge_language": True,
+    }
+
+    ds = call_dataset(ds_config)
+    trainer = None
+
+    # if ds_config["merge_language"] == False:
+        # for lang in ds.datasets.keys():
+        # # for lang in ["English"]:
+        #     # Train the model on each dataset
+        #     ds.set_splits_by_lang(lang)
+        #     print(ds.train_ds[0])
+        #     train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
+        #     if trainer == None:
+        #         trainer = train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
+        #         trainer.train()
+        #     else:
+        #         trainer.train_dataset = train_ds
+        #         trainer.eval_dataset = valid_ds
+        #         trainer.train(True)
+    # else:
+    train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
+    train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
+
+    # Get single task models from joint-trained model and upload to huggingface
+    # Note to myself: DO NOT Upload the Joint model as HF package, does not support
+
+    # intent_model = multitask_model.taskmodels_dict["intent"]
+    # ner_model = multitask_model.taskmodels_dict["ner"]
+
+    # # Push the Intent-specific model
+    # intent_model.push_to_hub(
+    #     "borisPMC/MedicGrabber_multitask_BERT_intent",
+    #     commit_message="Uploading intent-specific model",
+    # )
+    # tokenizer.push_to_hub(
+    #     "borisPMC/MedicGrabber_multitask_BERT_intent",
+    # )
+    # # Push the NER-specific model
+    # ner_model.push_to_hub(
+    #     "borisPMC/MedicGrabber_multitask_BERT_ner",
+    #     commit_message="Uploading NER-specific model",
+    # )
+    # tokenizer.push_to_hub(
+    #     "borisPMC/MedicGrabber_multitask_BERT_ner",
+    # )
+
+    # print("Uploaded, exiting...")
     
 
 if __name__ == "__main__":

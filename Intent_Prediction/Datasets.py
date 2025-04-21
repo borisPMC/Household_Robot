@@ -168,7 +168,16 @@ class PharmaIntent_Dataset:
 
 class New_PharmaIntent_Dataset:
 
-    INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+    # INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
+    INTENT_LABEL = [
+        "enquire_info",
+        "retrieve",
+        "enquire_location",
+        "enquire_suitable_med",
+        "general_chat",
+        "set_furniture",
+        "set_software"
+    ]
     # O: irelevant B: beginning I: inside
     NER_LABEL = ["O", "B-ACE_Inhibitor", "I-ACE_Inhibitor", "B-Metformin", "I-Metformin", "B-Atorvastatin", "I-Atorvastatin", "B-Amitriptyline", "I-Amitriptyline",]
 
@@ -351,8 +360,8 @@ class New_PharmaIntent_Dataset:
         ds = load_dataset("csv", data_files=config["data_file"], split="train")
 
         # Load Audio into dataset
-        ds = ds.cast_column("Audio_Path", Audio(sampling_rate=16000))
-        ds = ds.rename_column("Audio_Path", "Audio")
+        ds = ds.cast_column("file_name", Audio(sampling_rate=16000))
+        ds = ds.rename_column("file_name", "Audio")
 
         # ds = ds.map(PharmaIntent_Dataset.preprocess_audio)
 

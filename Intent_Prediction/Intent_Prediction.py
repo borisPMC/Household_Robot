@@ -29,7 +29,7 @@ login("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")
 def build_dataset():
     Datasets.PharmaIntent_Dataset.build_new_dataset("borisPMC/PharmaIntent", "medicine_intent.csv")
 
-def train_asr(ds: Datasets.New_PharmaIntent_Dataset, output_repo: str, pretrain_model: str) -> None:
+def train_asr(ds: Datasets.New_PharmaIntent_Dataset, ds_config: dict, output_repo: str, pretrain_model: str) -> None:
 
     use_exist = False
 
@@ -39,7 +39,12 @@ def train_asr(ds: Datasets.New_PharmaIntent_Dataset, output_repo: str, pretrain_
         use_exist=use_exist
         )
     
-    whisper.train(ds)
+    if ds_config["merge_language"] == False:
+        for l in ds_config["languages"]:
+            ds.set_splits_by_lang(l)
+            whisper.train(ds)
+    else:
+        whisper.train(ds)
 
     print(f"Pushing final model to hub...")
     whisper.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
@@ -177,16 +182,15 @@ def test_manual_nlp(asr_repo: str) -> None:
 
 def main():
     
-    # build_dataset()
+    # ds_config = {
+    #         "use_exist": True,
+    #         "languages": ["Cantonese", "English"],
+    #         "merge_language": False,
+    #     }
+    # ds = Datasets.call_dataset(ds_config)
 
-    ds = Datasets.call_dataset({
-            "use_exist": True,
-            "languages": ["Cantonese", "English"],
-            "merge_language": True,
-        })
-
-    train_asr(ds, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
-    train_asr(ds, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
+    # train_asr(ds, ds_config, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
+    # train_asr(ds, ds_config, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
     # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
     # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
 
@@ -195,11 +199,13 @@ def main():
 
     # test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
     
-    # ds = Datasets.call_dataset({
-    #         "use_exist": True,
-    #         "languages": ["Cantonese", "English"],
-    #         "merge_language": True,
-    #     })
+    ds = Datasets.call_dataset({
+            "use_exist": True,
+            "languages": ["Cantonese", "English"],
+            "merge_language": True,
+        })
+    
+    print(ds.train_ds[0])
     
     test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
     test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380

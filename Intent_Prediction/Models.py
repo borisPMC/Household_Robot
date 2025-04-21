@@ -33,7 +33,7 @@ from datasets import Dataset, IterableDataset, Audio
 from Datasets import PharmaIntent_Dataset
 import evaluate
 
-from Intent_Prediction import Datasets
+import Datasets
 
 # List of testing Whisper models
 

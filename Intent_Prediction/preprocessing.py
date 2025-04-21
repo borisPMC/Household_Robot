@@ -106,16 +106,16 @@ def hybrid_split(string: str) -> List[str]:
     return matches
 
 
-# Example usage
-fpath = "Intent_Prediction/audio/data/multitask_ds.xlsx"
-out_fpath = "Intent_Prediction/audio/data/multitask_ds_modified.xlsx"
-out_csv = "temp/ds.csv"
-df = pd.read_excel(fpath)
-lang_df = detect_language(df)
-tokenized_df = convert_sentence_to_tokens(df)
+# # Example usage
+# fpath = "Intent_Prediction/audio/data/multitask_ds.xlsx"
+# out_fpath = "Intent_Prediction/audio/data/multitask_ds_modified.xlsx"
+# out_csv = "temp/ds.csv"
+# df = pd.read_excel(fpath)
+# lang_df = detect_language(df)
+# tokenized_df = convert_sentence_to_tokens(df)
 
 
 
-# updated_df = convert_sentence_to_tokens(fpath)
-# tokenized_df.to_excel(out_fpath, index=False)
-tokenized_df.to_csv(out_csv, index=False)
+# # updated_df = convert_sentence_to_tokens(fpath)
+# # tokenized_df.to_excel(out_fpath, index=False)
+# tokenized_df.to_csv(out_csv, index=False)
