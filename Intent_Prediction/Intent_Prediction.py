@@ -37,18 +37,22 @@ def train_asr(ds: Datasets.New_PharmaIntent_Dataset, ds_config: dict, output_rep
         repo_id=output_repo,
         pretrain_model=pretrain_model,
         use_exist=use_exist
-        )
+    )
+
+    trainer = None
     
     if ds_config["merge_language"] == False:
         for l in ds_config["languages"]:
             ds.set_splits_by_lang(l)
-            whisper.train(ds)
+            trainer = whisper.update_trainer(ds, trainer)
+            trainer.train()
     else:
-        whisper.train(ds)
+        trainer = whisper.update_trainer(ds, trainer)
+        trainer.train()
 
     print(f"Pushing final model to hub...")
-    whisper.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
-    whisper.processor.push_to_hub(f"{whisper.repo_id}")
+    trainer.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
+    trainer.processing_class.push_to_hub(f"{whisper.repo_id}")
 
     return
 
@@ -186,17 +190,13 @@ def main():
     # ds_config = {
     #         "use_exist": True,
     #         "languages": ["Cantonese", "English"],
-    #         "merge_language": False,
+    #         "merge_language": True,
     #     }
     # ds = Datasets.call_dataset(ds_config)
 
     # train_asr(ds, ds_config, "borisPMC/MedicGrabber_WhisperTiny", "openai/whisper-tiny")
     # train_asr(ds, ds_config, "borisPMC/MedicGrabber_WhisperSmall", "openai/whisper-small")
-    # train_asr("borisPMC/whisper_large_grab_medicine_intent", "openai/whisper-large-v3")
-    # train_asr("borisPMC/whisper_largeTurbo_grab_medicine_intent", "openai/whisper-large-v3-turbo")
-
-    # train_asr("borisPMC/xlsr_grab_medicine_intent", "facebook/wav2vec2-large-xlsr-53")
-    # train_nlp("borisPMC/bert_baseM_grab_medicine_intent", "bert-base-multilingual-uncased")
+    # train_asr(ds, ds_config, "borisPMC/MedicGrabber_WhisperLargeTurbo", "openai/whisper-large-v3-turbo")
 
     # test_manual_nlp("borisPMC/whisper_small_grab_medicine_intent")
     
@@ -208,12 +208,20 @@ def main():
     
     print(ds.train_ds[0])
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.5649 | Medicine List F1: 0.9824
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6439 | Medicine List F1: 0.9947
-    # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
-    # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") 
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") 
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperLargeTurbo", "borisPMC/MedicGrabber_multitask_BERT")
 
-    return
+    # hf_model = .from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
+
+    # hf_model.push_to_hub("borisPMC/multitask_BERT_MedicGrabber", commit_message="Uploading Multitask BERT model")
+    # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber")
 
 if __name__ == "__main__":
     main()
+    # from transformers import WhisperModel, WhisperProcessor
+    # model = WhisperModel.from_pretrained("./temp/borisPMC/MedicGrabber_WhisperLargeTurbo/checkpoint-87")
+    # processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3-turbo", task="transcribe")
+
+    # model.push_to_hub("borisPMC/MedicGrabber_WhisperLargeTurbo", commit_message="Uploading Whisper LT model")
+    # processor.push_to_hub("borisPMC/MedicGrabber_WhisperLargeTurbo")

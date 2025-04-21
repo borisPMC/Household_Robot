@@ -444,15 +444,18 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds) -> Multitask
             overwrite_output_dir=True,
             learning_rate=1e-5,
             do_train=True,
-            num_train_epochs=30,
+            num_train_epochs=50, # 20 0.882996020285515
             # Adjust batch size if this doesn't fit on the Colab GPU
             per_device_train_batch_size=16,
             per_device_eval_batch_size=4,
-            evaluation_strategy="epoch",
+            logging_strategy="epoch",
+            eval_strategy="epoch",
             save_strategy="epoch",
             # By default, Trainer disallow saving weights contained shared tensors, therefore setting this to False
             save_safetensors=False,
             eval_on_start=True,
+            load_best_model_at_end=True,
+            metric_for_best_model="intent_f1"
         ),
         data_collator=GrabberBertDataCollator(),
         train_dataset=train_dataset,
@@ -540,28 +543,6 @@ def main():
 
     # Get single task models from joint-trained model and upload to huggingface
     # Note to myself: DO NOT Upload the Joint model as HF package, does not support
-
-    # intent_model = multitask_model.taskmodels_dict["intent"]
-    # ner_model = multitask_model.taskmodels_dict["ner"]
-
-    # # Push the Intent-specific model
-    # intent_model.push_to_hub(
-    #     "borisPMC/MedicGrabber_multitask_BERT_intent",
-    #     commit_message="Uploading intent-specific model",
-    # )
-    # tokenizer.push_to_hub(
-    #     "borisPMC/MedicGrabber_multitask_BERT_intent",
-    # )
-    # # Push the NER-specific model
-    # ner_model.push_to_hub(
-    #     "borisPMC/MedicGrabber_multitask_BERT_ner",
-    #     commit_message="Uploading NER-specific model",
-    # )
-    # tokenizer.push_to_hub(
-    #     "borisPMC/MedicGrabber_multitask_BERT_ner",
-    # )
-
-    # print("Uploaded, exiting...")
     
 
 if __name__ == "__main__":

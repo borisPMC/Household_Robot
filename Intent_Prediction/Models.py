@@ -158,7 +158,7 @@ class Whisper_Model:
             gradient_checkpointing=True,
             predict_with_generate=True,
             seed=SEED,
-            num_train_epochs=ASR_EPOCH,
+            num_train_epochs=10,
             fp16=True,
             fp16_full_eval=True,
             eval_strategy="epoch",
@@ -167,6 +167,8 @@ class Whisper_Model:
             metric_for_best_model="wer_ortho",
             greater_is_better=False,
             remove_unused_columns=False,
+            eval_on_start=True,
+            load_best_model_at_end=True,
         )
 
         return
@@ -202,11 +204,13 @@ class Whisper_Model:
 
         return {"wer_ortho": wer_ortho}
 
-    def train(self, ds: Datasets.New_PharmaIntent_Dataset):
+    def update_trainer(self, ds: Datasets.New_PharmaIntent_Dataset, prev_trainer: Seq2SeqTrainer=None):
 
-        ds.group_lang()
-
+        
         train_ds, valid_ds = self._prepare_datasets(ds)
+        if not train_ds or not valid_ds:
+            print("Missing Dataset(s)!")
+            return
 
         # for l in ds.datasets.keys():
 
@@ -214,21 +218,24 @@ class Whisper_Model:
 
         #     train_ds, valid_ds = self._prepare_datasets(ds)
 
-        trainer = Seq2SeqTrainer(
-            model=self.model,
-            args=self.training_args,
-            train_dataset=train_ds,
-            eval_dataset=valid_ds,
-            data_collator=self.data_collator,
-            compute_metrics=self.compute_metrics,
-            processing_class=self.processor,
-        )
+        trainer = prev_trainer
 
-        if not train_ds or not valid_ds:
-            print("Missing Dataset(s)!")
-            return
+        if trainer == None:
+            trainer = Seq2SeqTrainer(
+                model=self.model,
+                args=self.training_args,
+                train_dataset=train_ds,
+                eval_dataset=valid_ds,
+                data_collator=self.data_collator,
+                compute_metrics=self.compute_metrics,
+                processing_class=self.processor,
+            )
+        else:
+            trainer.train_dataset = train_ds
+            trainer.eval_dataset = valid_ds
+
         
-        trainer.train()
+        return trainer
         
         # model_id = self.repo_id.split("/")[1]
         # trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
