@@ -133,6 +133,7 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
     intent_pipe = pipeline("text-classification", model=intent_repo)
 
     transcripts = [i["text"] for i in asr_pipe(audio_list)]
+    print(transcripts)
     output = {
         "transcript": transcripts,
         "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
@@ -207,8 +208,8 @@ def main():
     
     print(ds.train_ds[0])
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6990 | Medicine List F1: 0.9231
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.7918 | Medicine List F1: 0.9380
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.5649 | Medicine List F1: 0.9824
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") # Intent F1: 0.6439 | Medicine List F1: 0.9947
     # test_ds("borisPMC/whisper_large_grab_medicine_intent", "borisPMC/bert_grab_medicine_intent")
     # test_ds("openai/whisper-large-v3-turbo", "borisPMC/bert_grab_medicine_intent")
 
