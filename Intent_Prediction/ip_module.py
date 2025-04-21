@@ -378,3 +378,54 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
         
         # Wait 1 second before looping again 
         time.sleep(2)
+
+def live_test(model_dict):
+
+    asr_pipe = model_dict["asr_pipe"]
+    intent_pipe = model_dict["intent_pipe"]
+    med_pipe = model_dict["med_list_pipe"]
+
+    while True:
+
+        audio_array = None
+        transcript = None
+
+        # print("\nRecording for 5 seconds...")
+        audio_data = sd.rec(int(5 * 16000), samplerate=16000, channels=1, dtype="float32")
+        sd.wait()  # Wait until recording is finished
+        audio_array = np.squeeze(audio_data)  # Convert to 1D array
+
+        transcript = asr_pipe(audio_array)["text"]
+        # print("Transcript:", transcript)
+        intent = -1
+        clean_meds = []
+
+        valid_transcript = len(hybrid_split(transcript)) > 1
+
+        if valid_transcript:
+
+            intent = intent_pipe(transcript)[0]["label"][-1]
+            med_list = New_PharmaIntent_Dataset.post_process_med(med_pipe(transcript))
+            # print(intent, med_list)
+            for med in med_list:
+                if med != "Empty":
+                    clean_meds.append(med)
+        
+        intent_label = New_PharmaIntent_Dataset.INTENT_LABEL[int(intent)] if valid_transcript else "None"
+
+        print(f"Detected Medicines: {clean_meds} | Intent: {intent_label}")
+
+def main():
+
+    model_dict = {
+        "asr_pipe":             load_asr_pipeline("borisPMC/MedicGrabber_WhisperSmall"),
+        "med_list_pipe":        load_med_list_pipeline("borisPMC/MedicGrabber_multitask_BERT_ner"),
+        "intent_pipe":          load_intent_pipeline("borisPMC/MedicGrabber_multitask_BERT_intent"),
+    }
+
+    model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
+
+    live_test(model_dict)
+
+if __name__ == "__main__":
+    main()
