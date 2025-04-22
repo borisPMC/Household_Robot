@@ -27,7 +27,7 @@ from transformers import (
     BertForSequenceClassification, BertTokenizer, BertConfig,
     Wav2Vec2FeatureExtractor, Wav2Vec2Processor, Wav2Vec2CTCTokenizer, Wav2Vec2ForCTC, 
     GPT2ForSequenceClassification, GPT2Tokenizer, GPT2Config,
-    Trainer, Seq2SeqTrainer, TrainingArguments, Seq2SeqTrainingArguments, DataCollatorWithPadding
+    Trainer, Seq2SeqTrainer, TrainingArguments, Seq2SeqTrainingArguments, DataCollatorWithPadding, EvalPrediction
 )
 from datasets import Dataset, IterableDataset, Audio
 from Datasets import PharmaIntent_Dataset
@@ -48,8 +48,6 @@ import Datasets
 
 # Source: https://huggingface.co/openai/whisper-large-v3-turbo
 # Params: 809 M (large-v3-turbo)
-
-# Custom Repo-id: borisPMC/whisper_[]_grab_medicine_intent
 
 class Whisper_Model:
 
@@ -155,10 +153,10 @@ class Whisper_Model:
             per_device_train_batch_size=TRAIN_BATCH_SIZE,
             per_device_eval_batch_size=VAL_BATCH_SIZE,
             gradient_accumulation_steps=1,
-            gradient_checkpointing=True,
+            gradient_checkpointing=True, # Must on or CUDA have no space
             predict_with_generate=True,
             seed=SEED,
-            num_train_epochs=10,
+            num_train_epochs=5,
             fp16=True,
             fp16_full_eval=True,
             eval_strategy="epoch",
@@ -173,7 +171,7 @@ class Whisper_Model:
 
         return
 
-    def compute_metrics(self, pred):
+    def compute_metrics(self, pred: EvalPrediction):
         pred_ids = pred.predictions
         label_ids = pred.label_ids
 

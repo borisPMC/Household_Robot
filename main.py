@@ -10,8 +10,7 @@ from paddleocr import PaddleOCR
 from Scene_Understanding.su_module import find_user_thread, PoseEstimator_ViTPose
 from Intent_Prediction.ip_module import listen_audio_thread, load_asr_pipeline, load_intent_pipeline, load_med_list_pipeline
 from Object_Detection.od_module import detect_medicine
-from Hand_Control.hc_module import Hand, control_hand
-from Arm_Control.ac_module import grab_medicine, reset_to_standby
+from Arm_Control.Grabber import Hand, grab_medicine, reset_to_standby
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)

@@ -12,7 +12,7 @@ import numpy as np
 from pandas import read_csv
 import torch
 from tqdm import tqdm
-from transformers import pipeline, Pipeline, BertConfig
+from transformers import pipeline, Pipeline, BertConfig, WhisperForConditionalGeneration, WhisperProcessor, AutoModel
 from multitask_BERT_for_hf import Multitask_BERT_v2
 import Models
 import Datasets
@@ -50,9 +50,9 @@ def train_asr(ds: Datasets.New_PharmaIntent_Dataset, ds_config: dict, output_rep
         trainer = whisper.update_trainer(ds, trainer)
         trainer.train()
 
+    # Push the best model (lowest WER) model to HF
     print(f"Pushing final model to hub...")
-    trainer.model.push_to_hub(f"{whisper.repo_id}", commit_message="Final epoch complete")
-    trainer.processing_class.push_to_hub(f"{whisper.repo_id}")
+    trainer.push_to_hub(f"{whisper.repo_id}")
 
     return
 
@@ -185,6 +185,36 @@ def test_manual_nlp(asr_repo: str) -> None:
 
     print(evaluate_unseen(prediction, label_list))
 
+def compare_models(ds, model):
+
+    model.generation_config.forced_decoder_ids = None
+
+    audio_list = ds.test_ds["Audio"]
+    intent_list = [str(Datasets.New_PharmaIntent_Dataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
+    ner_list = [Datasets.New_PharmaIntent_Dataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
+
+    true_labels = {
+        "intent": intent_list,
+        "ner":  ner_list,
+    }
+
+    nlp_repo = "borisPMC/MedicGrabber_multitask_BERT"
+
+    ner_repo = nlp_repo + "_ner"
+    intent_repo = nlp_repo + "_intent"
+
+    ner_pipe = pipeline("token-classification", model=ner_repo)
+    intent_pipe = pipeline("text-classification", model=intent_repo)
+
+    transcripts = [i["text"] for i in model(audio_list)]
+    output = {
+        "transcript": transcripts,
+        "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
+        "ner": [Datasets.New_PharmaIntent_Dataset.post_process_med(i) for i in ner_pipe(transcripts)],
+    }
+    evaluate_unseen(output, true_labels)
+    return
+
 def main():
     
     # ds_config = {
@@ -208,9 +238,9 @@ def main():
     
     print(ds.train_ds[0])
     
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT") 
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT") 
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperLargeTurbo", "borisPMC/MedicGrabber_multitask_BERT")
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT")          10 epo: Intent F1: 0.5576 | Medicine List F1: 0.9789
+    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT")
+    # test_ds(ds, "borisPMC/MedicGrabber_WhisperLargeTurbo", "borisPMC/MedicGrabber_multitask_BERT")
 
     # hf_model = .from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")
 
@@ -219,9 +249,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # from transformers import WhisperModel, WhisperProcessor
-    # model = WhisperModel.from_pretrained("./temp/borisPMC/MedicGrabber_WhisperLargeTurbo/checkpoint-87")
-    # processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3-turbo", task="transcribe")
-
-    # model.push_to_hub("borisPMC/MedicGrabber_WhisperLargeTurbo", commit_message="Uploading Whisper LT model")
-    # processor.push_to_hub("borisPMC/MedicGrabber_WhisperLargeTurbo")
