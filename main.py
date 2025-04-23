@@ -1,42 +1,29 @@
 # PIP packages
 from multiprocessing import Manager
 import time, torch, threading, urx
-from huggingface_hub import login
-from transformers import pipeline
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 
 # Custom Modules
-from Scene_Understanding.su_module import find_user_thread, PoseEstimator_ViTPose
-from Intent_Prediction.ip_module import listen_audio_thread, load_asr_pipeline, load_intent_pipeline, load_med_list_pipeline
-from Object_Detection.od_module import detect_medicine
-from Arm_Control.Grabber import Hand, grab_medicine, reset_to_standby
+from modules import Audio_Listener, Grabber, Object_Finder, User_Recogniser
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
 
-# login("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")
-
 # This function is specifically to control the timing flags.
-def grabbing_process(class_label: str, model_dict: dict) -> None:
+def grabbing_process(request_queue: str, model_dict: dict) -> None:
 
-    # time.sleep(10)  # Simulate the 10-second duration for grabbing a medicine
-    coord_list = detect_medicine(model_dict, class_label, 3) # a list of dict: [{xmin, ymin, xmax, ymax}]
-    print(coord_list)
+    for item in request_queue:
 
-    # Simulate Grabbing, comment if implemeneted
-    # time.sleep(10)
+        coord_list = Object_Finder.detect_medicine(model_dict, item, 3)
+        print(coord_list)
 
-    for item in coord_list:
-
-        # TODO: pass item & img to depth function
-        # (x, y, z) = detect_depth(item["coordinates"], model_dict["medicine_camera_index"], class_label)
-        
+        # Multiple bottles may exist. Get one only
+        pos = coord_list[0]
+            
         # Moving medicine to specific location from fixed starting point
-        grab_medicine(model_dict["robot_hand"], model_dict["robot_arm"], class_label)
-
-        reset_to_standby(model_dict["robot_arm"])
-
+        Grabber.grab_medicine(model_dict["robot_hand"], model_dict["robot_arm"], item)
+        Grabber.reset_to_standby(model_dict["robot_arm"])
 
     print("Grabbing done. Return to listening...")
     return
@@ -44,17 +31,16 @@ def grabbing_process(class_label: str, model_dict: dict) -> None:
 def main():
 
     # Define & Initialize ALL Models and Hardwares (or related model classes) to prevent repeated loading
-    # Loading on first time is slower and require Network connection. Afterwards, no Network should be need to maintain fluent arm/hand operation
-
+    # Loading on first time is slower and require Network connection. Afterwards, no Network should be need.
     model_dict = {
-        "asr_pipe":             load_asr_pipeline("borisPMC/MedicGrabber_WhisperSmall"),
-        "med_list_pipe":        load_med_list_pipeline("borisPMC/MedicGrabber_multitask_BERT_ner"),
-        "intent_pipe":          load_intent_pipeline("borisPMC/MedicGrabber_multitask_BERT_intent"),
-        "detect_med_model":     YOLO("./Object_Detection/siou150.pt"),
+        "asr_pipe":             Audio_Listener.load_asr_pipeline(),
+        "med_list_pipe":        Audio_Listener.load_med_list_pipeline(),
+        "intent_pipe":          Audio_Listener.load_intent_pipeline(),
+        "detect_med_model":     YOLO("./modules/siou150.pt"),
         "ocr_model":            PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
-        "pose_model":           PoseEstimator_ViTPose(),
+        "pose_model":           User_Recogniser.PoseEstimator_ViTPose(),
         "robot_arm":            urx.URRobot("192.168.12.21", useRTInterface=True),
-        "robot_hand":           Hand(2, 'COM4', 115200),
+        "robot_hand":           Grabber.Hand(2, 'COM4', 115200),
         # Assign the right camera before running
         "user_camera_index":    0,
         "medicine_camera_index":1,
@@ -66,8 +52,7 @@ def main():
     model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))
     model_dict["robot_arm"].set_payload(2, (0, 0, 0.1))
     model_dict["robot_arm"].set_freedrive(True)
-
-    reset_to_standby(model_dict["robot_arm"])
+    Grabber.reset_to_standby(model_dict["robot_arm"])
 
 
     # Note: Torch should use CUDA; Paddle should use CPU to avoid device collision
@@ -76,10 +61,8 @@ def main():
     manager = Manager()
     states_dict = manager.dict({
         "user_flag": False,         # Bool
-        "cmd_flag": False,          # Bool
-        "play_sound_flag": False,
-        "label_command": "",        # Str
-        "queued_commands": [],
+        "current_cmd": "",          # Bool
+        "queued_objects": [],
         "keypoints": [],            # List[list]: List of 2 scalar (x, y) lists
         "THREAD_PROCESS_TIMER": 5,  # CONSTANT, UNEXPECTED TO ALTER
     })
@@ -88,8 +71,8 @@ def main():
     listen_event.set()  # Set the event to allow the thread to run
 
     # Create threads
-    user_thread = threading.Thread(target=find_user_thread, args=(model_dict, states_dict, listen_event), daemon=True)
-    audio_thread = threading.Thread(target=listen_audio_thread, args=(model_dict, states_dict, listen_event), daemon=True)
+    user_thread = threading.Thread(target=User_Recogniser.find_user_thread, args=(model_dict, states_dict, listen_event), daemon=True)
+    audio_thread = threading.Thread(target=Audio_Listener.listen_audio_thread, args=(model_dict, states_dict, listen_event), daemon=True)
 
     user_thread.start()
     audio_thread.start()
@@ -99,29 +82,30 @@ def main():
     try:
         while True:
             
-            time.sleep(1)
-            # Trigger find_medicine() if conditions are met
-            print("User Found:", states_dict["user_flag"] ,"|", "Command Heard:", states_dict["cmd_flag"])
+            time.sleep(2.5)
+            print("User Found:", states_dict["user_flag"] ,"|", "Command Heard:", states_dict["current_cmd"])
 
-            if states_dict["user_flag"] and states_dict["cmd_flag"]:
+            # Trigger find_medicine() if conditions are met
+            if states_dict["user_flag"] and len(states_dict["current_cmd"]) > 0:
 
                 # Keep pushing queued label until the queue is empty
-                listen_event.clear()  # Stop listening to audio commands
-                queue = states_dict["queued_commands"]
+                listen_event.clear()  # Stop listening for User & Audio
+                print("\Pause listening mode\n")
 
-                for queue_item in queue:
-
-                    states_dict["label_command"] = queue_item
-                    grabbing_process(states_dict["label_command"], model_dict=model_dict)
+                intent = states_dict["current_cmd"]
+                match intent:
+                    case "1": # Retrieve
+                        grabbing_process(states_dict["queued_objects"], model_dict=model_dict)
+                    case _:
+                        print("To be developed in future...")
                 
-                # Reset after grabbing
+                # Reset after grabbing all objects in 
                 states_dict["user_flag"] = False
-                states_dict["cmd_flag"] = False
-                states_dict["label_command"] = ""
+                states_dict["current_cmd"] = ""
                 states_dict["keypoints"] = []
-                states_dict["queued_commands"] = []
+                states_dict["queued_objects"] = []
 
-                listen_event.set()  # Resume listening to audio commands
+                listen_event.set()  # Resume listening for User & Audio
                 print("\nReturn to listening mode\n")
     
     except KeyboardInterrupt:

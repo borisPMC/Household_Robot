@@ -1,0 +1,23 @@
+c:\Users\20051248d\Documents\GitHub\Medic_Grabber\Intent_Prediction\Multitask_NLP.py:358: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+{'loss': 1.7248, 'grad_norm': 4.52031135559082, 'learning_rate': 4.210526315789474e-05, 'epoch': 0.53}
+{'eval_loss': 1.16814386844635, 'eval_intent_accuracy': {'f1': 0.47488132911392406}, 'eval_ner_accuracy': {'f1': 0.8093624461474782}, 'eval_runtime': 0.328, 'eval_samples_per_second': 240.849, 'eval_steps_per_second': 15.244, 'epoch': 1.0}
+{'loss': 1.2444, 'grad_norm': 3.134843587875366, 'learning_rate': 3.3333333333333335e-05, 'epoch': 1.05}
+{'loss': 1.1539, 'grad_norm': 3.1490540504455566, 'learning_rate': 2.456140350877193e-05, 'epoch': 1.58}
+{'eval_loss': 1.0848314762115479, 'eval_intent_accuracy': {'f1': 0.47488132911392406}, 'eval_ner_accuracy': {'f1': 0.8790345932572728}, 'eval_runtime': 0.326, 'eval_samples_per_second': 242.335, 'eval_steps_per_second': 15.338, 'epoch': 2.0}
+{'loss': 1.0115, 'grad_norm': 4.121240139007568, 'learning_rate': 1.5789473684210526e-05, 'epoch': 2.11}
+{'loss': 1.037, 'grad_norm': 7.641217231750488, 'learning_rate': 7.017543859649123e-06, 'epoch': 2.63}
+{'eval_loss': 1.0759015083312988, 'eval_intent_accuracy': {'f1': 0.47488132911392406}, 'eval_ner_accuracy': {'f1': 0.8776680228805033}, 'eval_runtime': 0.324, 'eval_samples_per_second': 243.827, 'eval_steps_per_second': 15.432, 'epoch': 3.0}
+{'train_runtime': 15.8464, 'train_samples_per_second': 57.552, 'train_steps_per_second': 3.597, 'train_loss': 1.211440036171361, 'epoch': 3.0}
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 57/57 [00:15<00:00,  3.60it/s]
+Map: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 118/118 [00:00<00:00, 731.54 examples/s]
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:00<00:00, 692.31 examples/s]
+Map: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 34/34 [00:00<00:00, 723.40 examples/s]
+c:\Users\20051248d\Documents\GitHub\Medic_Grabber\Intent_Prediction\Multitask_NLP.py:358: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
+  trainer = Trainer(
+{'eval_loss': 0.6916477680206299, 'eval_intent_accuracy': {'f1': 0.7805245436824384}, 'eval_ner_accuracy': {'f1': 0.8710227178179262}, 'eval_runtime': 0.152, 'eval_samples_per_second': 177.623, 'eval_steps_per_second': 13.157, 'epoch': 1.0}
+{'loss': 1.083, 'grad_norm': 6.470846652984619, 'learning_rate': 3.125e-05, 'epoch': 1.25}
+{'eval_loss': 0.5930123925209045, 'eval_intent_accuracy': {'f1': 0.8316872427983539}, 'eval_ner_accuracy': {'f1': 0.8793203818740105}, 'eval_runtime': 0.152, 'eval_samples_per_second': 177.641, 'eval_steps_per_second': 13.159, 'epoch': 2.0}
+{'loss': 0.7026, 'grad_norm': 3.206047534942627, 'learning_rate': 1.0416666666666668e-05, 'epoch': 2.5}
+{'eval_loss': 0.5307947993278503, 'eval_intent_accuracy': {'f1': 0.8714692714692714}, 'eval_ner_accuracy': {'f1': 0.887494575115968}, 'eval_runtime': 0.155, 'eval_samples_per_second': 174.185, 'eval_steps_per_second': 12.903, 'epoch': 3.0}
+{'train_runtime': 9.2976, 'train_samples_per_second': 38.074, 'train_steps_per_second': 2.581, 'train_loss': 0.8345180749893188, 'epoch': 3.0}

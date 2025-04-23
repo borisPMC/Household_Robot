@@ -11,3 +11,4 @@ Intent_Prediction/cv-corpus-21.0-2025-03-14
 Intent_Prediction/results
 temp
 models
+/legacy_codes/Intent_Prediction/audio/*.mp3

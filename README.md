@@ -1,24 +1,24 @@
+# Proactive Human-Robot Collaborative Service Robot System
 
-## We can decribe our provided functions here ##
-<br>
+**An Interdiscplinary Capstone Project hosted by the Faculty of Engineering, Hong Kong Polytechnic University**
 
-### hand control ###
-control_hand( coordination : dict, label) 目标物体的坐标，物品类型 <br>
-    ..... <br>
-    identify grasp type，识别抓握类型 <br>
-    get the 3d coordination of the object, 得到物品3d坐标 <br>
-    move hand to the object, 让手接近物品 <br>
-    hold the object, 抓住物品 <br>
-    ..... <br>
-    return nothing <br>
+Our proposed proactive robot serving Hong Kong elderly people in a household. The robot can grab objects and deliver them to the user based on the given audio command. As a proof of concept, four medicines are currently supported, including ACE Inhitbitor, Metformin, Atorvastatin, and Amitriptyline.
 
-hand_release ( coordination = (-1,-1,-1) ) 放手，如果没有输入坐标则原地放手 <br>
-    return nothing <br>
-  <br>
-需要改进，增加函数返回值等请加载这里：  <br>
+## About this repository
+The deployment scripts includes main.py and all scripts in _modules_ folder. The _legacy_codes_ contains scripts and related files during the development stage, and it may seems outdated and messy.
 
+## System Architecture
+![System Architecture for the Household robot](asset/sys_arch.jpg)
 
-Message to Boris:
+## Pre-Requisites Softwares
+1. Windows OS (Preferrably Windows 10)
+2. Python 3.11
+3. FFMPEG: [Official Website](https://www.ffmpeg.org/download.html)
+4. Azure Kinect SDK v1.4.2: [Download Links](https://github.com/microsoft/azure-kinect-sensor-sdk/blob/develop/docs/usage.md)
 
-After installation of urx, please comment out urx/robot.py Line 204-205
-
+## Contributors
+Yuet Wong<br>
+Son Quang Le<br>
+Jialin Xiao<br>
+Wai Man Lai<br>
+Kit Chuen Leung<br>
