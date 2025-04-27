@@ -56,9 +56,51 @@ def get_whisper_training(logged_step=300):
     plt.title("Whisper Evaluation Time by Training Steps /w CV17")  # add title
     plt.savefig(fname="graph/Whisper_runtime.png")
 
+def readJson(fpath):
+
+    # Opening JSON file
+    f = open(fpath)
+
+    # returns JSON object as a dictionary
+    data = json.load(f)["log_history"]
+
+    train_loss =  [0]
+    intent_loss = []
+    ner_loss = []
+    intent_f1 = []
+    med_f1_seq = []
+    tkn_f1 = []
+
+    # Iterating through the json list
+    for i in data:
+        keys = i.keys()
+        if "loss" in keys:
+            train_loss.append(i["loss"])
+        if "eval_intent_f1" in keys:
+            intent_f1.append(i["eval_intent_f1"])
+        if "eval_intent_loss" in keys:
+            intent_loss.append(i["eval_intent_loss"])
+        if "eval_ner_loss" in keys:
+            ner_loss.append(i["eval_ner_loss"])
+        if "eval_ner_med_acc" in keys:
+            med_f1_seq.append(i["eval_ner_med_acc"])
+        if "eval_ner_tkn_f1" in keys:
+            tkn_f1.append(i["eval_ner_tkn_f1"])
+
+    pd.DataFrame({
+        "Train Loss": train_loss,
+        "Eval Intent Loss": intent_loss,
+        "Eval NER Loss": ner_loss,
+        "Intent F1": intent_f1,
+        "Med List SeqF1": med_f1_seq,
+        "Token F1": tkn_f1,
+    }).to_csv("./temp/result.csv")
+
+    # Closing file
+    f.close()
 
 def main():
     get_custom()
 
 if __name__ == "__main__":
-    main()
+    readJson("./models/multitask_model/checkpoint-1740/trainer_state.json")

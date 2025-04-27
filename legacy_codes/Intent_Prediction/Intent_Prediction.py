@@ -126,8 +126,11 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
         "ner":  ner_list,
     }
 
-    ner_repo = nlp_repo + "_ner"
-    intent_repo = nlp_repo + "_intent"
+    # ner_repo = nlp_repo + "_ner"
+    # intent_repo = nlp_repo + "_intent"
+
+    ner_repo = "borisPMC/HouseHolder_NER"
+    intent_repo = "borisPMC/HouseHolder_IC"
 
     asr_pipe = pipeline("automatic-speech-recognition", model=asr_repo)
     asr_pipe.generation_config.forced_decoder_ids = None
@@ -237,7 +240,7 @@ def main():
     print(ds.train_ds[0])
     
     # test_ds(ds, "borisPMC/MedicGrabber_WhisperTiny", "borisPMC/MedicGrabber_multitask_BERT")          10 epo: Intent F1: 0.5576 | Medicine List F1: 0.9789
-    test_ds(ds, "borisPMC/MedicGrabber_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT")
+    test_ds(ds, "borisPMC/HouseHolder_WhisperSmall", "borisPMC/MedicGrabber_multitask_BERT")
     # test_ds(ds, "borisPMC/MedicGrabber_WhisperLargeTurbo", "borisPMC/MedicGrabber_multitask_BERT")
 
     # hf_model = .from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")

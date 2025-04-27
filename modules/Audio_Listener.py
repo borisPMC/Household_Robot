@@ -55,7 +55,7 @@ def hybrid_split(string: str):
     matches = re.findall(regex, string, re.UNICODE)
     return matches
 
-def load_asr_pipeline(repo="borisPMC/MedicGrabber_WhisperSmall") -> transformers.Pipeline:
+def load_asr_pipeline(repo="borisPMC/HouseHolder_WhisperSmall") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         asr_pipe = transformers.pipeline("automatic-speech-recognition", model=f"./temp/{repo}")
     else:
@@ -64,7 +64,7 @@ def load_asr_pipeline(repo="borisPMC/MedicGrabber_WhisperSmall") -> transformers
         asr_pipe.save_pretrained(f"./temp/{repo}")
     return asr_pipe
 
-def load_med_list_pipeline(repo="borisPMC/MedicGrabber_multitask_BERT_ner") -> transformers.Pipeline:
+def load_med_list_pipeline(repo="borisPMC/HouseHolder_NER") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         med_list_pipe = transformers.pipeline("token-classification", model=f"./temp/{repo}")
     else:
@@ -73,7 +73,7 @@ def load_med_list_pipeline(repo="borisPMC/MedicGrabber_multitask_BERT_ner") -> t
         med_list_pipe.save_pretrained(f"./temp/{repo}")
     return med_list_pipe
 
-def load_intent_pipeline(repo="borisPMC/MedicGrabber_multitask_BERT_intent") -> transformers.Pipeline:
+def load_intent_pipeline(repo="borisPMC/HouseHolder_IC") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         intent_pipe = transformers.pipeline("text-classification", model=f"./temp/{repo}")
     else:

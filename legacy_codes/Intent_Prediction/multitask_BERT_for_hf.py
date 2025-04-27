@@ -241,13 +241,19 @@ class MultitaskTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
         """
         Custom compute_loss method to handle multitask models.
+        Bias has been implemented for ideal training.
         """
+        
+        bias = 1
+
         # Extract the task_name from the inputs
         if "task_name" not in inputs.keys():
             if inputs["labels"].size(dim=0) == len(INTENT_LABEL):
                 inputs["task_name"] = "intent"
+                bias = 1
             else:
                 inputs["task_name"] = "ner"
+                bias = 1
 
         # Pass the task_name to the model's forward method
         try:
@@ -256,8 +262,8 @@ class MultitaskTrainer(Trainer):
             inputs["task_name"] = "intent" if inputs["task_name"] == "ner" else "ner"
             outputs = model(**inputs)
 
-        # Compute the loss
-        loss = outputs["loss"]
+        # Compute the loss (default Cross-Entropy)
+        loss = outputs["loss"] * bias
 
         return (loss, outputs) if return_outputs else loss
 
@@ -444,7 +450,7 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds) -> Multitask
             overwrite_output_dir=True,
             learning_rate=1e-5,
             do_train=True,
-            num_train_epochs=50, # 20 0.882996020285515
+            num_train_epochs=30, # 20 0.882996020285515
             # Adjust batch size if this doesn't fit on the Colab GPU
             per_device_train_batch_size=16,
             per_device_eval_batch_size=4,
@@ -474,19 +480,19 @@ def upload_model(multitask_model, tokenizer):
 
     # Push the Intent-specific model
     intent_model.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_intent",
+        "borisPMC/MedicGrabber_multitask_BERT_intent_8_2",
         commit_message="Uploading intent-specific model",
     )
     tokenizer.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_intent",
+        "borisPMC/MedicGrabber_multitask_BERT_intent_8_2",
     )
     # Push the NER-specific model
     ner_model.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_ner",
+        "borisPMC/MedicGrabber_multitask_BERT_ner_8_2",
         commit_message="Uploading NER-specific model",
     )
     tokenizer.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_ner",
+        "borisPMC/MedicGrabber_multitask_BERT_ner_8_2",
     )
 
     print("Uploaded, exiting...")
