@@ -1,8 +1,0 @@
-
-path: ./Object_Detection  # Root of Dataset
-train: images/train  # Path to training set from path
-val: images/val      # Path to validation set from path
-nc: 1                # Number of classes
-names:
-  - medicine_bottle  # Class name
-iou_type: siou     # Optional parameters (Decomment if needed)

@@ -1,0 +1,93 @@
+{
+  "best_global_step": 87,
+  "best_metric": 15.841584158415841,
+  "best_model_checkpoint": "./temp/borisPMC/MedicGrabber_WhisperLargeTurbo\\checkpoint-87",
+  "epoch": 3.0,
+  "eval_steps": 500,
+  "global_step": 87,
+  "is_hyper_param_search": false,
+  "is_local_process_zero": true,
+  "is_world_process_zero": true,
+  "log_history": [
+    {
+      "epoch": 0,
+      "eval_loss": 2.7709386348724365,
+      "eval_runtime": 49.006,
+      "eval_samples_per_second": 2.326,
+      "eval_steps_per_second": 0.592,
+      "eval_wer_ortho": 32.475247524752476,
+      "step": 0
+    },
+    {
+      "epoch": 1.0,
+      "grad_norm": 21.155439376831055,
+      "learning_rate": 3.620689655172414e-05,
+      "loss": 1.946,
+      "step": 29
+    },
+    {
+      "epoch": 1.0,
+      "eval_loss": 0.5671122074127197,
+      "eval_runtime": 700.4891,
+      "eval_samples_per_second": 0.163,
+      "eval_steps_per_second": 0.041,
+      "eval_wer_ortho": 19.603960396039604,
+      "step": 29
+    },
+    {
+      "epoch": 2.0,
+      "grad_norm": 14.472105026245117,
+      "learning_rate": 1.9540229885057475e-05,
+      "loss": 0.2527,
+      "step": 58
+    },
+    {
+      "epoch": 2.0,
+      "eval_loss": 0.46830713748931885,
+      "eval_runtime": 552.0455,
+      "eval_samples_per_second": 0.207,
+      "eval_steps_per_second": 0.053,
+      "eval_wer_ortho": 17.227722772277225,
+      "step": 58
+    },
+    {
+      "epoch": 3.0,
+      "grad_norm": 8.179032325744629,
+      "learning_rate": 2.8735632183908046e-06,
+      "loss": 0.0938,
+      "step": 87
+    },
+    {
+      "epoch": 3.0,
+      "eval_loss": 0.3717603385448456,
+      "eval_runtime": 552.8462,
+      "eval_samples_per_second": 0.206,
+      "eval_steps_per_second": 0.052,
+      "eval_wer_ortho": 15.841584158415841,
+      "step": 87
+    }
+  ],
+  "logging_steps": 500,
+  "max_steps": 87,
+  "num_input_tokens_seen": 0,
+  "num_train_epochs": 3,
+  "save_steps": 500,
+  "stateful_callbacks": {
+    "TrainerControl": {
+      "args": {
+        "should_epoch_stop": false,
+        "should_evaluate": false,
+        "should_log": false,
+        "should_save": true,
+        "should_training_stop": true
+      },
+      "attributes": {}
+    }
+  },
+  "total_flos": 2.37329200447488e+18,
+  "train_batch_size": 16,
+  "trial_name": null,
+  "trial_params": null
+}
+
+Intent F1: 0.6447 | Medicine List F1: 0.9806 @ BERT ~ 0.73/0.99
