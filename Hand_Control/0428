@@ -26,7 +26,7 @@ def reset_to_standby(arm: urx.URRobot):
     # L [-0.004373136801291539, 0.499918666359738, 0.19937056638987397, -1.5775177375519502, -0.00013697164368624924, 0.06722903150819382]
     arm.movej((-4.267364327107565, -1.5765263042845667, -2.3882980346679688, 3.9583703714558105, -1.1640966574298304, 3.1896891593933105), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
-def grab_1(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,4.7,0,-0.2)):
+def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,4.7,0,-0.2)):
     
 #c1(),release(),pregrip()
     arm.movel((0.17,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
@@ -116,13 +116,13 @@ def grab_medicine(hand: Hand, arm: urx.URRobot, medicine: str, coord=None):
 
     match medicine:
         case "ACE_Inhibitor":
-            grab_1(hand, arm, med_coord)
+            grab_0(hand, arm)
         case "Metformin":
-            grab_0(hand, arm)
+            grab_1(hand, arm)
         case "Atorvastatin":
-            grab_0(hand, arm)
+            grab_2(hand, arm)
         case "Amitriptyline":
-            grab_0(hand, arm)
+            grab_3(hand, arm)
         case _:
             print("Error")
     
