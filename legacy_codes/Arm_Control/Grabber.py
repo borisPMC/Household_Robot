@@ -676,7 +676,7 @@ def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,4.7,0,-0.2))
     sleep(0.5)
     arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
 
-def grab_1(hand: Hand, arm: urx.URRobot, start_coord = (0,0,0,0,0,0)):
+def grab_1(hand: Hand, arm: urx.URRobot, start_coord = (0,0,0.1,0,0,0)):
 
     arm.movej(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
@@ -730,7 +730,7 @@ def main():
 
         print("Arm start moving")
 
-        reset_to_standby(arm)
+        #reset_to_standby(arm)
         match medicine:
             case "ACE Inhibitor":
                 grab_0(hand, arm)

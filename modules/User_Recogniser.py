@@ -61,7 +61,7 @@ def is_detected(keypoints, confidence_threshold=0.5):
 
     return False
 
-def live_capture(pose_estimator: PoseEstimator_ViTPose, device=0, img_temp_fpath="./temp/su_temp.jpg", confidence_threshold=0.5, timer=1):
+def live_capture(pose_estimator: PoseEstimator_ViTPose, device=1, img_temp_fpath="./temp/su_temp.jpg", confidence_threshold=0.5, timer=1):
 
     # Live capture a footage. 0: default camera
     cam = cv2.VideoCapture(device)
@@ -72,20 +72,25 @@ def live_capture(pose_estimator: PoseEstimator_ViTPose, device=0, img_temp_fpath
 
     start_time = time.time()
     while True:
-        ret, frame = cam.read()
+        try:
+            ret, frame = cam.read()
 
-        if not ret:
-            print("Failed to capture frame. Exiting.")
-            break
+            if not ret:
+                print("Failed to capture frame. Exiting.")
+                break
 
-        # # Display the captured frame
-        cv2.imwrite(img_temp_fpath, frame)
+            # # Display the captured frame
+            cv2.imwrite(img_temp_fpath, frame)
 
-        # Check if 5 second is passed or a person is detected
-        keypoints = pose_estimator.estimate_pose(img_temp_fpath)
-        user_exist = is_detected(keypoints, confidence_threshold)
+            # Check if 5 second is passed or a person is detected
+            keypoints = pose_estimator.estimate_pose(img_temp_fpath)
+            user_exist = is_detected(keypoints, confidence_threshold)
 
-        if time.time() - start_time >= timer or user_exist:
+            if time.time() - start_time >= timer or user_exist:
+                break
+        except ValueError:
+            keypoints = []
+            user_exist = False
             break
     
     cam.release()
@@ -108,4 +113,4 @@ def find_user_thread(model_dict, shared_dict, listen_event) -> None:
 
         time.sleep(1)
 
-PoseEstimator_ViTPose()
+# PoseEstimator_ViTPose()

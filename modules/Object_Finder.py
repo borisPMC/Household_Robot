@@ -5,7 +5,8 @@ from ultralytics import YOLO
 from paddleocr import PaddleOCR
 import sys
 sys.path.append("..")
-from modules import Depth_Detector
+# import Depth_Detector
+import modules.Depth_Detector as Depth_Detector
 
 MAX_ATTEMPTS = 3
 
@@ -110,11 +111,11 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
 
     wanted_rois = []
 
-    print(f"{ocr_model} | {image} | {tgt_label}")
+    print(f"{ocr_model} | {coord_list} | {tgt_label}")
 
     try:
         # Start from 1: Skip class item
-        for i in range(1, len(coord_list)):
+        for i in range(0, len(coord_list)):
             xmin = coord_list[i]["x_min"]
             ymin = coord_list[i]["y_min"]
             xmax = coord_list[i]["x_max"]
@@ -141,7 +142,6 @@ def detect_with_ocr(ocr_model: PaddleOCR, image, coord_list: list[dict], tgt_lab
                 text_found = True
 
             # 只记录包含目标文本的ROI
-            print(text_found)
             if text_found:
                 roi_info = {
                     "id": i,
@@ -230,49 +230,70 @@ def detect_medicine(model_dict, target_label: str, max_attempts=MAX_ATTEMPTS) ->
 
 
 
-def detect_medicine_redefined(detect_med_model: YOLO, ocr_model: PaddleOCR, target_label: str, max_attempts=MAX_ATTEMPTS) -> list[dict]:
+def detect_medicine_redefined(model_dict: dict, target_label: str, max_attempts=MAX_ATTEMPTS) -> list[dict]:
+    
     print("Detecting medicine:", target_label, "\n")
 
     snapshot_fname = './temp/photo.jpg'
-    coord_list = []  # Perhaps List of Dicts
-    attempted = 1
-    roi_list = []  # {id, coordinates (xmin, ymin, xmax, ymax), center, ocr_text}
-    coord = []
-    conf = []
+    attempted = 0
+    
+    detect_med_model = model_dict["detect_med_model"]
+    ocr_model = model_dict["ocr_model"]
+    depth_cam = model_dict["object_cam"]
 
+    for i in range(attempted, max_attempts):
+    # while True:
 
-
-    while True:
+        coord_list = []  # Perhaps List of Dicts
+        roi_list = []  # {id, coordinates (xmin, ymin, xmax, ymax), center, ocr_text}
+        coord = []
+        conf = []
 
         # Step 1: Taking a snapshot
-        img, dep_img = Depth_Detector.use_kinect()
+        img, dep_img = Depth_Detector.use_kinect(depth_cam)
         image = img
         # Step 2: See if ANY medicine exists
         coord, conf = detect_medicine_exist(image, detect_med_model)
 
         # Step 3: See if the specific medicine is found
+        roi_list = detect_with_ocr(ocr_model, image, coord, target_label)
+
         # Success to find specific medicine(s), exit the loop
-        for tgt in coord:
-            (xmin, xmax, ymin, ymax)  = (tgt["x_min"],tgt["x_max"], tgt["y_min"], tgt["y_max"])
-            midx = int((xmax+xmin)/2)
-            midy = int((ymax+ymin)/2)
-            cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
-            dis = Depth_Detector.dismap(xmin, ymin,xmax, ymax, dep_img)
+        for tgt in roi_list:
+            coord_list.append({
+                "x_min": tgt["coordinates"][0],
+                "y_min": tgt["coordinates"][1],
+                "x_max": tgt["coordinates"][2],
+                "y_max": tgt["coordinates"][3],
+            })
 
-            cv2.putText(img,str(round(dis,2)) + "mm, " + str(midx) +","+ str(midy), (xmin, ymax+20),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(255,50,50))
+        # Success to find specific medicine(s), exit the loop
+        result = None
+        if len(roi_list) > 0:
+            for tgt in coord_list:
+                (xmin, xmax, ymin, ymax)  = (tgt["x_min"],tgt["x_max"], tgt["y_min"], tgt["y_max"])
+                midx = int((xmax+xmin)/2)
+                midy = int((ymax+ymin)/2)
+                cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
+                coord, dis = Depth_Detector.dismap(depth_cam, xmin, ymin, xmax, ymax, dep_img)
+                result = Depth_Detector.postrans(str(coord))
+                
+                # print(coord, dis)
 
-        if len(coord_list) > 0:
+                cv2.putText(img,str(round(dis,2)) + "mm, " + str(midx) +","+ str(midy), (xmin, ymax+20),cv2.FONT_HERSHEY_COMPLEX_SMALL,1,(255,50,50))
+
+        if result != None:
             break
 
 
-        cv2.imshow('Transformed Color Image', img)
+        # cv2.imshow('Transformed Color Image', img)
 
-        time.sleep(0.05)
+        time.sleep(2)
         # Press q key to stop
         if cv2.waitKey(1) == ord('q'):
             break
 
-    if len(coord_list) == 0:
+    if result == None:
         print("\n❌ Failed 3 times. Please check:")
         print("1. Ensure bottle is centered in frame")
         print("2. Adjust camera focus")
@@ -282,11 +303,20 @@ def detect_medicine_redefined(detect_med_model: YOLO, ocr_model: PaddleOCR, targ
     else:
         print("Medicine found!\n")
 
-    return coord_list
+    return result # result should be a 3-item tuple: (x, y, z)
 
 def main():
-    model = YOLO("siou150.pt")
-    detect_medicine_redefined(model, PaddleOCR(use_angle_cls=True, lang='en'),"ACE inhibitor")
+
+    object_cam = Depth_Detector.init_depth_detector()
+
+    model_dict = {
+        "detect_med_model":     YOLO("./modules/siou150.pt"),
+        "ocr_model":            PaddleOCR(use_angle_cls=True, lang='en'),  # Set language to English
+        "object_cam":           object_cam
+    }
+    result = detect_medicine_redefined(model_dict, "ACE inhibitor")
+    print(result)
+    model_dict["object_cam"].close()
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ from ultralytics import YOLO
 from paddleocr import PaddleOCR
 
 # Custom Modules
-from modules import Audio_Listener, Grabber, Object_Finder, User_Recogniser
+from modules import Audio_Listener, Grabber, Object_Finder, User_Recogniser, Depth_Detector
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Using device:", DEVICE)
@@ -15,15 +15,18 @@ def grabbing_process(request_queue: str, model_dict: dict) -> None:
 
     for item in request_queue:
 
-        coord_list = Object_Finder.detect_medicine(model_dict, item, 3)
-        print(coord_list)
+        coord_list = Object_Finder.detect_medicine_redefined(model_dict, item, 3)
 
         # Multiple bottles may exist. Get one only
-        pos = coord_list[0]
-            
-        # Moving medicine to specific location from fixed starting point
-        Grabber.grab_medicine(model_dict["robot_hand"], model_dict["robot_arm"], item)
-        Grabber.reset_to_standby(model_dict["robot_arm"])
+        # pos = coord_list[0]
+        if coord_list:
+            tgt_coord = Grabber.convert_to_arm_coord(coord_list)
+            print(coord_list)
+            print(tgt_coord)
+            print(model_dict["robot_arm"].getl())
+            # Moving medicine to specific location from fixed starting point
+            Grabber.grab_medicine(model_dict["robot_hand"], model_dict["robot_arm"], item, tgt_coord)
+            Grabber.reset_to_standby(model_dict["robot_arm"])
 
     print("Grabbing done. Return to listening...")
     return
@@ -43,15 +46,15 @@ def main():
         "robot_hand":           Grabber.Hand(2, 'COM4', 115200),
         # Assign the right camera before running
         "user_camera_index":    0,
-        "medicine_camera_index":1,
+        "object_cam":           Depth_Detector.init_depth_detector()
     }
 
     model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
     
-    # Configure Robot Arm
+    # # Configure Robot Arm
+    model_dict["robot_hand"].pregrip()
     model_dict["robot_arm"].set_tcp((0, 0, 0.1, 0, 0, 0))
     model_dict["robot_arm"].set_payload(2, (0, 0, 0.1))
-    model_dict["robot_arm"].set_freedrive(True)
     Grabber.reset_to_standby(model_dict["robot_arm"])
 
 
@@ -109,8 +112,9 @@ def main():
                 print("\nReturn to listening mode\n")
     
     except KeyboardInterrupt:
-        model_dict["robot_arm"].cleanup()
+        model_dict["robot_arm"].cleanup() # Close hardware
         model_dict["robot_hand"].close()
+        model_dict["object_cam"].close()
         print("Stopping threads...")
 
 if __name__ == "__main__":
