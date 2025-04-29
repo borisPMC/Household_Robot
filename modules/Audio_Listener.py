@@ -92,6 +92,8 @@ def handle_intent(intent: str, tidied_obj_list, audio_root="./asset/"):
     msg = ""
     response_fpath = ""
 
+    print("Playing response...")
+
     # The second printing line should be audio
     match intent:
         case "0": # "enquire_info"
@@ -115,16 +117,19 @@ def handle_intent(intent: str, tidied_obj_list, audio_root="./asset/"):
             msg = "\nHello, take care!\n"
             response_fpath = "res4.mp3"
         case "5": # "set_furniture",
-            msg = "\nWait until I have legs to walk!\n",
+            msg = "\nWait until I have legs to walk!\n"
             response_fpath = "res5.mp3"
         case "6": # "set_software"
             msg = "\nStill can't do Office works yet...\n"
             response_fpath = "res6.mp3"
+        case _:
+            msg = "\nNo speech detected.\n"
     
     if response_fpath != "":
         playsound(audio_root + response_fpath)
 
     print(msg)
+    print("End response, return listening...")
     return command, queued_obj
 
 def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> None:
@@ -146,9 +151,10 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
-        # print("Transcript:", transcript)
+        script_len = len(hybrid_split(transcript))
 
-        if len(transcript) > 0 :
+        # Prevent empty audio 
+        if script_len > 1 :
 
             intent = intent_pipe(transcript)[0]["label"][-1]
             med_list = post_process_obj(med_pipe(transcript))
@@ -160,9 +166,6 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
                     tidied_obj_list.append(med)
 
             shared_dict["current_cmd"], shared_dict["queued_objects"] = handle_intent(intent, tidied_obj_list)
-
-        else:
-            print("No speech detected.")
         
         # Wait 1 second before looping again 
         time.sleep(2)
@@ -184,9 +187,11 @@ def live_test(model_dict):
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
+        script_len = len(hybrid_split(transcript))
         # print("Transcript:", transcript)
 
-        if len(transcript) > 0 :
+        # Prevent empty audio 
+        if script_len > 1 :
 
             intent = intent_pipe(transcript)[0]["label"][-1]
             med_list = post_process_obj(med_pipe(transcript))
@@ -198,10 +203,7 @@ def live_test(model_dict):
                     tidied_obj_list.append(med)
 
             handle_intent(intent, tidied_obj_list)
-
-        else:
-            print("No speech detected.")
-        
+                  
         # Wait 1 second before looping again 
         time.sleep(2)
 
