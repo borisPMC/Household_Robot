@@ -156,7 +156,7 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
             print("No speech detected.")
         
         # Wait 1 second before looping again 
-        time.sleep(2)
+        time.sleep(1)
 
 def live_test(model_dict):
 
