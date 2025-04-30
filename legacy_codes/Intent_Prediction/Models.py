@@ -48,14 +48,9 @@ class Whisper_Model:
 
     repo_id: str
     model: WhisperForConditionalGeneration
-    # feature_extractor: WhisperFeatureExtractor
-    # tokenizer: WhisperTokenizer
 
     @dataclass
     class DataCollatorSpeechSeq2SeqWithPadding:
-        # feature_extractor: Union[Any, WhisperFeatureExtractor]
-        # tokenizer: Union[Any, WhisperTokenizer]
-        # decoder_start_token_id: int
 
         def __init__(self, processor: WhisperProcessor, audio_pad_id=0, text_pad_id=50257, audio_max_length=480000, text_max_length=128):
             self.processor = processor
@@ -111,7 +106,7 @@ class Whisper_Model:
         self.processor = WhisperProcessor.from_pretrained(call_id, task="transcribe")
         self.model.generation_config.forced_decoder_ids = None
 
-    def _prepare_datasets(self, ds: Datasets.New_PharmaIntent_Dataset):
+    def _prepare_datasets(self, ds: Datasets.IntentDataset):
         # Cast audio column to 16kHz sampling rate
         train_ds = ds.train_ds.cast_column("Audio", Audio(sampling_rate=16000))
         valid_ds = ds.valid_ds.cast_column("Audio", Audio(sampling_rate=16000))
@@ -180,36 +175,15 @@ class Whisper_Model:
         # compute orthographic wer
         wer_ortho = 100 * self.evaluator.compute(predictions=pred_str, references=label_str)
 
-        # # # compute normalised WER
-        # pred_str_norm = [self.processor(pred) for pred in pred_str]
-        # label_str_norm = [self.processor(label) for label in label_str]
-        # # filtering step to only evaluate the samples that correspond to non-zero references:
-        # pred_str_norm = [
-        #     pred_str_norm[i] for i in range(len(pred_str_norm)) if len(label_str_norm[i]) > 0
-        # ]
-        # label_str_norm = [
-        #     label_str_norm[i]
-        #     for i in range(len(label_str_norm))
-        #     if len(label_str_norm[i]) > 0
-        # ]
-
-        # wer = 100 * self.evaluator.compute(predictions=pred_str_norm, references=label_str_norm)
-
         return {"wer_ortho": wer_ortho}
 
-    def update_trainer(self, ds: Datasets.New_PharmaIntent_Dataset, prev_trainer: Seq2SeqTrainer=None):
+    def update_trainer(self, ds: Datasets.IntentDataset, prev_trainer: Seq2SeqTrainer=None):
 
         
         train_ds, valid_ds = self._prepare_datasets(ds)
         if not train_ds or not valid_ds:
             print("Missing Dataset(s)!")
             return
-
-        # for l in ds.datasets.keys():
-
-        #     ds.set_splits_by_lang(l)
-
-        #     train_ds, valid_ds = self._prepare_datasets(ds)
 
         trainer = prev_trainer
 
@@ -229,9 +203,6 @@ class Whisper_Model:
 
         
         return trainer
-        
-        # model_id = self.repo_id.split("/")[1]
-        # trainer.save_model(f"./temp/{model_id}_lang_{l}_checkpoint")
 
 # 20250403: table searcher for intent prediction
 # Vocab based classifier for exploration and comparison with LLM models, should have the lowest performance (0.525 /w Whipser-small)

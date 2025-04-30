@@ -12,7 +12,7 @@ import transformers
 
 SEED = 42
 
-class New_PharmaIntent_Dataset:
+class IntentDataset:
 
     # INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
     INTENT_LABEL = [
@@ -45,7 +45,7 @@ class New_PharmaIntent_Dataset:
         
         for lang in config["languages"]:
             lang_ds = load_dataset(self.repo_id, name=lang)
-            processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
+            processed_lang_ds = lang_ds.map(IntentDataset.postdownload_process)
             self.datasets[lang] = processed_lang_ds
 
         # Merge the datasets and set split with the merged one
@@ -129,8 +129,8 @@ class New_PharmaIntent_Dataset:
         detect_med = set()
 
         for token in tag_list:
-            if token != "0" and New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:] != "":
-                detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
+            if token != "0" and IntentDataset.NER_LABEL[int(token)][2:] != "":
+                detect_med.add(IntentDataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
 
         listed_med = list(detect_med)
 
@@ -147,7 +147,7 @@ class New_PharmaIntent_Dataset:
         ner_tag = []
         for tkn in output:
             ner_tag.append(tkn["entity"][-1])
-        detect_med = New_PharmaIntent_Dataset.check_NER(ner_tag)
+        detect_med = IntentDataset.check_NER(ner_tag)
         return detect_med
     # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
     # @staticmethod
@@ -187,7 +187,7 @@ class New_PharmaIntent_Dataset:
         tokenized_speech = tokens
 
         # Preprocess Intent
-        num_intent = New_PharmaIntent_Dataset.INTENT_LABEL.index(example["Intent"])
+        num_intent = IntentDataset.INTENT_LABEL.index(example["Intent"])
         
         # Ensure NER_Tag length matches the number of tokens
         if len(ner_tag) != len(tokens):
@@ -340,7 +340,7 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
         if len(transcript) > 0 :
 
             intent = intent_pipe(transcript)[0]["label"][-1]
-            med_list = New_PharmaIntent_Dataset.post_process_med(med_pipe(transcript))
+            med_list = IntentDataset.post_process_med(med_pipe(transcript))
             # print(intent, med_list)
 
             clean_meds = []
@@ -405,13 +405,13 @@ def live_test(model_dict):
         if valid_transcript:
 
             intent = intent_pipe(transcript)[0]["label"][-1]
-            med_list = New_PharmaIntent_Dataset.post_process_med(med_pipe(transcript))
+            med_list = IntentDataset.post_process_med(med_pipe(transcript))
             # print(intent, med_list)
             for med in med_list:
                 if med != "Empty":
                     clean_meds.append(med)
         
-        intent_label = New_PharmaIntent_Dataset.INTENT_LABEL[int(intent)] if valid_transcript else "None"
+        intent_label = IntentDataset.INTENT_LABEL[int(intent)] if valid_transcript else "None"
 
         print(f"Detected Medicines: {clean_meds} | Intent: {intent_label}")
 

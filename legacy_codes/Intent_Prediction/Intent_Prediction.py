@@ -27,7 +27,7 @@ print("Using device:", DEVICE)
 def build_dataset():
     Datasets.PharmaIntent_Dataset.build_new_dataset("borisPMC/PharmaIntent", "medicine_intent.csv")
 
-def train_asr(ds: Datasets.New_PharmaIntent_Dataset, ds_config: dict, output_repo: str, pretrain_model: str) -> None:
+def train_asr(ds: Datasets.IntentDataset, ds_config: dict, output_repo: str, pretrain_model: str) -> None:
 
     use_exist = False
 
@@ -115,11 +115,11 @@ def listen_audio(asr_pipe: Pipeline, nlp_pipe: Pipeline, duration=5, sample_rate
 
     return class_label["label"]
 
-def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str) -> None:
+def test_ds(ds: Datasets.IntentDataset, asr_repo: str, nlp_repo: str) -> None:
 
     audio_list = ds.test_ds["Audio"]
-    intent_list = [str(Datasets.New_PharmaIntent_Dataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
-    ner_list = [Datasets.New_PharmaIntent_Dataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
+    intent_list = [str(Datasets.IntentDataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
+    ner_list = [Datasets.IntentDataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
 
     true_labels = {
         "intent": intent_list,
@@ -142,7 +142,7 @@ def test_ds(ds: Datasets.New_PharmaIntent_Dataset, asr_repo: str, nlp_repo: str)
     output = {
         "transcript": transcripts,
         "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
-        "ner": [Datasets.New_PharmaIntent_Dataset.post_process_med(i) for i in ner_pipe(transcripts)],
+        "ner": [Datasets.IntentDataset.post_process_med(i) for i in ner_pipe(transcripts)],
     }
 
     # raise Exception(f"{output}")
@@ -191,8 +191,8 @@ def compare_models(ds, model):
     model.generation_config.forced_decoder_ids = None
 
     audio_list = ds.test_ds["Audio"]
-    intent_list = [str(Datasets.New_PharmaIntent_Dataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
-    ner_list = [Datasets.New_PharmaIntent_Dataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
+    intent_list = [str(Datasets.IntentDataset.INTENT_LABEL.index(i)) for i in ds.test_ds["Intent"]]
+    ner_list = [Datasets.IntentDataset.check_NER(i) for i in ds.test_ds["NER_Labels"]]
 
     true_labels = {
         "intent": intent_list,
@@ -211,7 +211,7 @@ def compare_models(ds, model):
     output = {
         "transcript": transcripts,
         "intent": [i["label"][-1] for i in intent_pipe(transcripts)],
-        "ner": [Datasets.New_PharmaIntent_Dataset.post_process_med(i) for i in ner_pipe(transcripts)],
+        "ner": [Datasets.IntentDataset.post_process_med(i) for i in ner_pipe(transcripts)],
     }
     evaluate_unseen(output, true_labels)
     return

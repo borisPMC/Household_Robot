@@ -1,23 +1,17 @@
-import asyncio
-from dataclasses import dataclass
 import inspect
-import json
-import re
-from typing import Any, Dict, List
+from typing import Dict, List
 import evaluate
 import numpy as np
 from transformers import (
-    BertTokenizer, BertConfig, BertModel, Trainer, TrainingArguments, BertTokenizerFast,
-    EvalPrediction, AutoConfig, AutoModel, Pipeline, PreTrainedModel,
-    PretrainedConfig, BertForSequenceClassification, BertForTokenClassification)
+    BertTokenizer, BertConfig, Trainer, TrainingArguments, BertTokenizerFast,
+    EvalPrediction, PreTrainedModel,
+    BertForSequenceClassification, BertForTokenClassification)
 import torch
 from torch import nn
 from datasets import DatasetDict
-from Datasets import New_PharmaIntent_Dataset, call_dataset
-import dataclasses
+from Datasets import IntentDataset, call_dataset
 from torch.utils.data.dataloader import DataLoader
-from transformers.data.data_collator import DataCollator, InputDataClass, DefaultDataCollator, DataCollatorWithPadding
-from torch.utils.data.distributed import DistributedSampler
+from transformers.data.data_collator import InputDataClass, DefaultDataCollator
 from torch.utils.data.sampler import RandomSampler
 from typing import List, Union, Dict
 
@@ -267,7 +261,7 @@ class MultitaskTrainer(Trainer):
 
         return (loss, outputs) if return_outputs else loss
 
-def prepare_datasets(lang_ds: New_PharmaIntent_Dataset, tokenizer: BertTokenizer, max_length: int):
+def prepare_datasets(lang_ds: IntentDataset, tokenizer: BertTokenizer, max_length: int):
     """
     Prepares train and evaluation datasets for a given language.
 
@@ -429,8 +423,8 @@ def train_mtmodel(model, tokenizer, evaluators, train_ds, valid_ds) -> Multitask
                 true_token_labels.append(true_seq)
                 pred_token_labels.append(pred_seq_str)
                 # Convert the medical request
-                true_med_request.append(New_PharmaIntent_Dataset.check_NER(true_seq))
-                pred_med_request.append(New_PharmaIntent_Dataset.check_NER(pred_seq_str))
+                true_med_request.append(IntentDataset.check_NER(true_seq))
+                pred_med_request.append(IntentDataset.check_NER(pred_seq_str))
 
             ner_seq_scores = evaluators["seqeval"].compute(predictions=pred_med_request, references=true_med_request)
 
@@ -480,19 +474,19 @@ def upload_model(multitask_model, tokenizer):
 
     # Push the Intent-specific model
     intent_model.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_intent_8_2",
+        "borisPMC/HouseHolder_IC",
         commit_message="Uploading intent-specific model",
     )
     tokenizer.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_intent_8_2",
+        "borisPMC/HouseHolder_IC",
     )
     # Push the NER-specific model
     ner_model.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_ner_8_2",
+        "borisPMC/HouseHolder_NER",
         commit_message="Uploading NER-specific model",
     )
     tokenizer.push_to_hub(
-        "borisPMC/MedicGrabber_multitask_BERT_ner_8_2",
+        "borisPMC/HouseHolder_NER",
     )
 
     print("Uploaded, exiting...")
@@ -527,28 +521,11 @@ def main():
     }
 
     ds = call_dataset(ds_config)
-    trainer = None
 
-    # if ds_config["merge_language"] == False:
-        # for lang in ds.datasets.keys():
-        # # for lang in ["English"]:
-        #     # Train the model on each dataset
-        #     ds.set_splits_by_lang(lang)
-        #     print(ds.train_ds[0])
-        #     train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
-        #     if trainer == None:
-        #         trainer = train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
-        #         trainer.train()
-        #     else:
-        #         trainer.train_dataset = train_ds
-        #         trainer.eval_dataset = valid_ds
-        #         trainer.train(True)
-    # else:
     train_ds, valid_ds = prepare_datasets(ds, tokenizer, max_length)
     train_mtmodel(multitask_model, tokenizer, evaluators, train_ds, valid_ds)
 
     # Get single task models from joint-trained model and upload to huggingface
-    # Note to myself: DO NOT Upload the Joint model as HF package, does not support
     
 
 if __name__ == "__main__":

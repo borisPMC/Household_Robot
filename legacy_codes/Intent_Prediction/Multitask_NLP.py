@@ -21,7 +21,7 @@ from transformers import (
 import torch
 from torch import nn
 from datasets import DatasetDict
-from Datasets import New_PharmaIntent_Dataset, call_dataset
+from Datasets import IntentDataset, call_dataset
 
 """
 CLASS LABEL LIST
@@ -257,8 +257,8 @@ def set_trainer(model, tokenizer, evaluators, train_ds, eval_ds, max_length=128)
             true_token_labels.append(true_seq)
             pred_token_labels.append(pred_seq_str)
             # Convert the medical request
-            true_med_request.append(New_PharmaIntent_Dataset.check_NER(true_seq))
-            pred_med_request.append(New_PharmaIntent_Dataset.check_NER(pred_seq_str))
+            true_med_request.append(IntentDataset.check_NER(true_seq))
+            pred_med_request.append(IntentDataset.check_NER(pred_seq_str))
 
         # raise Exception(pred_token_labels, true_token_labels)
 
@@ -367,7 +367,7 @@ async def main():
     trainer.push_to_hub()
     # tokenizer.push_to_hub("borisPMC/multitask_BERT_MedicGrabber_2")
 
-    # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(New_PharmaIntent_Dataset.INTENT_LABEL), len(New_PharmaIntent_Dataset.NER_LABEL))
+    # generate_multitask_bert_config(config, "multitask_BERT_MedicGrabber", len(IntentDataset.INTENT_LABEL), len(IntentDataset.NER_LABEL))
     
     # Upload final model
     # hf_model = BertModel.from_pretrained("./temp/multitask_BERT_MedicGrabber/checkpoint-170")

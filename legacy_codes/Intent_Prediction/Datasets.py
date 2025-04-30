@@ -166,9 +166,8 @@ class PharmaIntent_Dataset:
                 private=True
             )
 
-class New_PharmaIntent_Dataset:
+class IntentDataset:
 
-    # INTENT_LABEL = ["other_intents", "retrieve_med", "search_med", "enquire_suitable_med"]
     INTENT_LABEL = [
         "enquire_info",
         "retrieve",
@@ -199,7 +198,7 @@ class New_PharmaIntent_Dataset:
         
         for lang in config["languages"]:
             lang_ds = load_dataset(self.repo_id, name=lang)
-            processed_lang_ds = lang_ds.map(New_PharmaIntent_Dataset.postdownload_process)
+            processed_lang_ds = lang_ds.map(IntentDataset.postdownload_process)
             self.datasets[lang] = processed_lang_ds
 
         # Merge the datasets and set split with the merged one
@@ -232,44 +231,6 @@ class New_PharmaIntent_Dataset:
         print(f"Merged dataset loaded!")
         print("Train:", len(self.train_ds), "Valid:", len(self.valid_ds), "Test:", len(self.test_ds))
         return
-    
-    def create_vocab_file(self, output_dir: str, vocab_filename: str = "vocab.json"):
-        """
-        Creates a vocabulary file from the sentences in the dataset.
-
-        Args:
-            output_dir (str): Directory to save the vocabulary file.
-            vocab_filename (str): Name of the vocabulary file (default: "vocab.json").
-        """
-
-        vocab = {}
-        
-
-        # Combine all sentences from train, validation, and test datasets
-        print("Extracting sentences from the dataset...")
-        all_sentences = (
-            self.train_ds["Text"] +
-            self.valid_ds["Text"] +
-            self.test_ds["Text"]
-        )
-
-
-        # add special tokens
-        vocab["[UNK]"] = len(vocab)
-        vocab["[PAD]"] = len(vocab)
-        vocab["|"] = vocab[" "]
-        del vocab[" "]
-
-        # Ensure output directory exists
-        os.makedirs(output_dir, exist_ok=True)
-
-        # Save vocabulary to file
-        vocab_path = os.path.join(output_dir, vocab_filename)
-        print(f"Saving vocabulary to {vocab_path}...")
-        with open(vocab_path, "w", encoding="utf-8") as vocab_file:
-            json.dump(vocab, vocab_file, ensure_ascii=False, indent=4)
-
-        print("Vocabulary file created successfully!")
 
     # Use for validation / deployment, return 4-item list (padded)
     @staticmethod
@@ -283,8 +244,8 @@ class New_PharmaIntent_Dataset:
         detect_med = set()
 
         for token in tag_list:
-            if token != "0" and New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:] != "":
-                detect_med.add(New_PharmaIntent_Dataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
+            if token != "0" and IntentDataset.NER_LABEL[int(token)][2:] != "":
+                detect_med.add(IntentDataset.NER_LABEL[int(token)][2:]) # [2:] -> remove the beginning and interim tag
 
         listed_med = list(detect_med)
 
@@ -301,27 +262,8 @@ class New_PharmaIntent_Dataset:
         ner_tag = []
         for tkn in output:
             ner_tag.append(tkn["entity"][-1])
-        detect_med = New_PharmaIntent_Dataset.check_NER(ner_tag)
+        detect_med = IntentDataset.check_NER(ner_tag)
         return detect_med
-    # # Truncate/pad audio to 5 seconds (5 * 16000 samples for 16kHz sampling rate) for fair model comparison
-    # @staticmethod
-    # def _preprocess_data(example):
-
-    #     # Process audio
-    #     max_length = 5 * 16000  # 5 seconds at 16kHz
-    #     audio_array = example["Audio"]["array"]
-        
-    #     # Truncate if longer than 5 seconds
-    #     if len(audio_array) > max_length:
-    #         audio_array = audio_array[:max_length]
-    #     # Pad with zeros if shorter than 5 seconds
-    #     elif len(audio_array) < max_length:
-    #         padding = np.zeros(max_length - len(audio_array), dtype=audio_array.dtype)
-    #         audio_array = np.concatenate([audio_array, padding])
-        
-    #     example["Audio"]["array"] = audio_array
-
-    #     return example
 
     @staticmethod
     def postdownload_process(example):
@@ -341,7 +283,7 @@ class New_PharmaIntent_Dataset:
         tokenized_speech = tokens
 
         # Preprocess Intent
-        num_intent = New_PharmaIntent_Dataset.INTENT_LABEL.index(example["Intent"])
+        num_intent = IntentDataset.INTENT_LABEL.index(example["Intent"])
         
         # Ensure NER_Tag length matches the number of tokens
         if len(ner_tag) != len(tokens):
@@ -382,14 +324,6 @@ class New_PharmaIntent_Dataset:
             "valid": validate_ds,
             "test": test_ds
         })
-
-        # English: 118 train, 27 valid, 34 test -> 179
-        # Cantonese: 114 train, 30 valid, 40 test -> 184
-        # Eng_Can: 40 train, 6 valid, 14 test -> 60
-        # Can_Eng: 35 train, 14 valid, 11 test -> 60
-
-        # Can_Eng: Cantonese as main, English as secondary
-        # Eng_Can: English as main, Cantonese as secondary
 
         for l in ["English", "Cantonese"]:
 
@@ -466,7 +400,7 @@ def hybrid_split(string: str) -> List[str]:
     return matches
 
 def build_dataset():
-    New_PharmaIntent_Dataset.build_new_dataset(
+    IntentDataset.build_new_dataset(
         "PharmaIntent_v2", 
         config={
             "data_file": "temp\ds.csv", 
@@ -488,7 +422,7 @@ def call_dataset(config=None):
             "merge_language": False,
         }
 
-    ds = New_PharmaIntent_Dataset("borisPMC/PharmaIntent_v2", config)
+    ds = IntentDataset("borisPMC/PharmaIntent_v2", config)
 
     print("Dataset loaded successfully! \n")
     return ds
