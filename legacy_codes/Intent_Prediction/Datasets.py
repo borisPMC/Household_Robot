@@ -428,7 +428,6 @@ def call_dataset(config=None):
     return ds
 
 def main():
-    # convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "temp\ds.csv")
     build_dataset()
 
 if __name__ == "__main__":
