@@ -286,7 +286,7 @@ def detect_medicine_redefined(model_dict: dict, target_label: str, max_attempts=
             break
 
 
-        # cv2.imshow('Transformed Color Image', img)
+        #cv2.imshow('Transformed Color Image', img)
 
         time.sleep(2)
         # Press q key to stop
@@ -315,6 +315,11 @@ def main():
         "object_cam":           object_cam
     }
     result = detect_medicine_redefined(model_dict, "ACE inhibitor")
+
+
+
+
+
     print(result)
     model_dict["object_cam"].close()
 

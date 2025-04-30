@@ -1,6 +1,6 @@
-import re, time, numpy as np, sounddevice as sd, os
-from playsound import playsound
+import re, time, numpy as np, sounddevice as sd, os, json
 from typing import Union
+from datasets import load_dataset, Dataset, interleave_datasets, Audio, DatasetDict
 
 import transformers
 
@@ -82,7 +82,7 @@ def load_intent_pipeline(repo="borisPMC/HouseHolder_IC") -> transformers.Pipelin
         intent_pipe.save_pretrained(f"./temp/{repo}")
     return intent_pipe
 
-def handle_intent(intent: str, tidied_obj_list, audio_root="./asset/"):
+def handle_intent(intent: str, tidied_obj_list):
     """
     Request Handler. Medicine Grabbing is supported at this version.
     """
@@ -90,46 +90,30 @@ def handle_intent(intent: str, tidied_obj_list, audio_root="./asset/"):
     command = ""
     queued_obj = []
     msg = ""
-    response_fpath = ""
-
-    print("Playing response...")
 
     # The second printing line should be audio
     match intent:
         case "0": # "enquire_info"
-            msg = "\nI would like to answer, but I know not much...\n"
-            response_fpath = "res0.mp3"
+            msg = "\nI would like to answer, but I know not much then you...\n"
         case "1": # "retrieve"
             if len(tidied_obj_list) > 0:
                 msg = "\nGrabbing the requested items for you.\n"
-                response_fpath = "res1.mp3"
                 command = intent
                 queued_obj = tidied_obj_list
             else:
                 msg = "\nI can't retrieve any items if you aren't indicate an object!\n"
         case "2": # "enquire_location"
             msg = "\nI would like to answer, but I know not much about locations...\n"
-            response_fpath = "res2.mp3"
         case "3": # "enquire_suitable_med"
             msg = "\nI would like to answer, but I know not much about medical diagnosis...\n"
-            response_fpath = "res3.mp3"
         case "4": # "general_chat"
             msg = "\nHello, take care!\n"
-            response_fpath = "res4.mp3"
         case "5": # "set_furniture",
-            msg = "\nWait until I have legs to walk!\n"
-            response_fpath = "res5.mp3"
+            msg = "\nWait 'till I have legs to walk!\n",
         case "6": # "set_software"
             msg = "\nStill can't do Office works yet...\n"
-            response_fpath = "res6.mp3"
-        case _:
-            msg = "\nNo speech detected.\n"
-    
-    if response_fpath != "":
-        playsound(audio_root + response_fpath)
 
     print(msg)
-    print("End response, return listening...")
     return command, queued_obj
 
 def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> None:
@@ -151,10 +135,9 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
-        script_len = len(hybrid_split(transcript))
+        print("Transcript:", transcript)
 
-        # Prevent empty audio 
-        if script_len > 1 :
+        if len(transcript) > 0 :
 
             intent = intent_pipe(transcript)[0]["label"][-1]
             med_list = post_process_obj(med_pipe(transcript))
@@ -166,6 +149,9 @@ def listen_audio_thread(model_dict: dict, shared_dict: dict, listen_event) -> No
                     tidied_obj_list.append(med)
 
             shared_dict["current_cmd"], shared_dict["queued_objects"] = handle_intent(intent, tidied_obj_list)
+
+        else:
+            print("No speech detected.")
         
         # Wait 1 second before looping again 
         time.sleep(2)
@@ -187,32 +173,31 @@ def live_test(model_dict):
         audio_array = np.squeeze(audio_data)  # Convert to 1D array
 
         transcript = asr_pipe(audio_array)["text"]
-        script_len = len(hybrid_split(transcript))
         # print("Transcript:", transcript)
+        intent = -1
+        tidied_obj_list = []
 
-        # Prevent empty audio 
-        if script_len > 1 :
+        valid_transcript = len(hybrid_split(transcript)) > 1
+
+        if valid_transcript:
 
             intent = intent_pipe(transcript)[0]["label"][-1]
             med_list = post_process_obj(med_pipe(transcript))
             # print(intent, med_list)
-
-            tidied_obj_list = []
             for med in med_list:
                 if med != "Empty":
                     tidied_obj_list.append(med)
+        
+        intent_label = INTENT_LABEL[int(intent)] if valid_transcript else "None"
 
-            handle_intent(intent, tidied_obj_list)
-                  
-        # Wait 1 second before looping again 
-        time.sleep(2)
+        print(f"Detected Medicines: {tidied_obj_list} | Intent: {intent_label}")
 
 def main():
 
     model_dict = {
-        "asr_pipe":             load_asr_pipeline("borisPMC/HouseHolder_WhisperSmall"),
-        "med_list_pipe":        load_med_list_pipeline("borisPMC/HouseHolder_NER"),
-        "intent_pipe":          load_intent_pipeline("borisPMC/HouseHolder_IC"),
+        "asr_pipe":             load_asr_pipeline("borisPMC/MedicGrabber_WhisperSmall"),
+        "med_list_pipe":        load_med_list_pipeline("borisPMC/MedicGrabber_multitask_BERT_ner"),
+        "intent_pipe":          load_intent_pipeline("borisPMC/MedicGrabber_multitask_BERT_intent"),
     }
 
     model_dict["asr_pipe"].generation_config.forced_decoder_ids = None

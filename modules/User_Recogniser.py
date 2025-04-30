@@ -1,4 +1,4 @@
-import cv2, torch, time
+import cv2, torch, time, serial, threading
 from PIL import Image
 from transformers import AutoProcessor, RTDetrForObjectDetection, VitPoseForPoseEstimation
 
@@ -41,6 +41,51 @@ class PoseEstimator_ViTPose:
         person_boxes = self.detect_humans(image)
         keypoints = self.detect_keypoints(image, person_boxes)
         return keypoints
+
+class MIC_array:
+    def __init__(self, COM, states_dict, listen_event):
+        self.ser_ = serial.Serial(port=COM, baudrate=115200)#, parity=serial.PARITY_ODD,stopbits=serial.STOPBITS_TWO,bytesize=serial.SEVENBITS)
+        thread = threading.Thread(target=self.reader(), kwargs={"states_dict": states_dict, "listen_event": listen_event})
+        thread.start()
+        self.now_pos = -1
+        print("voice direction detector:", self.ser_.isOpen)
+
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        """
+        Must add this magic method to prevent the port not closing and obstract the next initialization.
+        """
+        self.ser_.close()
+
+    def __delattr__(self):
+        self.ser_.close()
+
+    def reader(self, states_dict, listen_event):
+        while True:
+            listen_event.wait()
+            if self.ser_.in_waiting > 0:
+                data  = self.ser_.readline()
+                datastr = data.decode('utf-8')
+                self.now_pos = float(datastr.strip())
+                self.update_state(states_dict)
+                #print(self.now_pos)
+                time.sleep(0.01)
+
+    def get_pos(self):
+        return self.now_pos
+    
+    def update_state(self, states_dict):
+        radian = (self.get_pos() / 180) if (self.get_pos() > 0 and self.get_pos() <= 180) else 0
+        states_dict["user_angle"] = radian
+    
+    def close(self):
+        """
+        Close the serial port. Should be called whenever the program ends.
+        """
+        self.ser_.close()
+        return
 
 def is_detected(keypoints, confidence_threshold=0.5):
     # Check if the list is empty

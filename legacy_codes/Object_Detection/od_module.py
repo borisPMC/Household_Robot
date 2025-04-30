@@ -11,8 +11,8 @@ from js2py import eval_js
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 import sys
-sys.path.append("..")
-from Hand_Control import kinect
+# sys.path.append("..")
+import kinect
 
 """
 META DATA SECTION

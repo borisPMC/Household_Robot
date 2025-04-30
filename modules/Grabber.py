@@ -670,46 +670,44 @@ def reset_to_standby(arm: urx.URRobot):
     # L [-0.004373136801291539, 0.499918666359738, 0.19937056638987397, -1.5775177375519502, -0.00013697164368624924, 0.06722903150819382]
     arm.movej((-4.267364327107565, -1.5765263042845667, -2.3882980346679688, 3.9583703714558105, -1.1640966574298304, 3.1896891593933105), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
 
-def grab_0(hand: Hand, arm: urx.URRobot, start_coord=(0.17,0.4,0.06,4.7,0,-0.2)):
-    
-#c1(),release(),pregrip()
-    arm.movel((0.17,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
-    hand.pregrip()
-    arm.movel((0,0.02,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
-    hand.c1()
-    arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
-    arm.movel((-0.31,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    arm.movej((3.5,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    # arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+def deliver_obj(hand: Hand, arm: urx.URRobot, radian: float):
+    """
+    Returning object to the front of user.
+    """
+    adj_radian = -2 * (1 - radian) - 0.5
+    arm.movej((-2, -1.34, -2.38, 3.70, -0.56, 3.2), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    arm.movej((-adj_radian, 0 , 0, 0, 0, 0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     hand.release()
     hand.pregrip()
     time.sleep(0.5)
     arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+
+def grab_0(hand: Hand, arm: urx.URRobot, radian = 0, start_coord=(0.17,0.4,0.06,4.7,0,-0.2)):
+    hand.pregrip()
+    arm.movel((0.17,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
+    hand.pregrip()
+    arm.movel((0,0.03,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    hand.c1()
+    arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movel((-0.31,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    deliver_obj(hand, arm, radian)
 
 # (-0.12232428631591798, -0.10373125252151488, 0.0024565451145172118)
 # Cam coord at Arm coord: (-0.12427202005322101, 0.0999293524552253, 0.07920388314512974)
 
-def grab_1(hand: Hand, arm: urx.URRobot, start_coord=(0.05,0.46,0.06,4.7,0,-0.2)):
-    
-#c1(),release(),pregrip()
+def grab_1(hand: Hand, arm: urx.URRobot, radian = 0, start_coord=(0.05,0.45,0.06,4.7,0,-0.2)):
+    hand.pregrip()
     arm.movel((0.1,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
     hand.pregrip()
-    arm.movel((0,0.02,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
+    arm.movel((0,0.01,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
     hand.c1()
     arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
     arm.movel((-0.31,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    arm.movej((2.9,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    # arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    hand.release()
-    hand.pregrip()
-    time.sleep(0.5)
-    arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    deliver_obj(hand, arm, radian)
 
-def grab_2(hand: Hand, arm: urx.URRobot, start_coord=(-0.1,0.46,0.06,4.7,0,-0.2)):
-    
-#c1(),release(),pregrip()
+def grab_2(hand: Hand, arm: urx.URRobot, radian = 0, start_coord=(-0.1,0.46,0.06,4.7,0,-0.2)):
     arm.movel((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
     hand.pregrip()
@@ -717,53 +715,32 @@ def grab_2(hand: Hand, arm: urx.URRobot, start_coord=(-0.1,0.46,0.06,4.7,0,-0.2)
     hand.c1()
     arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
     arm.movel((0,-0.09,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    arm.movej((3.2,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    # arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)0....  8889563636+36+3+
-    hand.release()
-    hand.pregrip()
-    time.sleep(0.5)
-    arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    deliver_obj(hand, arm, radian)
 
-def grab_3(hand: Hand, arm: urx.URRobot, start_coord=(-0.25,0.46,0.06,4.7,0,-0.2)):
-    
-#c1(),release(),pregrip()
-    arm.movel((0,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+def grab_3(hand: Hand, arm: urx.URRobot, radian = 0, start_coord=(-0.2,0.46,0.06,4.7,0,-0.2)):
+    arm.movel((-0.25,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
     arm.movel(start_coord, acc=ACCELERATION, vel=VELOCITY, wait=True, relative=False)
     hand.pregrip()
     arm.movel((0,0.02,0,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
     hand.c1()
     arm.movel((0,0,0.2,0,0,0), acc=ACCELERATION, vel=VELOCITY , wait=True, relative=True)
     arm.movel((0,-0.1,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    arm.movej((2.9,0,0,0,0,0), acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    # arm.movel((0,0,-0.2,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
-    hand.release()
-    hand.pregrip()
-    time.sleep(0.5)
-    arm.movel((0,0,0.15,0,0,0) ,acc=ACCELERATION, vel=VELOCITY, wait=True, relative=True)
+    deliver_obj(hand, arm, radian)
 
 # Main function for the Master program. It is intent to control both the arm and the hand.
-def grab_medicine(hand: Hand, arm: urx.URRobot, medicine: str, coord=None):
+def grab_medicine(hand: Hand, arm: urx.URRobot, medicine: str, radian: float, coord=None):
 
     print("Arm start moving")
 
-    # Absolute
-    med_coord = arm.getl()
-    med_coord[:3] = coord[:3]
-
-    # Relative
-    # med_coord = [0]*6
-    # med_coord[:3] =[coord[i] - arm.getl()[i] for i in range(3)]
-    print(med_coord)
-
     match medicine:
         case "ACE_Inhibitor":
-            grab_0(hand, arm, med_coord)
+            grab_0(hand, arm, radian)
         case "Metformin":
-            grab_1(hand, arm, med_coord)
+            grab_1(hand, arm, radian)
         case "Atorvastatin":
-            grab_2(hand, arm, med_coord)
+            grab_2(hand, arm, radian)
         case "Amitriptyline":
-            grab_3(hand, arm, med_coord)
+            grab_3(hand, arm, radian)
         case _:
             print("Error")
     
@@ -786,7 +763,7 @@ def main():
 
         # These three are given from external modules, don't need to care if configuring the arm motions only.
         # I include the Hand here. Please see grab_0 to know how to use it.
-        medicine = "Metformin" 
+        medicine = "ACE Inhibitor" 
         hand = Hand()
         arm = urx.URRobot("192.168.12.21", useRTInterface=True)
         arm.set_tcp((0, 0, 0.1, 0, 0, 0))

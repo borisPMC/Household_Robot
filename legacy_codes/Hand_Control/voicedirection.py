@@ -17,17 +17,11 @@ class MIC_array:
                 data  = self.ser_.readline()
                 datastr = data.decode('utf-8')
                 self.now_pos = float(datastr.strip())
-                print(self.now_pos)
+                #print(self.now_pos)
                 time.sleep(0.01)
 
     def get_pos(self):
         return self.now_pos
-
-def listen_user_pos(mic: MIC_array):
-    while True:
-        #print(mic.reader())
-        time.sleep(1)
-
 
 if __name__ == "__main__":
     mic = MIC_array("COM5")
