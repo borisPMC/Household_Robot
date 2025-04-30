@@ -1,6 +1,5 @@
-import re, time, numpy as np, sounddevice as sd, os, json
+import re, time, numpy as np, sounddevice as sd, os
 from typing import Union
-from datasets import load_dataset, Dataset, interleave_datasets, Audio, DatasetDict
 
 import transformers
 
@@ -55,6 +54,7 @@ def hybrid_split(string: str):
     matches = re.findall(regex, string, re.UNICODE)
     return matches
 
+# Train script: legacy_codes/Intent_Prediction/Models.py
 def load_asr_pipeline(repo="borisPMC/HouseHolder_WhisperSmall") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         asr_pipe = transformers.pipeline("automatic-speech-recognition", model=f"./temp/{repo}")
@@ -64,6 +64,7 @@ def load_asr_pipeline(repo="borisPMC/HouseHolder_WhisperSmall") -> transformers.
         asr_pipe.save_pretrained(f"./temp/{repo}")
     return asr_pipe
 
+# Train script: legacy_codes/Intent_Prediction/multitask_BERT_for_hf.py (joint trained under hard param sharing paradigm)
 def load_med_list_pipeline(repo="borisPMC/HouseHolder_NER") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         med_list_pipe = transformers.pipeline("token-classification", model=f"./temp/{repo}")
@@ -73,6 +74,7 @@ def load_med_list_pipeline(repo="borisPMC/HouseHolder_NER") -> transformers.Pipe
         med_list_pipe.save_pretrained(f"./temp/{repo}")
     return med_list_pipe
 
+# Train script: legacy_codes/Intent_Prediction/multitask_BERT_for_hf.py (joint trained under hard param sharing paradigm)
 def load_intent_pipeline(repo="borisPMC/HouseHolder_IC") -> transformers.Pipeline:
     if os.path.exists(f"./temp/{repo}"):
         intent_pipe = transformers.pipeline("text-classification", model=f"./temp/{repo}")
@@ -191,18 +193,3 @@ def live_test(model_dict):
         intent_label = INTENT_LABEL[int(intent)] if valid_transcript else "None"
 
         print(f"Detected Medicines: {tidied_obj_list} | Intent: {intent_label}")
-
-def main():
-
-    model_dict = {
-        "asr_pipe":             load_asr_pipeline("borisPMC/MedicGrabber_WhisperSmall"),
-        "med_list_pipe":        load_med_list_pipeline("borisPMC/MedicGrabber_multitask_BERT_ner"),
-        "intent_pipe":          load_intent_pipeline("borisPMC/MedicGrabber_multitask_BERT_intent"),
-    }
-
-    model_dict["asr_pipe"].generation_config.forced_decoder_ids = None
-
-    live_test(model_dict)
-
-if __name__ == "__main__":
-    main()
