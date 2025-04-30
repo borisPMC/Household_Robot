@@ -8,7 +8,7 @@ PS C:\Users\20051248d\Documents\GitHub\Medic_Grabber> & c:/Users/20051248d/Docum
 Applying default config for calling PharmaIntent_v2...
 Dataset loaded successfully! 
 
-{'Speech': '我哋出去行下啦', 'Audio': {'path': None, 'array': array([-0.0038147 , -0.0067749 , -0.00564575, ...,  0.        ,
+{'Text': '我哋出去行下啦', 'Audio': {'path': None, 'array': array([-0.0038147 , -0.0067749 , -0.00564575, ...,  0.        ,
         0.        ,  0.        ]), 'sampling_rate': 16000}, 'Intent': 'other_intents', 'NER_Tag': "'0000000", 'Tokenized_Speech': ['我', '哋', '出', '去', '行', '下', '啦'], 'NER_Labels': [0, 0, 0, 0, 0, 0, 0], 'Intent_Label': 0}
 c:\Users\20051248d\Documents\GitHub\Medic_Grabber\Intent_Prediction\Multitask_NLP.py:359: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `Trainer.__init__`. Use `processing_class` instead.
   trainer = Trainer(

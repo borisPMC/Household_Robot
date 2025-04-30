@@ -38,7 +38,7 @@ class PharmaIntent_Dataset:
     def _set_metadata(self):
         self.repo_id = "borisPMC/PharmaIntent"
         self.audio_col = "Audio"
-        self.speech_col = "Speech"
+        self.speech_col = "Text"
         self.label_col = "Label"
         self.label_list = ["Empty", "ACE Inhibitor", "Metformin", "Atorvastatin", "Amitriptyline"]
 
@@ -64,9 +64,9 @@ class PharmaIntent_Dataset:
         # Combine all sentences from train, validation, and test datasets
         print("Extracting sentences from the dataset...")
         all_sentences = (
-            self.train_ds["Speech"] +
-            self.valid_ds["Speech"] +
-            self.test_ds["Speech"]
+            self.train_ds["Text"] +
+            self.valid_ds["Text"] +
+            self.test_ds["Text"]
         )
 
         # Count unique characters
@@ -211,7 +211,7 @@ class New_PharmaIntent_Dataset:
 
     def _set_metadata(self):
         self.audio_col = "Audio_Path"
-        self.speech_col = "Speech"
+        self.speech_col = "Text"
         self.intent = "Intent"
         self.ner_tag = "NER_Tag"
 
@@ -248,9 +248,9 @@ class New_PharmaIntent_Dataset:
         # Combine all sentences from train, validation, and test datasets
         print("Extracting sentences from the dataset...")
         all_sentences = (
-            self.train_ds["Speech"] +
-            self.valid_ds["Speech"] +
-            self.test_ds["Speech"]
+            self.train_ds["Text"] +
+            self.valid_ds["Text"] +
+            self.test_ds["Text"]
         )
 
 
@@ -328,7 +328,7 @@ class New_PharmaIntent_Dataset:
 
         tokenized_speech = []
         ner_labels = []
-        speech = example["Speech"]
+        speech = example["Text"]
 
         # Preprocess NER_Tag
         if example["NER_Tag"][0] == "'":
@@ -336,7 +336,7 @@ class New_PharmaIntent_Dataset:
         else:
             ner_tag = example["NER_Tag"]
 
-        # Preprocess Speech
+        # Preprocess Text
         tokens = hybrid_split(speech)
         tokenized_speech = tokens
 
@@ -496,13 +496,6 @@ def call_dataset(config=None):
 def main():
     # convert_excel_to_csv("Intent_Prediction\multitask_audio\multitask_ds_light.xlsx", "temp\ds.csv")
     build_dataset()
-    ace_count = 0
-    ds = call_dataset()
-    for data in ds.datasets["Cantonese"]["train"]:
-        ace_count += New_PharmaIntent_Dataset.check_NER(data["NER_Tag"]).count("ACE_Inhibitor")
-
-    # 80 ACE for light Canton Train set
-    print(ace_count)
 
 if __name__ == "__main__":
     main()   

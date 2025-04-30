@@ -295,7 +295,7 @@ def prepare_datasets(lang_ds: New_PharmaIntent_Dataset, tokenizer: BertTokenizer
     })
 
     def convert_to_intent_features(batch):
-        speech = batch["Speech"]
+        speech = batch["Text"]
         intent_labels = batch["Intent_Label"]
         outputs = tokenizer(
             speech, max_length=max_length, padding="max_length", truncation=True
@@ -308,7 +308,7 @@ def prepare_datasets(lang_ds: New_PharmaIntent_Dataset, tokenizer: BertTokenizer
         return features
 
     def convert_to_ner_features(batch):
-        speech = batch["Speech"]
+        speech = batch["Text"]
         ner_labels = batch["NER_Labels"]
         outputs = tokenizer(
             speech, max_length=max_length, padding="max_length"

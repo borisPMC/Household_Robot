@@ -127,7 +127,7 @@ class Whisper_Model:
             example = self.processor(
                 audio=audio["array"],
                 sampling_rate=audio["sampling_rate"],
-                text=example["Speech"],
+                text=example["Text"],
             )
 
             # compute input length of audio sample in seconds
@@ -275,7 +275,7 @@ class BERT_Model:
 
     def _preprocess_dataset(self):
         def preprocess_function(batch):
-            speech = batch["Speech"]
+            speech = batch["Text"]
             label = batch["Label"]
 
             # Tokenize speech and map labels
@@ -286,8 +286,8 @@ class BERT_Model:
             return batch
 
         # Apply preprocessing
-        self.training_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Speech", "Label", "Audio"], batched=True)
-        self.testing_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Speech", "Label", "Audio"], batched=True)
+        self.training_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Text", "Label", "Audio"], batched=True)
+        self.testing_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Text", "Label", "Audio"], batched=True)
 
     def _prepare_training(self):
         self.evaluator = evaluate.load("f1")
@@ -439,7 +439,7 @@ class Wav2Vec2_Model:
 
         def preprocess_function(batch):
             audio = batch["Audio"]
-            label = batch["Speech"]
+            label = batch["Text"]
 
             # Ensure audio is truncated/padded to 5 seconds (5 * 16000 samples)
             max_length = 5 * 16000  # 5 seconds at 16kHz
@@ -455,8 +455,8 @@ class Wav2Vec2_Model:
 
 
         # Apply preprocessing
-        self.train_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
-        self.test_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Audio", "Speech", "Label"], batched=True)
+        self.train_dataset = self.dataset.train_ds.map(preprocess_function, remove_columns=["Audio", "Text", "Label"], batched=True)
+        self.test_dataset = self.dataset.valid_ds.map(preprocess_function, remove_columns=["Audio", "Text", "Label"], batched=True)
 
     def _prepare_training(self):
         self.cer_metric = evaluate.load("cer")
@@ -607,7 +607,7 @@ class GPT2_Model:
 
         def _f(batch):
 
-            speech_col = batch["Speech"]
+            speech_col = batch["Text"]
             label_col = batch["Label"]
 
             tokenised_dict = self.tokenizer(speech_col, padding="max_length", return_tensors="pt")
@@ -619,8 +619,8 @@ class GPT2_Model:
 
             return batch
 
-        vectorized_train_ds = train_ds.map(_f, batched=True, remove_columns=["Label","Speech"], batch_size=16)
-        vectorized_test_ds = valid_ds.map(_f, batched=True, remove_columns=["Label","Speech"] , batch_size=16)
+        vectorized_train_ds = train_ds.map(_f, batched=True, remove_columns=["Label","Text"], batch_size=16)
+        vectorized_test_ds = valid_ds.map(_f, batched=True, remove_columns=["Label","Text"] , batch_size=16)
 
         self.training_dataset = vectorized_train_ds
         self.testing_dataset = vectorized_test_ds

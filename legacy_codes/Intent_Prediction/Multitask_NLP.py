@@ -326,7 +326,7 @@ async def main():
 
     def preprocess(example, tokenizer, max_length=128):
 
-        text = example["Speech"]
+        text = example["Text"]
 
         # Tokenize the text
         encoding = tokenizer(

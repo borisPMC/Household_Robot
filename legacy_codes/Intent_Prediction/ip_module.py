@@ -57,7 +57,7 @@ class New_PharmaIntent_Dataset:
 
     def _set_metadata(self):
         self.audio_col = "Audio_Path"
-        self.speech_col = "Speech"
+        self.speech_col = "Text"
         self.intent = "Intent"
         self.ner_tag = "NER_Tag"
 
@@ -94,9 +94,9 @@ class New_PharmaIntent_Dataset:
         # Combine all sentences from train, validation, and test datasets
         print("Extracting sentences from the dataset...")
         all_sentences = (
-            self.train_ds["Speech"] +
-            self.valid_ds["Speech"] +
-            self.test_ds["Speech"]
+            self.train_ds["Text"] +
+            self.valid_ds["Text"] +
+            self.test_ds["Text"]
         )
 
 
@@ -174,7 +174,7 @@ class New_PharmaIntent_Dataset:
 
         tokenized_speech = []
         ner_labels = []
-        speech = example["Speech"]
+        speech = example["Text"]
 
         # Preprocess NER_Tag
         if example["NER_Tag"][0] == "'":
@@ -182,7 +182,7 @@ class New_PharmaIntent_Dataset:
         else:
             ner_tag = example["NER_Tag"]
 
-        # Preprocess Speech
+        # Preprocess Text
         tokens = hybrid_split(speech)
         tokenized_speech = tokens
 

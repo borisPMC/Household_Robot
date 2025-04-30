@@ -1,4 +1,4 @@
-Language,Speech,Label,Audio_path
+Language,Text,Label,Audio_path
 English,Get me hypertension medicine,ACE Inhibitor,medicine_intent_audio/0001.mp3
 Cantonese,攞高血壓藥畀我,ACE Inhibitor,medicine_intent_audio/0002.mp3
 Cantonese,幫我拎高血壓藥,ACE Inhibitor,medicine_intent_audio/0003.mp3

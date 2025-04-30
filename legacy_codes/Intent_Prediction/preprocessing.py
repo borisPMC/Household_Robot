@@ -51,7 +51,7 @@ def convert_sentence_to_tokens(df: pd.DataFrame) -> pd.DataFrame:
     # Process each row in the dataframe
     for index, row in df.iterrows():
 
-        speech = row["Speech"].lower()
+        speech = row["Text"].lower()
 
         # Split the speech into tokens
         tokens = hybrid_split(speech)
@@ -88,7 +88,7 @@ def detect_language(df: pd.DataFrame):
     for index, row in df.iterrows():
 
         lang = "Unknown"
-        speech = row["Speech"]
+        speech = row["Text"]
         if re.search(r"[\u4e00-\ufaff]", speech, re.UNICODE):
             lang = "Cantonese"
         else:
