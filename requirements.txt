@@ -42,7 +42,6 @@ iso8601==2.1.0
 Jinja2==3.1.6
 jiwer==3.1.0
 joblib==1.4.2
-Js2Py==0.74
 kiwisolver==1.4.8
 lazy_loader==0.4
 librosa==0.11.0

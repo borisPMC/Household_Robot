@@ -7,7 +7,7 @@ import shutil
 import time
 from PIL import Image
 # from IPython.display import display, Javascript, Image
-from js2py import eval_js
+
 from ultralytics import YOLO
 from paddleocr import PaddleOCR
 import sys
