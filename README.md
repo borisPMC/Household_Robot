@@ -7,8 +7,6 @@ Our proposed proactive robot serves Hong Kong elderly people in households. The 
 ## About this repository
 The deployment scripts includes main.py and all scripts in _modules_ folder. After setting up everything (hardware, SDKs), run _main.py_ directly.
 
-The _legacy_codes_ contains scripts and documents during the development stage and may be outdated and messy. These scripts are unexpected to be called when running the system.
-
 ## System Architecture
 ![System Architecture for the Household robot](asset/sys_arch.jpg)
 
